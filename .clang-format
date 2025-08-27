@@ -1,0 +1,51 @@
+# .clang-format
+BasedOnStyle: LLVM
+IndentWidth: 4               # indentation standard
+TabWidth: 4
+UseTab: Never                # espaces > tabs (plus fréquent en pro)
+
+# Alignements
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros: true
+AlignOperands: true
+AlignTrailingComments: true
+
+# Espacements
+SpaceBeforeParens: ControlStatements   # if (), while (), mais pas f ()
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+SpacesInAngles: false                  # pas de "vector< int >"
+SpaceBeforeAssignmentOperators: true
+
+# Braces
+BreakBeforeBraces: Allman              # chaque { sur une nouvelle ligne
+AllowShortFunctionsOnASingleLine: Empty
+
+# Templates & lambdas
+BinPackArguments: false
+BinPackParameters: false
+Cpp11BracedListStyle: true
+IndentWrappedFunctionNames: true
+AlwaysBreakTemplateDeclarations: Yes   # force les templates multiline lisibles
+
+# Imports & includes
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<.*\.h>'
+    Priority: 1
+  - Regex: '^<.*>'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+
+# Nommage (optionnel mais courant)
+DerivePointerAlignment: false
+PointerAlignment: Left                 # int* ptr, pas int *ptr
+
+# Autres
+ColumnLimit: 100                       # wrap auto au-delà de 100 colonnes
+AccessModifierOffset: -4               # alignement des public:/private:
+KeepEmptyLinesAtTheStartOfBlocks: false

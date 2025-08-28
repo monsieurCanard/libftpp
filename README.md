@@ -23,8 +23,41 @@ You must provide a unified header file named libftpp.hpp, which
 includes all the necessary headers from your toolbox. This will enable other developers (or your future self) to easily integrate your library into new projects by
 including just this single header file.
 
+//DOCS
 
 POOL :
 Un Pool c’est une sorte de “réservoir” de mémoire qui pré-alloue un certain nombre d’objets et les réutilise pour éviter des allocations/désallocations fréquentes.
 
 ... (ellipsis) en C++ sert à “dérouler” ta liste d’arguments (ou de types) dans un variadic template.
+
+Un template Variadic est un template qui peut prendre un nombre variable d’arguments (ou de types). C’est utile pour créer des classes ou des fonctions génériques qui peuvent gérer différents types ou nombres d’arguments.
+
+T& = référence classique (uniquement lvalues).
+
+const T& = référence constante (lvalues et rvalues).
+
+T&& (non-template) = référence à rvalue seulement.
+
+T&& (dans un template) = forwarding reference (s’adapte).
+
+Boilerplate = du code répétitif et standard
+
+acquire (et plus largement les object pools) ne sont pas du C++ standard.
+C’est une technique classique de design
+
+
+pourquoi std::forward est recommandé
+
+Préserve la nature lvalue/rvalue
+
+Si l’utilisateur passe une rvalue (ex : pool.acquire(42)), std::forward transmet la rvalue au constructeur de TType.
+
+Sans forward, toutes les rvalues deviennent des lvalues, donc :
+
+Il y a une copie inutile au lieu d’un déplacement.
+
+Certains constructeurs rvalue-only ne fonctionneront pas.
+
+Performance
+
+forward permet de ne pas créer de copies inutiles, donc c’est plus performant, surtout si TType est lourd à copier.

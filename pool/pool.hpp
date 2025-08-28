@@ -10,21 +10,22 @@ public:
     Pool();
     ~Pool();
 
-    // J'assume l'undefined behaviour si numberOfObjectStored > objects.size()
     void resize(const size_t& numberOfObjectStored);
 
     template <typename... TArgs>
     <TType> acquire(TArgs&&... p_args);
-    void foo(int& nb);
+    
+    void release(*TType);
 
     class Object
     {
     private:
+        Pool<TType>* pool_ptr; 
         bool ready = true;
         TType* myself;
-
     public:
-        Object();
+        template <Typename... TArgs>
+        Object(Pool<TType>* pool, TArgs&&... p_args);
         ~Object();
 
         TType* operator->();
@@ -32,7 +33,3 @@ public:
 };
 
 #include "pool.tpp"
-
-for(const int& element : element) {
-
-}

@@ -1,4 +1,4 @@
-#include "pool.hpp"
+// #include "pool.hpp"
 
 template <Typename TType>
 Pool::Pool()
@@ -22,6 +22,11 @@ void Pool::resize(const size_t& numberOfObjectStored)
     objects.resize(numberOfObjectStored);
 }
 
+template <Typename TType>
+void Pool::release(TType* obj) {
+    obj->~TType();
+}
+
 template <Typename... TArgs>
 Pool::Object<TType> Pool::acquire(TArgs&&... p_args) {
     for(size_t i = 0; i < objects.size(); i++) {
@@ -31,14 +36,17 @@ Pool::Object<TType> Pool::acquire(TArgs&&... p_args) {
         }
     }
     if(i == objects.size())
-        throw std::runtime_error("No Object Free !");
+        throw std::runtime_error("No element available !");
 
     return object[i](std::forward<TArgs>(p_args)...);
 }
 
-class Object {
-private:
-public:
-    Object();
-    ~Object();
-    
+template <Typename... TArgs>
+Object::Object(Pool<TType>* pool, TArgs&& ...p_args) {
+    pool_ptr = pool;
+}
+
+template <Typename... TArgs>
+Object::~Object() {
+	pool_ptr->release(myself);
+}

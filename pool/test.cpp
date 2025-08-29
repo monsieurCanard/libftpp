@@ -29,27 +29,23 @@ int main()
 {
     Pool<MyObject> pool;
 
-    // Test 1 : redimensionnement du pool
     pool.resize(3);
     std::cout << "Pool resized to 3 objects\n";
 
-    // Test 2 : acquisition et utilisation
     auto obj1 = pool.acquire(10, "A");
     obj1->show();
 
     auto obj2 = pool.acquire(20, "B");
     obj2->show();
 
-    // Test 3 : réutilisation après scope
     {
         auto obj3 = pool.acquire(30, "C");
         obj3->show();
-    } // obj3 détruit automatiquement -> remis dans le pool
+    }
 
     auto obj4 = pool.acquire(40, "D");
-    obj4->show(); // devrait réutiliser l'index de C
+    obj4->show();
 
-    // Test 4 : dépassement du pool -> exception
     try
     {
         auto obj5 = pool.acquire(50, "E");

@@ -8,6 +8,9 @@ Pool<TType>::Pool()
 template <typename TType>
 Pool<TType>::~Pool()
 {
+    // #ifdef DEBUG
+    //     std::cout << "Pool Destructor Call" << std::endl;
+    // #endif
 }
 
 /*
@@ -27,10 +30,8 @@ void Pool<TType>::resize(const size_t& numberOfObjectStored)
 template <typename TType>
 void Pool<TType>::release(Object& obj)
 {
-    obj.myself.~TType();
-    std::cout << "Destructor of Obj called" << obj.idx << std::endl;
+    obj.get()->~TType();
     available.push(obj.idx);
-    std::cout << "kajqdwhgljahdwh of Obj called" << std::endl;
 }
 
 template <typename TType>
@@ -39,11 +40,13 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
 {
     if (available.empty())
         throw std::runtime_error("No Object available !");
+
     size_t i = available.top();
     new (&objects[i].myself) TType(std::forward<TArgs&&>(p_args)...);
     available.pop();
-    pool_ptr       = this;
-    objects[i].idx = i;
+
+    objects[i].pool_ptr = this;
+    objects[i].idx      = i;
     return objects[i];
 }
 
@@ -68,5 +71,11 @@ Pool<TType>::Object::~Object()
 template <typename TType>
 TType* Pool<TType>::Object::operator->()
 {
-    return &myself;
+    return get();
+}
+
+template <typename TType>
+TType* Pool<TType>::Object::get()
+{
+    return reinterpret_cast<TType*>(&myself);
 }

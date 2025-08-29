@@ -25,39 +25,93 @@ including just this single header file.
 
 //DOCS
 
-POOL :
-Un Pool c’est une sorte de “réservoir” de mémoire qui pré-alloue un certain nombre d’objets et les réutilise pour éviter des allocations/désallocations fréquentes.
+📦 Pool
 
-... (ellipsis) en C++ sert à “dérouler” ta liste d’arguments (ou de types) dans un variadic template.
+Un Pool est un réservoir de mémoire qui pré-alloue un certain nombre d’objets et les réutilise.
+Cela évite des allocations/désallocations fréquentes, ce qui améliore les performances, surtout si la création/destruction d’objets est coûteuse.
+C’est une technique de design (non standard C++), mais très répandue.
 
-Un template Variadic est un template qui peut prendre un nombre variable d’arguments (ou de types). C’est utile pour créer des classes ou des fonctions génériques qui peuvent gérer différents types ou nombres d’arguments.
+🔧 Templates variadiques
 
-T& = référence classique (uniquement lvalues).
+template <typename... TArgs> : un template qui accepte un nombre variable d’arguments.
 
-const T& = référence constante (lvalues et rvalues).
+L’opérateur ... (ellipsis) sert à dérouler la liste d’arguments.
 
-T&& (non-template) = référence à rvalue seulement.
+Exemple :
+```cpp
+template <typename... TArgs>
+void func(TArgs... args) {
+		(std::cout << ... << args) << std::endl; // Affiche tous les arguments
+}
+```
+```cpp
+pool.acquire(1, "test", 3.14); 
+// Les paramètres sont transmis au constructeur de TType
+```
+🔗 Gestion des références
 
-T&& (dans un template) = forwarding reference (s’adapte).
+T& → référence classique (uniquement lvalues).
 
-Boilerplate = du code répétitif et standard
+const T& → référence constante (accepte lvalues et rvalues).
 
-acquire (et plus largement les object pools) ne sont pas du C++ standard.
-C’est une technique classique de design
+T&& (hors template) → référence à rvalue uniquement.
 
+T&& (dans un template) → forwarding reference (s’adapte selon l’argument).
 
-pourquoi std::forward est recommandé
+📝 Boilerplate
 
-Préserve la nature lvalue/rvalue
+Un terme qui désigne du code répétitif et standard, souvent nécessaire en C++
+(par ex. pour gérer la mécanique des templates ou la mémoire).
 
-Si l’utilisateur passe une rvalue (ex : pool.acquire(42)), std::forward transmet la rvalue au constructeur de TType.
+🚀 Pourquoi utiliser std::forward ?
 
-Sans forward, toutes les rvalues deviennent des lvalues, donc :
+std::forward est recommandé car il préserve la nature des arguments (lvalue ou rvalue).
 
-Il y a une copie inutile au lieu d’un déplacement.
+Sans forward :
+
+Une rvalue est transformée en lvalue.
+
+Cela provoque une copie inutile.
 
 Certains constructeurs rvalue-only ne fonctionneront pas.
 
-Performance
+Avec forward :
 
-forward permet de ne pas créer de copies inutiles, donc c’est plus performant, surtout si TType est lourd à copier.
+Les rvalues sont transmises correctement.
+
+On évite des copies coûteuses.
+
+Les déplacements (move) sont possibles → meilleures performances.
+
+Exemple :
+```cpp
+template <typename T>
+void func(T&& arg) {
+	std::cout << std::forward<T>(arg) << std::endl;
+}
+```
+```cpp
+template <typename... TArgs>
+TType* acquire(TArgs&&... args) {
+    void* memory = ...; // mémoire déjà réservée dans le Pool
+    return new (memory) TType(std::forward<TArgs>(args)...);
+}
+```
+
+td::aligned_storage
+
+std::aligned_storage est un template struct fourni par le standard C++11 qui permet de pré-allouer de la mémoire brute suffisamment grande et correctement alignée pour contenir n’importe quel type T.
+
+C’est très utile pour des object pools, le placement new, ou des constructions manuelles d’objets dans un buffer déjà alloué.
+
+Syntaxe de base
+```cpp
+std::aligned_storage<sizeof(TType), alignof(TType)>::type myMemory;
+```
+sizeof(TType) : taille nécessaire pour stocker un objet de type TType
+
+alignof(TType) : alignement requis pour le type TType
+
+::type : récupère le type réel correspondant à la mémoire brute
+
+On doit egalement toujours creer une fonction get qui retourne un pointeur vers TType en reinterpretant la mémoire brute.

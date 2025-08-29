@@ -3,23 +3,23 @@
 
 #include "pool.hpp"
 
-class MyObject
+class Canard
 {
 public:
     int         value;
     std::string name;
 
-    MyObject(int v, std::string n) : value(v), name(n)
+    Canard(int v, std::string n) : value(v), name(n)
     {
-        std::cout << "Constructed MyObject(" << value << ", " << name << ")\n";
+        std::cout << "Constructed Canard(" << value << ", " << name << ")\n";
     }
 
-    ~MyObject()
+    ~Canard()
     {
-        std::cout << "Destroyed MyObject(" << value << ", " << name << ")\n";
+        std::cout << "Destroyed Canard(" << value << ", " << name << ")\n";
     }
 
-    void show()
+    void showObject()
     {
         std::cout << "Object " << name << " has value " << value << "\n";
     }
@@ -27,36 +27,36 @@ public:
 
 int main()
 {
-    Pool<MyObject> pool;
+    Pool<Canard> pool;
 
     pool.resize(3);
     std::cout << "Pool resized to 3 objects\n";
 
-    auto obj1 = pool.acquire(10, "A");
-    obj1->show();
+    auto obj1 = pool.acquire(1, "Albert");
+    obj1->showObject();
 
-    auto obj2 = pool.acquire(20, "B");
-    obj2->show();
+    auto obj2 = pool.acquire(20, "Bertrand");
+    obj2->showObject();
 
     {
-        auto obj3 = pool.acquire(30, "C");
-        obj3->show();
+        auto obj3 = pool.acquire(30, "Carole");
+        obj3->showObject();
     }
 
-    auto obj4 = pool.acquire(40, "D");
-    obj4->show();
+    auto obj4 = pool.acquire(40, "Davitrand");
+    obj4->showObject();
 
     try
     {
-        auto obj5 = pool.acquire(50, "E");
+        auto obj5 = pool.acquire(7777, "Esteban");
     }
     catch (const std::runtime_error& e)
     {
         std::cout << "Exception captured: " << e.what() << "\n";
     }
 
-    // Test 5 : vérifier destruction à la fin du programme
     std::cout << "End of main, remaining objects will be destroyed\n";
+    std::cout << std::endl;
 
     return 0;
 }

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POOL_HPP
+#define POOL_HPP
 
 #include <cstddef>
 #include <stack>
@@ -97,3 +98,5 @@ public:
 };
 
 #include "pool.tpp"
+
+#endif

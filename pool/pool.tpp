@@ -8,14 +8,15 @@ Pool<TType>::Pool()
 template <typename TType>
 Pool<TType>::~Pool()
 {
-    // #ifdef DEBUG
-    //     std::cout << "Pool Destructor Call" << std::endl;
-    // #endif
+#ifdef DEBUG // Just For 42 Eval
+    std::cout << "Pool Destructor Call" << std::endl;
+#endif
 }
 
 /*
- * @brief Allocate n objects in the Pool
- * @warning Grow Only Pool(allocate only when arg > objects.size())
+ * @brief Resize the pool to contain n objects
+ * @warning If n is less than the current size, objects will be lost
+ * @param numberOfObjectStored Number of objects to allocate
  */
 template <typename TType>
 void Pool<TType>::resize(const size_t& numberOfObjectStored)
@@ -72,6 +73,11 @@ Pool<TType>::Object::~Object()
 {
     if (pool_ptr != nullptr)
         pool_ptr->release(*this);
+
+#ifdef DEBUG // Just For 42 Eval
+    if (pool_ptr != nullptr)
+        std::cout << "Release Object Called" << std::endl;
+#endif
 }
 
 template <typename TType>

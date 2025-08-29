@@ -1,4 +1,13 @@
 # libftpp
+
+clone project for Google Test Procedures
+
+```bash
+git clone git@github.com:monsieurCanard/libftpp.git
+cd libftpp
+git submodule update --init --recursive
+```
+
 Further Exploration into Advanced C++
 
 Your code must compile with at least the flag -std=c++11
@@ -115,3 +124,34 @@ alignof(TType) : alignement requis pour le type TType
 ::type : récupère le type réel correspondant à la mémoire brute
 
 On doit egalement toujours creer une fonction get qui retourne un pointeur vers TType en reinterpretant la mémoire brute.
+
+
+DATABUFFER
+
+Qu’est-ce qu’un C++ stream ?
+
+Un stream (flux) est une abstraction pour lire ou écrire des données, qui peut représenter :
+
+un fichier (std::ifstream, std::ofstream)
+
+la console (std::cin, std::cout)
+
+un buffer en mémoire (std::stringstream)
+
+Idée clé : tu ne t’occupes pas des détails de stockage, juste du flux de données.
+
+2️⃣ Types de streams
+Type	Description
+std::istream	flux en lecture (input)
+std::ostream	flux en écriture (output)
+std::iostream	flux lecture + écriture
+std::ifstream	fichier en lecture
+std::ofstream	fichier en écriture
+std::stringstream	flux en mémoire (string)
+
+
+Pour la serialisation: 
+utilisation de reinterpret cast pour changer le type de pointeur pour copier les octets en memoire
+
+Pour la deserialisation:
+utilisation de memcpy pour copier les octets en memoire dans la variable cible

@@ -15,6 +15,7 @@
  * and deallocations.
  *
  * @tparam TType Type of objects managed by the pool.
+
  */
 template <typename TType>
 class Pool
@@ -33,7 +34,7 @@ class Pool
         ~Object();
 
         template <typename... TArgs>
-        Object(Pool<TType>* pool, TArgs&&... p_args);
+        Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args);
 
         /**
          * @brief Return a pointer to the underlying TType object.
@@ -47,20 +48,24 @@ private:
 
     std::vector<Object> objects;
     std::stack<size_t>  available;
+    // bool                alive = true;
 
 public:
     Pool();
     ~Pool();
 
     /**
+
      * @brief Pre-allocates memory for a given number of objects.
      * @param numberOfObjectStored Number of objects to pre-allocate.
      * @see acquire()
      * @see release()
+
      */
     void resize(const size_t& numberOfObjectStored);
 
     /**
+
      * @brief Acquires an object from the pool.
      *
      * Constructs a new TType object in pre-allocated memory
@@ -71,19 +76,24 @@ public:
      * @return A Pool::Object wrapper containing the allocated TType.
      *
      * @see release()
+
      * */
     template <typename... TArgs>
     Object acquire(TArgs&&... p_args);
 
     /**
+
      * @brief Releases an object back into the pool.
      *
      * Destroys the contained TType object and return its slot to the available Stack.
      *
      * @param obj Pool::Object to release.
      * @see acquire()
+
      */
     void release(Object& obj);
+
+    void setAvailable(size_t& idx);
 };
 
 #include "pool.tpp"

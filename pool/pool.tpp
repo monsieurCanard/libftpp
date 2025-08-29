@@ -35,6 +35,12 @@ void Pool<TType>::release(Object& obj)
 }
 
 template <typename TType>
+void Pool<TType>::setAvailable(size_t& index)
+{
+    this->available.push(index);
+}
+
+template <typename TType>
 template <typename... TArgs>
 typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
 {
@@ -42,12 +48,10 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
         throw std::runtime_error("No Object available !");
 
     size_t i = available.top();
-    new (&objects[i].myself) TType(std::forward<TArgs&&>(p_args)...);
     available.pop();
 
-    objects[i].pool_ptr = this;
-    objects[i].idx      = i;
-    return objects[i];
+    // TType* ptr = new (&objects[i].myself) TType(std::forward<TArgs&&>(p_args)...);
+    return Object(this, i, std::forward<TArgs&&>(p_args)...);
 }
 
 template <typename TType>
@@ -57,15 +61,17 @@ Pool<TType>::Object::Object() : pool_ptr(nullptr), idx(0)
 
 template <typename TType>
 template <typename... TArgs>
-Pool<TType>::Object::Object(Pool<TType>* pool, TArgs&&... p_args)
-    : pool_ptr(pool), myself(std::forward<TArgs&&>(p_args)...)
+Pool<TType>::Object::Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args)
+    : pool_ptr(pool), idx(index)
 {
+    new (&myself) TType(std::forward<TArgs&&>(p_args)...);
 }
 
 template <typename TType>
 Pool<TType>::Object::~Object()
 {
-    pool_ptr->release(*this);
+    if (pool_ptr != nullptr)
+        pool_ptr->release(*this);
 }
 
 template <typename TType>

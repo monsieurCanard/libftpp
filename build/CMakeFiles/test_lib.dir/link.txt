@@ -1,0 +1,2 @@
+/usr/bin/ar qc libtest_lib.a CMakeFiles/test_lib.dir/srcs/data_structures/data_buffer/data_buffer.cpp.o CMakeFiles/test_lib.dir/srcs/design_patterns/memento/memento.cpp.o
+/usr/bin/ranlib libtest_lib.a

@@ -48,4 +48,4 @@ PointerAlignment: Left                 # int* ptr, pas int *ptr
 # Autres
 ColumnLimit: 100                       # wrap auto au-delà de 100 colonnes
 AccessModifierOffset: -4               # alignement des public:/private:
-KeepEmptyLinesAtTheStartOfBlocks: false
+KeepEmptyLinesAtTheStartOfBlocks: true

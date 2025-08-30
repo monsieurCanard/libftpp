@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdatabuffer_lib.a CMakeFiles/databuffer_lib.dir/srcs/data_buffer/data_buffer.cpp.o
+/usr/bin/ranlib libdatabuffer_lib.a

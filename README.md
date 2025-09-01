@@ -62,7 +62,36 @@ libftpp/
 - **Headers** : Indépendants avec include guards
 - **Mémoire** : Éviter les fuites, gestion RAII
 
-## 📚 Structures de données
+# 📚 Gang of Four – Résumé simple
+
+| Catégorie | Pattern | Idée en une phrase | Exemple en C++ |
+|-----------|---------|---------------------|----------------|
+| **Création** | Singleton | Toujours la même instance unique | Un seul `Logger` ou `ConfigManager` |
+| | Factory Method | Choisit quel objet créer sans dire son type exact | `ShapeFactory` → retourne `Circle` ou `Square` |
+| | Abstract Factory | Crée des familles d’objets compatibles | `UIFactory` → boutons Windows/Linux |
+| | Builder | Construit un objet étape par étape | `HttpRequestBuilder` pour configurer une requête |
+| | Prototype | Clone un objet existant | `Document* copy = doc.clone();` |
+| **Structure** | Adapter | Rend deux interfaces compatibles | `LegacyPrinterAdapter` pour utiliser une vieille lib |
+| | Bridge | Sépare abstraction et implémentation | `Renderer` (OpenGL/DirectX) séparé de `Shape` |
+| | Composite | Objets simples et composés traités pareil | `File` et `Directory` dans un système de fichiers |
+| | Decorator | Ajoute des fonctions sans toucher au code | `Stream` décoré avec `BufferedStream` |
+| | Facade | Simplifie un système complexe | `CompilerFacade` qui appelle lexer+parser+codegen |
+| | Flyweight | Partage objets identiques pour économiser mémoire | `Character` dans un éditeur de texte |
+| | Proxy | Contrôle l’accès à un objet réel | `ImageProxy` qui charge l’image à la demande |
+| **Comportement** | Observer | Un objet prévient les autres automatiquement | `Button` → notifie ses listeners |
+| | Memento | Sauvegarde/restaure un état | `Game.save()` et `Game.load()` |
+| | State | Change le comportement selon l’état | `TCPConnection` en état `Connected`/`Closed` |
+| | Chain of Responsibility | Passe une requête dans une chaîne de handlers | Middleware HTTP qui traite ou passe au suivant |
+| | Command | Action emballée dans un objet | `UndoCommand` ou `MoveCommand` dans un éditeur |
+| | Interpreter | Exécute une mini-grammaire/langage | Calculatrice qui lit `1+2*3` |
+| | Iterator | Parcourt une collection sans connaître sa structure | `for(auto it = list.begin(); it != list.end(); ++it)` |
+| | Mediator | Un objet central gère la communication | `ChatRoom` qui relaie les messages |
+| | Strategy | Choisir un algo interchangeable facilement | `sort(data, QuickSortStrategy{})` |
+| | Template Method | Squelette d’un algo, détails dans les sous-classes | `Game::play()` appelle `init()`, `loop()`, `end()` |
+| | Visitor | Ajoute une opération sans changer les classes | `ASTVisitor` pour analyser un arbre syntaxique |
+
+
+## 📚 Structures de données implementées
 
 ### 📦 Pool de mémoire
 
@@ -76,7 +105,6 @@ Un **Pool** est un réservoir de mémoire qui pré-alloue des objets pour évite
 ```cpp
 Pool<MyClass> pool(100);  // Pré-alloue 100 objets
 auto* obj = pool.acquire(arg1, arg2);  // Construction avec arguments
-pool.release(obj);  // Retour au pool
 ```
 
 ### 💾 DataBuffer
@@ -84,7 +112,7 @@ pool.release(obj);  // Retour au pool
 Système de **sérialisation/désérialisation** utilisant les streams C++ pour la persistance de données.
 
 **Fonctionnalités :**
-- Sérialisation via `reinterpret_cast` pour copier les octets
+- Sérialisation via `reinterpret_cast<unsigned int*>` pour copier les octets
 - Désérialisation via `memcpy` pour restaurer les données
 - Compatible avec tous les types de streams (`file`, `stringstream`, etc.)
 
@@ -95,7 +123,7 @@ Système de **sérialisation/désérialisation** utilisant les streams C++ pour 
 - `std::ifstream/ofstream` : fichiers
 - `std::stringstream` : flux en mémoire
 
-## 🎨 Design Patterns implémentés
+## 🎨 Details - Design Patterns (✅ = implémentés)
 
 ### 🔹 Création (Creational Patterns)
 
@@ -115,12 +143,6 @@ auto* manager = db.instance();
 **Avantages :**
 - Contrôle strict de l'instanciation
 - Accès global uniforme
-- Initialisation paresseuse possible
-
-**Inconvénients :**
-- Peut créer des dépendances cachées
-- Difficile à tester et mocker
-- Problèmes potentiels de concurrence
 
 #### Factory Method
 **But :** Définit une interface pour créer un objet, mais laisse les sous-classes décider de la classe instanciée.
@@ -142,7 +164,6 @@ public:
 
 #### Abstract Factory
 **But :** Fournit une interface pour créer des familles d'objets liés sans spécifier leurs classes concrètes.
-
 **Utilisation :** Systèmes multi-plateformes, thèmes d'interface, familles de produits.
 
 **Avantages :**
@@ -435,6 +456,7 @@ new (ptr) T(args...);  // Placement new
 - Object pools
 - Containers personnalisés
 - Éviter les allocations dynamiques
+
 
 ## 🧪 Tests
 

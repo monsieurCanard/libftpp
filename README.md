@@ -1,6 +1,6 @@
 # libftpp
 
-![C++](https://img.shields.io/badge/C%2B%2B-11-blue.svg)
+![C++](https://img.shields.io/badge/C%2B%2B-blue.svg)
 
 ## 📖 Description
 
@@ -11,7 +11,6 @@
 ### Prérequis
 - CMake ≥ 3.14
 - Compilateur C++11 ou supérieur
-- Git (pour les sous-modules)
 
 ### Installation
 

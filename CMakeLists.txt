@@ -12,6 +12,7 @@ add_subdirectory(extern/googletest)
 add_library(test_lib 
 srcs/data_structures/data_buffer/data_buffer.cpp
 srcs/design_patterns/memento/memento.cpp
+srcs/design_patterns/thread_safe_iostream/thread_safe_iostream.cpp
 )
 
 # Ajouter l'exécutable de tests
@@ -23,6 +24,7 @@ tests/test_memento.cpp
 tests/test_observer.cpp
 tests/test_singleton.cpp
 tests/test_state_machine.cpp
+tests/test_thread_safe_iostream.cpp
 )
 
 # Lier GoogleTest et ta librairie
@@ -34,4 +36,5 @@ srcs/data_structures/pool
 srcs/design_patterns/memento
 srcs/design_patterns/observer
 srcs/design_patterns/singleton
-srcs/design_patterns/state_machine)
+srcs/design_patterns/state_machine
+srcs/design_patterns/thread_safe_iostream)

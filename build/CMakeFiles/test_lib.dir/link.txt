@@ -1,2 +1,0 @@
-/usr/bin/ar qc libtest_lib.a CMakeFiles/test_lib.dir/srcs/data_structures/data_buffer/data_buffer.cpp.o CMakeFiles/test_lib.dir/srcs/design_patterns/memento/memento.cpp.o CMakeFiles/test_lib.dir/srcs/design_patterns/thread_safe_iostream/thread_safe_iostream.cpp.o CMakeFiles/test_lib.dir/srcs/thread/persistent_worker/persistent_worker.cpp.o CMakeFiles/test_lib.dir/srcs/thread/thread/thread.cpp.o CMakeFiles/test_lib.dir/srcs/thread/worker_pool/worker_pool.cpp.o
-/usr/bin/ranlib libtest_lib.a

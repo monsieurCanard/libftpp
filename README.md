@@ -60,7 +60,7 @@ libftpp/
 - **Standard** : C++11 minimum avec flags `-Wall -Wextra -Werror`
 - **Interdictions** : Boost, `*printf()`, `*alloc()`, `free()`
 - **Headers** : Indépendants avec include guards
-- **Mémoire** : Éviter les fuites, gestion RAII
+- **Mémoire** : Éviter les fuites, gestion RAII (Resource Acquisition Is Initialization)
 
 # 📚 Gang of Four – Résumé simple
 
@@ -411,6 +411,8 @@ protected:
 
 ### Templates variadiques
 Permettent de passer un nombre variable d'arguments typés :
+Ellipsis: `...`
+Si tu mets `...` dans une fonction comme ceci: 
 
 ```cpp
 template <typename... TArgs>
@@ -421,6 +423,7 @@ void func(TArgs... args) {
 // Usage
 func(1, "hello", 3.14);
 ```
+Cela signifie que tu peux passer n'importe quel nombre d'arguments de n'importe quel type.
 
 ### Gestion des références et std::forward
 
@@ -444,7 +447,7 @@ TType* acquire(TArgs&&... args) {
 
 ### std::aligned_storage
 
-Template C++11 pour pré-allouer de la mémoire correctement alignée :
+Template C++11 pour pré-allouer de la mémoire correctement alignée mais deprecated en c++23:
 
 ```cpp
 std::aligned_storage<sizeof(T), alignof(T)>::type storage;

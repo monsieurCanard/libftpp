@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "data_buffer.hpp"
+#include "libftpp.hpp"
 
 // --- Test int ---
 TEST(DataBufferTest, IntSerialization)

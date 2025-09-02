@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "singleton.hpp"
+#include "libftpp.hpp"
 
 // Une classe simple pour tester le Singleton
 class MyClass

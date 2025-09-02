@@ -1,7 +1,7 @@
 // tests/test_state_machine.cpp
 #include <gtest/gtest.h>
 
-#include "state_machine.hpp"
+#include "libftpp.hpp"
 
 enum class TestState
 {

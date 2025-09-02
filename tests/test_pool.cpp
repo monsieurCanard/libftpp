@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "pool.hpp"
+#include "libftpp.hpp"
 
 // --- Test struct custom pour la généralité ---
 struct TestStruct

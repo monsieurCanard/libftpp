@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "observer.hpp"
+#include "libftpp.hpp"
 
 TEST(ObserverTest, SingleEventLambda)
 {

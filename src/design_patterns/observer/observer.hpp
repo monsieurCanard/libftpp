@@ -21,8 +21,8 @@ public:
 
     void notify(const TEvent& event)
     {
-        typename std::unordered_map < TEvent,
-            std::vector<std::function<void()>>::iterator it = _events.find(event);
+        typename std::unordered_map<TEvent, std::vector<std::function<void()>>>::iterator it =
+            _events.find(event);
 
         // We can also use auto to simplify the code
         // auto it = _events.find(event);

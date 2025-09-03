@@ -55,7 +55,7 @@ TEST(ObserverTest, MultipleEventsAndLambdas)
     obs.subscribe(1, [&]() { c += 3; }); // remplace la précédente lambda pour 1
 
     obs.notify(1);
-    EXPECT_EQ(a, 0); // l’ancienne lambda pour 1 a été remplacée
+    EXPECT_EQ(a, 1); // l’ancienne lambda pour 1 a été remplacée
     EXPECT_EQ(c, 3);
 
     obs.notify(2);

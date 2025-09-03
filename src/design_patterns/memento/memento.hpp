@@ -2,6 +2,7 @@
 #define MEMENTO_HPP
 
 #include <stddef.h>
+#include <string.h>
 
 #include <stdexcept>
 #include <vector>

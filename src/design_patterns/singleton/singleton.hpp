@@ -13,7 +13,7 @@ private:
 public:
     TType* instance()
     {
-        if (!instance)
+        if (!_instance)
             return nullptr;
 
         return _instance.get();

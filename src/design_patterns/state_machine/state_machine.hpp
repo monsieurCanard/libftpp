@@ -8,13 +8,14 @@
 #include <set>
 #include <stdexcept>
 #include <unordered_map>
+#include <unordered_set>
 
 template <typename TState>
 class StateMachine
 {
 private:
     TState                                                     _currentS;
-    std::set<TState>                                           _states;
+    std::unordered_set<TState>                                 _states;
     std::map<std::pair<TState, TState>, std::function<void()>> _transitions;
     std::unordered_map<TState, std::function<void()>>          _actions;
 

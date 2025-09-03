@@ -3,7 +3,10 @@
 
 #include <stddef.h>
 
+#include <stdexcept>
+#include <string>
 #include <vector>
+
 class Message
 {
 private:
@@ -28,11 +31,13 @@ public:
     template <typename T>
     Message& operator<<(const T& value)
     {
-
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
         _buffer.insert(_buffer.end(), ptr, ptr + sizeof(T));
         return *this;
     }
+
+    Message& operator<<(const std::string& value);
+    Message& operator>>(std::string& value);
 
     Type type() const
     {

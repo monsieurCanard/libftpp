@@ -37,16 +37,11 @@ class Pool
         template <typename... TArgs>
         Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args);
 
-        /**
-         * @brief Return a pointer to the underlying TType object.
-         */
         TType* operator->();
         TType* get();
     };
 
 private:
-    class Object;
-
     std::vector<Object> _objects;
     std::stack<size_t>  _available;
 

@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I. -Wall -Wextra -Werror")
 add_subdirectory(extern/googletest)
 
 # Bibliothèque de ton code - récupérer tous les .cpp automatiquement
-file(GLOB_RECURSE LIB_SOURCES "srcs/**/*.cpp")
+file(GLOB_RECURSE LIB_SOURCES "src/**/*.cpp")
 add_library(test_lib ${LIB_SOURCES})
 
 # Ajouter l'exécutable de tests
@@ -19,6 +19,6 @@ add_executable(tests ${TEST_SOURCES})
 # Lier GoogleTest et ta librairie
 target_link_libraries(tests gtest_main test_lib)
 
-# Inclure le dossier racine pour les includes et le dossier srcs
-target_include_directories(tests PRIVATE . srcs)
-target_include_directories(test_lib PRIVATE . srcs)
+# Inclure le dossier racine pour les includes et le dossier src
+target_include_directories(tests PRIVATE . src)
+target_include_directories(test_lib PRIVATE . src)

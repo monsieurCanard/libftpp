@@ -8,8 +8,19 @@ TEST(DataBufferTest, IntSerialization)
     DataBuffer buf;
     int        x = 42, y = 0;
 
-    buf << x; // sérialisation
-    buf >> y; // désérialisation
+    buf << x;
+    buf >> y;
+
+    EXPECT_EQ(x, y);
+}
+
+TEST(DataBufferTest, StringSerialization)
+{
+    DataBuffer  buf;
+    std::string x = "42", y = "";
+
+    buf << x;
+    buf >> y;
 
     EXPECT_EQ(x, y);
 }
@@ -73,7 +84,6 @@ TEST(DataBufferTest, MultipleWrites)
     buf << a << b;
     buf >> c;
 
-    // Ici on ne lit que le premier int, il doit être égal à a
     EXPECT_EQ(c, a);
 }
 
@@ -86,9 +96,3 @@ TEST(DataBufferTest, EmptyBuffer)
 
     EXPECT_THROW(buf >> y, std::runtime_error);
 }
-
-// // --- Main ---
-// int main(int argc, char **argv) {
-//     ::testing::InitGoogleTest(&argc, argv);
-//     return RUN_ALL_TESTS();
-// }

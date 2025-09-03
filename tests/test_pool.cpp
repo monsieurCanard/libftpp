@@ -33,13 +33,14 @@ TEST(PoolTest, AcquireReleaseReuse)
     Pool<int> pool;
     pool.resize(2);
 
-    auto obj1 = pool.acquire(1);
     auto obj2 = pool.acquire(2);
+    {
+        auto obj1 = pool.acquire(1);
 
-    EXPECT_EQ(*obj1.get(), 1);
-    EXPECT_EQ(*obj2.get(), 2);
-
-    pool.release(obj1);           // libère le premier objet
+        EXPECT_EQ(*obj1.get(), 1);
+        EXPECT_EQ(*obj2.get(), 2);
+    }
+    // pool.release(obj1);           // libère le premier objet
     auto obj3 = pool.acquire(10); // doit réutiliser le slot d'obj1
 
     EXPECT_EQ(*obj3.get(), 10);
@@ -83,12 +84,14 @@ TEST(PoolTest, MultipleAcquireRelease)
     Pool<int> pool;
     pool.resize(3);
 
-    auto a = pool.acquire(1);
-    auto b = pool.acquire(2);
+    {
+        auto a = pool.acquire(1);
+        auto b = pool.acquire(2);
+    }
     auto c = pool.acquire(3);
 
-    pool.release(a);
-    pool.release(b);
+    // pool.release(a);
+    // pool.release(b);
 
     auto d = pool.acquire(10);
     auto e = pool.acquire(20);
@@ -96,7 +99,7 @@ TEST(PoolTest, MultipleAcquireRelease)
     EXPECT_EQ(*d.get(), 10);
     EXPECT_EQ(*e.get(), 20);
 
-    EXPECT_EQ(*c.get(), 3); // objet jamais relâché reste intact
+    EXPECT_EQ(*c.get(), 3);
 }
 
 // --- Test exception ou comportement si trop d'acquisitions ---
@@ -108,7 +111,5 @@ TEST(PoolTest, OverAcquire)
     auto a = pool.acquire(1);
     auto b = pool.acquire(2);
 
-    // Selon ton implémentation, essayer d'acquérir un 3ème objet peut échouer.
-    // Si tu throws exception, tu peux tester :
     EXPECT_THROW(pool.acquire(3), std::runtime_error);
 }

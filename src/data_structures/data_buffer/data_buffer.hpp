@@ -7,6 +7,10 @@
 #include <iostream>
 #include <vector>
 
+/*
+ * @brief A simple data buffer for serialization and deserialization.
+ * @note This class doesn't handle Data Structures like vectors or maps.
+ */
 class DataBuffer
 {
 private:
@@ -39,6 +43,9 @@ public:
         _cursor += sizeof(T);
         return *this;
     }
+
+    DataBuffer& operator<<(const std::string& value);
+    DataBuffer& operator>>(std::string& value);
 };
 
 #endif

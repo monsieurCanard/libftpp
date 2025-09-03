@@ -8,7 +8,6 @@
 
 /*
  * @brief Memento Design Pattern
- * @note Need to be implemented as friend class
  * @warning You must implement _saveToSnapshot and _loadFromSnapshot
  *
  */
@@ -42,7 +41,13 @@ public:
             _cursor += sizeof(T);
             return *this;
         }
+
+        Snapshot& operator<<(const std::string& value);
+        Snapshot& operator>>(std::string& value);
+
+        void reset();
     };
+
     Snapshot save();
     void     load(const Memento::Snapshot& state);
 

@@ -160,7 +160,7 @@ TEST(ThreadSafeQueue_ConcurrentPushPopManyThreads, StressTestProducersConsumers)
     {
         int base = p * items_per_producer;
         prod_threads.emplace_back(
-            [base, items_per_producer, &q]()
+            [base, &q]()
             {
                 for (int i = 0; i < items_per_producer; ++i)
                 {

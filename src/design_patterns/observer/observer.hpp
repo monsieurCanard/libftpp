@@ -5,23 +5,24 @@
 #include <map>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 template <typename TEvent>
 class Observer
 {
 private:
-    std::unordered_map<TEvent, std::function<void()>> _events;
+    std::unordered_map<TEvent, std::vector<std::function<void()>>> _events;
 
 public:
     void subscribe(const TEvent& event, const std::function<void()>& lambda)
     {
-        _events[event] = lambda;
+        _events[event].push_back(lambda);
     }
 
     void notify(const TEvent& event)
     {
-        typename std::unordered_map<TEvent, std::function<void()>>::iterator it =
-            _events.find(event);
+        typename std::unordered_map < TEvent,
+            std::vector<std::function<void()>>::iterator it = _events.find(event);
 
         // We can also use auto to simplify the code
         // auto it = _events.find(event);
@@ -29,8 +30,8 @@ public:
         {
             throw std::runtime_error("No event found");
         }
-
-        it->second();
+        for (const auto& funct : it->second)
+            funct();
     }
 };
 #endif

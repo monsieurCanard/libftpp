@@ -13,6 +13,9 @@ private:
 public:
     TType* instance()
     {
+        if (!instance)
+            return nullptr;
+
         return _instance.get();
     }
 

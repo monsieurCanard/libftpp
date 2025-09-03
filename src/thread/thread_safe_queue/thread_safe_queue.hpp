@@ -22,22 +22,28 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _queue.push_front(newElement);
     }
+
     // Debattre de l'argument const pour pop back qui ne sert a rien
     TType pop_back()
     {
+        std::lock_guard<std::mutex> lock(_mutex);
+
         if (_queue.empty())
             throw std::runtime_error("Trying to pop from an empty queue");
-        std::lock_guard<std::mutex> lock(_mutex);
-        TType                       value = _queue.back();
+
+        TType value = _queue.back();
         _queue.pop_back();
         return value;
     }
+
     TType pop_front()
     {
+        std::lock_guard<std::mutex> lock(_mutex);
+
         if (_queue.empty())
             throw std::runtime_error("Trying to pop from an empty queue");
-        std::lock_guard<std::mutex> lock(_mutex);
-        TType                       value = _queue.front();
+
+        TType value = _queue.front();
         _queue.pop_front();
         return value;
     }

@@ -1,5 +1,9 @@
 #include "message.hpp"
 
+Message::Message(Type type) : _type(type) {}
+
+Message::Message(Type type, std::vector<unsigned char> buff) : _type(type), _buffer(buff) {}
+
 const std::vector<unsigned char>& Message::data() const
 {
     return _buffer;
@@ -15,7 +19,6 @@ Message& Message::operator<<(const std::string& value)
 
 Message& Message::operator>>(std::string& value)
 {
-
     size_t size;
     *this >> size;
     if (size + _cursor > _buffer.size())

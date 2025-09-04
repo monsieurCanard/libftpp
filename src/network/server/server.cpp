@@ -54,8 +54,11 @@ void Server::acceptNewConnection()
     _client[_next_id++] = connfd;
 }
 
-bool receiveClientMsg(int& fd)
+bool Server::receiveClientMsg(int& fd)
 {
+    if (!FD_ISSET(fd, &_readyRead))
+        return; // Maybe throw something
+
     while (true)
     {
         char buffRead[READ_BUFFER_SIZE];
@@ -64,8 +67,13 @@ bool receiveClientMsg(int& fd)
         {
             return false;
         }
+        buffRead[byteRead] = '\0';
 
-        int ret = 0;
-        while (ret =)
+        char* pos = buffRead;
+        char* newline_pos;
+        while ((newline_pos = buffRead.strchr(pos, '\n')) != nullptr)
+        {
+            newline_pos[pos] = '\0';
+        }
     }
 }

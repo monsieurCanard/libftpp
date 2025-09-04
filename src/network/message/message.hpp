@@ -17,6 +17,7 @@ private:
 public:
     using Type = int;
     Message(Type type) : _type(type) {}
+    Message(Type type, std::vector<unsigned char>);
 
     template <typename T>
     Message& operator>>(T& value)

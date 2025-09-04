@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-void Client::error(int& fd, std::string&& errorMessage)
+void Client::error(std::string&& errorMessage)
 {
     disconnect();
     throw std::runtime_error(errorMessage);
@@ -80,9 +80,7 @@ void Client::receiveMessage()
             error(_fd, "Cannot receive message");
     }
 
-    Message msg(typeInt);
-    for (unsigned char& element : msgTab)
-        msg << element;
+    Message msg(typeInt, msgTab);
 
     _msgs.push_back(msg);
 }

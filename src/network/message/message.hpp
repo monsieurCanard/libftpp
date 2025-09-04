@@ -2,38 +2,54 @@
 #define MESSAGE_HPP
 
 #include <stddef.h>
+#include <string.h>
 
 #include <stdexcept>
 #include <string>
 #include <vector>
 
+#include "ring_buffer.hpp"
+
 class Message
 {
 private:
-    int                        _type;
-    std::vector<unsigned char> _buffer;
-    size_t                     _cursor = 0;
+    int        _type;
+    RingBuffer _buffer;
+    size_t     _cursor = 0;
 
 public:
     using Type = int;
-    Message(Type type) : _type(type) {}
-    Message(Type type, std::vector<unsigned char>);
+    Message(Type type);
+
+    // bool canRead(); // Pour verifier si j'ai un message complet
+    bool isComplet();
 
     template <typename T>
     Message& operator>>(T& value)
     {
-        if (sizeof(T) + _cursor > _buffer.size())
-            throw std::runtime_error("Read out of Buffer !");
-        memcpy(&value, _buffer.data() + _cursor, sizeof(T));
-        _cursor += sizeof(T);
+        try
+        {
+            _buffer.popInto(&value, sizeof(T));
+        }
+        catch (const std::runtime_error& e)
+        {
+        TODO:
+            throw;
+        }
         return *this;
     }
 
     template <typename T>
     Message& operator<<(const T& value)
     {
-        const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
-        _buffer.insert(_buffer.end(), ptr, ptr + sizeof(T));
+        try
+        {
+            _buffer.pushInto(&value, sizeof(T));
+        }
+        catch (const std::runtime_error7 e)
+        {
+            throw;
+        }
         return *this;
     }
 
@@ -43,11 +59,6 @@ public:
     Type type() const
     {
         return _type;
-    }
-
-    const std::vector<unsigned char>& data() const
-    {
-        return _buffer;
     }
 
     void reset()

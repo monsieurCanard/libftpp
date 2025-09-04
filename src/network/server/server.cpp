@@ -73,7 +73,8 @@ bool Server::receiveClientMsg(int& fd)
         char* newline_pos;
         while ((newline_pos = buffRead.strchr(pos, '\n')) != nullptr)
         {
-            newline_pos[pos] = '\0';
+            _clients_buffs[fd] << newline_pos;
+            if (_clients.buffs[fd].)
         }
     }
 }

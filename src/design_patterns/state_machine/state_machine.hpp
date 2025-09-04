@@ -22,12 +22,13 @@ private:
 public:
     void addState(const TState& state)
     {
-        if (_states.size() == 0)
+        if (_states.empty())
         {
             _currentS = state;
         }
         _states.insert(state);
     }
+
     void addTransition(const TState&                startState,
                        const TState&                finalState,
                        const std::function<void()>& lambda)
@@ -43,6 +44,7 @@ public:
     {
         _actions[state] = lambda;
     }
+
     void transitionTo(const TState& state)
     {
         auto it = _transitions.find(std::make_pair(_currentS, state));

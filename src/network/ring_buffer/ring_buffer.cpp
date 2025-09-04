@@ -1,21 +1,21 @@
 #include "ring_buffer.hpp"
 
 RingBuffer::RingBuffer() : _buffer(MAX_BUFFER_SIZE) {}
-RingBuffer::RingBuffer(size_t&& size_buffer) : _buffer(size_buffer) {}
+RingBuffer::RingBuffer(const size_t& size_buffer) : _buffer(size_buffer) {}
 
 bool RingBuffer::isEmpty()
 {
-    return _buffer.size() == 0;
+    return _size == 0;
 }
 
-bool RingBuffer::isfull()
+bool RingBuffer::isFull()
 {
     return _buffer.size() == _size;
 }
 
 size_t RingBuffer::size()
 {
-    return _buffer.size();
+    return _size;
 }
 
 size_t RingBuffer::capacity()
@@ -23,9 +23,22 @@ size_t RingBuffer::capacity()
     return _size;
 }
 
+size_t RingBuffer::capacityAvailable()
+{
+    return _buffer.size() - _size;
+}
+
+void RingBuffer::push(const std::string& line)
+{
+    if (isFull())
+        throw std::runtime_error("trying to write on full buffer");
+    std::vector<unsigned char> tmp(line.begin(), line.end());
+    push(tmp);
+}
+
 void RingBuffer::push(const unsigned char& byte)
 {
-    if (isfull())
+    if (isFull())
         throw std::runtime_error("trying to write on full buffer");
     _buffer[_head] = byte;
     _head          = (_head + 1) % _buffer.size();
@@ -34,7 +47,7 @@ void RingBuffer::push(const unsigned char& byte)
 
 void RingBuffer::push(const std::vector<unsigned char>& bytes)
 {
-    if (isfull())
+    if (isFull())
         throw std::runtime_error("trying to write on full buffer");
     if (bytes.size() > _buffer.size() - _size)
         throw std::runtime_error("trying to read more than available in buffer");
@@ -44,6 +57,8 @@ void RingBuffer::push(const std::vector<unsigned char>& bytes)
         _head          = (_head + 1) % _buffer.size();
         _size++;
     }
+
+    std::cout << " _size apres push " << _size << std::endl;
 }
 
 unsigned char RingBuffer::pop()
@@ -57,21 +72,46 @@ unsigned char RingBuffer::pop()
     return byte;
 }
 
-std::vector<unsigned char> RingBuffer::pop(size_t&& size)
+std::vector<unsigned char> RingBuffer::pop(const size_t& size)
 {
-    if (isEmpty())
-        throw std::runtime_error("trying to read on empty buffer");
     if (size > _size)
-        throw std::runtime_error("trying to read more than available in buffer");
+        throw std::runtime_error("trying to read more than available in buffer or empty buffer");
     std::vector<unsigned char> byte(size);
     for (size_t i = 0; i < size; i++)
     {
-        byte.push_back(_buffer[_tail]);
-        _tail = (_tail + 1) % _buffer.size();
+        byte[i] = _buffer[_tail];
+        _tail   = (_tail + 1) % _buffer.size();
         _size--;
     }
 
     return byte;
+}
+
+void RingBuffer::pushInto(const void* data, const size_t& size)
+{
+    if (capacityAvailable() < size)
+        throw std::runtime_error("trying to read more than available in buffer");
+    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&data);
+    for (size_t i = 0; i < size; i++)
+    {
+        _buffer[_head] = ptr[i];
+        _head          = (_head + 1) % _buffer.size();
+        _size++;
+    }
+}
+
+void RingBuffer::popInto(void* data, const size_t& size)
+{
+    if (size > _size)
+        throw std::runtime_error("trying to read more than available in buffer or empty buffer");
+
+    unsigned char* ptr = reinterpret_cast<unsigned char*>(&data);
+    for (size_t i = 0; i < size; i++)
+    {
+        ptr[i] = _buffer[_tail];
+        _tail  = (_tail + 1) % _buffer.size();
+        _size--;
+    }
 }
 
 unsigned char RingBuffer::peek()
@@ -84,7 +124,7 @@ unsigned char RingBuffer::peek()
     return byte;
 }
 
-std::vector<unsigned char> RingBuffer::peek(size_t&& size)
+std::vector<unsigned char> RingBuffer::peek(const size_t& size)
 {
     if (isEmpty())
         throw std::runtime_error("trying to read on empty buffer");
@@ -94,7 +134,7 @@ std::vector<unsigned char> RingBuffer::peek(size_t&& size)
     size_t                     tmp_idx = _tail;
     for (size_t i = 0; i < size; i++)
     {
-        byte.push_back(_buffer[tmp_idx]);
+        byte[i] = _buffer[tmp_idx];
         tmp_idx = (tmp_idx + 1) % _buffer.size();
     }
 

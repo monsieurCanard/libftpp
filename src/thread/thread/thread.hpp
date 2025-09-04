@@ -6,7 +6,7 @@
 #include <string>
 #include <thread>
 
-#include "design_patterns/thread_safe_iostream/thread_safe_iostream.hpp"
+#include "src/thread/thread_safe_iostream/thread_safe_iostream.hpp"
 
 class Thread
 {

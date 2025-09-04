@@ -12,14 +12,13 @@
 #include "src/design_patterns/observer/observer.hpp"
 #include "src/design_patterns/singleton/singleton.hpp"
 #include "src/design_patterns/state_machine/state_machine.hpp"
-#include "src/design_patterns/thread_safe_iostream/thread_safe_iostream.hpp"
 
 // Network
-#include "src/network/message.hpp"
-
+#include "src/network/ring_buffer/ring_buffer.hpp"
 // Threading
 #include "src/thread/persistent_worker/persistent_worker.hpp"
 #include "src/thread/thread/thread.hpp"
+#include "src/thread/thread_safe_iostream/thread_safe_iostream.hpp"
 #include "src/thread/thread_safe_queue/thread_safe_queue.hpp"
 #include "src/thread/threading.hpp"
 #include "src/thread/worker_pool/worker_pool.hpp"

@@ -17,6 +17,7 @@
 #define READ_BUFFER_SIZE  4096
 #define MAX_CLIENT_BUFFER 32768
 
+#include "message.hpp"
 class Server
 {
 private:
@@ -31,6 +32,7 @@ private:
     std::unordered_map<Message::Type, std::function<void(long long& clientID, const Message& msg)>>
                                        _tasks;
     std::unordered_map<long long, int> _clients;
+    std::vector<int, Message>          _clients_buffs;
 
     void start(const size_t& port);
 

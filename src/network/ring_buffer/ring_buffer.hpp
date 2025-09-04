@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -18,22 +19,27 @@ private:
 
 public:
     RingBuffer();
-    RingBuffer(size_t&& size_buffer);
+    RingBuffer(const size_t& size_buffer);
 
-    void push(unsigned char byte);
+    void push(const unsigned char& byte);
+    void push(const std::string& line);
+    void push(const std::vector<unsigned char>& bytes);
+    void pushInto(const void* data, const size_t& size);
 
-    unsigned char pop();
+    unsigned char              pop();
+    std::vector<unsigned char> pop(const size_t& size);
+    void                       popInto(void* data, const size_t& size);
 
-    std::vector<unsigned char> pop(size_t&& size);
-    unsigned char              peek();
+    unsigned char peek();
 
-    std::vector<unsigned char> peek(size_t&& size);
+    std::vector<unsigned char> peek(const size_t& size);
     void                       clear();
 
     bool   isEmpty();
-    bool   isfull();
+    bool   isFull();
     size_t size();
     size_t capacity();
+    size_t capacityAvailable();
 };
 
 #endif

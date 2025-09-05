@@ -84,15 +84,51 @@ static bool starts_with(const std::string& s, const std::string& pref)
 }
 
 // ---------- Tests ----------
+TEST(ThreadSafeIOStream_Basics, MultipleThreads)
+{
+    const int num_threads         = 5;
+    const int messages_per_thread = 10;
 
+    // CoutCapture cap;
+    auto thread_func = [](int thread_id)
+    {
+        for (int i = 0; i < messages_per_thread; ++i)
+        {
+            threadSafeCout << "Thread " << thread_id << " message " << i << '\n';
+        }
+    };
+
+    std::vector<std::thread> threads;
+    for (int i = 0; i < num_threads; ++i)
+    {
+        threads.emplace_back(std::thread(thread_func, i));
+    }
+
+    for (auto& t : threads)
+    {
+        t.join();
+    }
+
+    // std::regex         line_pattern("Thread [0-9]+ message [0-9]+");
+    // std::istringstream iss(cap.str());
+    // std::string        line;
+    // int                line_count = 0;
+    // while (std::getline(iss, line))
+    // {
+    //     EXPECT_TRUE(std::regex_match(line, line_pattern));
+    //     ++line_count;
+    // }
+}
 TEST(ThreadSafeIOStream_Basics, PrefixAtLineStartAndSingleOccurrence)
 {
     CoutCapture cap;
     threadSafeCout.setPrefix("[T] ");
     threadSafeCout << "Hello" << std::endl;
 
-    const std::string out   = cap.str();
-    auto              lines = split_lines(out);
+    const std::string out = cap.str();
+
+    auto lines = split_lines(out);
+
     ASSERT_FALSE(lines.empty());
     const std::string& line = lines.front();
 

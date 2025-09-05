@@ -58,6 +58,19 @@ public:
     {
         return _type;
     }
+    std::vector<unsigned char> popData();
+    std::vector<unsigned char> getData() const;
+    int                        getType();
+
+    RingBuffer& data()
+    {
+        return _buffer;
+    }
+
+    int type()
+    {
+        return _type;
+    }
 
     void reset();
 };

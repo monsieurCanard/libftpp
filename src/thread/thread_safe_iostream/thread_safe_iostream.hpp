@@ -10,9 +10,10 @@
 class ThreadSafeIOStream
 {
 private:
-    std::string _prefix;
-    std::mutex  _mutex;
-    bool        _needPrefix = true;
+    static std::mutex  _mutex;
+    std::ostringstream _buffer;
+    std::string        _prefix;
+    void               flushBuffer();
 
 public:
     template <typename T>
@@ -41,33 +42,27 @@ public:
     template <typename T>
     ThreadSafeIOStream& operator<<(const T& value)
     {
-        std::ostringstream ss;
-        ss << value;
-        std::string            line   = ss.str();
+        _buffer << value;
+
+        std::string            line   = _buffer.str();
         std::string::size_type pos    = 0;
         std::string::size_type cursor = 0;
+        if (line.find('\n') == std::string::npos)
+            return *this;
 
         std::lock_guard<std::mutex> lock(_mutex);
-        if (_needPrefix)
-        {
-            std::cout << _prefix;
-            _needPrefix = false;
-        }
 
         while ((pos = line.find('\n', cursor)) != std::string::npos)
         {
-            if (_needPrefix)
-            {
-                std::cout << _prefix;
-                _needPrefix = false;
-            }
-
+            std::cout << _prefix;
             std::cout << line.substr(cursor, pos - cursor) << '\n';
-            cursor      = pos + 1;
-            _needPrefix = true;
+            cursor = pos + 1;
         }
 
-        std::cout << line.substr(cursor);
+        _buffer.clear();
+        _buffer.str("");
+        if (cursor < line.length())
+            std::cout << line.substr(cursor);
         return *this;
     }
 

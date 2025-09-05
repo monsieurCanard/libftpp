@@ -42,54 +42,41 @@ void Client::defineAction(const Message::Type&                           message
 
 void Client::send(const Message& message)
 {
-    int msgType;
-    msgType << message;
-    ::send(_fd, &msgType, sizeof(msgType), 0);
-
-    size_t size;
-    size << message;
-    ::send(_fd, &size, sizeof(size), 0);
-
-    if (size > 0)
-    {
-        ::send(_fd, message.data().data(), size, 0);
-    }
+    auto data = message.getData();
+    ::send(_fd, data.data(), data.size(), 0);
 }
+
 void Client::receiveMessage()
 {
-    int    typeInt;
-    size_t size;
-
-    int bytes = recv(_fd, &typeInt, sizeof(typeInt), MSG_WAITALL);
+    char buffRead[16000];
+    int  bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
+    std::cout << " Message recu " << std::endl;
     if (bytes == 0)
-        error("Server closed connection");
-    if (bytes == -1)
-        error("Cannot receive message");
-
-    bytes = recv(_fd, &size, sizeof(size), MSG_WAITALL);
-    if (bytes == 0)
-        error("Server closed connection");
-    if (bytes == -1)
-        error("Cannot receive message");
-
-    std::vector<unsigned char> msgTab(size);
-    if (size > 0)
     {
-        bytes = recv(_fd, msgTab.data(), size, MSG_WAITALL);
-        if (bytes == 0)
-            error("Server closed connection");
-        if (bytes == -1)
-            error("Cannot receive message");
+        error("Server closed connection");
     }
+    if (bytes == -1)
+    {
+        // Gérer le cas où il n'y a pas assez de données
+        if (errno == EAGAIN || errno == EWOULDBLOCK)
+            return; // Pas assez de données, on reviendra plus tard
+        error("Cannot receive message");
+    }
+    _tmpMsg.data().pushInto(buffRead, bytes);
 
-    Message msg(msgTab);
-
-    _msgs.push_back(msg);
+    while (_tmpMsg.isComplet())
+    {
+        std::cout << "Message complete" << std::endl;
+        Message newMsg(_tmpMsg.getType());
+        newMsg.data().push(_tmpMsg.popData());
+        _msgs.push_back(newMsg);
+        _tmpMsg.reset();
+    }
 }
 
 void Client::update()
 {
-    while (true)
+    while (_fd > 0)
     {
         FD_ZERO(&_readyRead);
         FD_SET(_fd, &_readyRead);
@@ -100,10 +87,12 @@ void Client::update()
             break;
         receiveMessage();
     }
-
+    std::cout << "Processing " << _msgs.size() << " messages" << std::endl;
     for (auto& msg : _msgs)
     {
-        auto it = _triggers.find(msg.type());
+        int type = msg.type();
+        std::cout << "message type" << type << std::endl;
+        auto it = _triggers.find(type);
         if (it == _triggers.end()) // Maybe Throw Exception
             continue;
         for (auto& funct : it->second)

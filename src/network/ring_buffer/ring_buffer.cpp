@@ -3,12 +3,12 @@
 RingBuffer::RingBuffer() : _buffer(MAX_BUFFER_SIZE) {}
 RingBuffer::RingBuffer(const size_t& size_buffer) : _buffer(size_buffer) {}
 
-bool RingBuffer::isEmpty()
+bool RingBuffer::isEmpty() const
 {
     return _size == 0;
 }
 
-bool RingBuffer::isFull()
+bool RingBuffer::isFull() const
 {
     return _buffer.size() == _size;
 }
@@ -20,7 +20,7 @@ size_t RingBuffer::size()
 
 size_t RingBuffer::capacity()
 {
-    return _size;
+    return _buffer.size();
 }
 
 size_t RingBuffer::capacityAvailable()
@@ -57,8 +57,6 @@ void RingBuffer::push(const std::vector<unsigned char>& bytes)
         _head          = (_head + 1) % _buffer.size();
         _size++;
     }
-
-    std::cout << " _size apres push " << _size << std::endl;
 }
 
 unsigned char RingBuffer::pop()
@@ -90,14 +88,16 @@ std::vector<unsigned char> RingBuffer::pop(const size_t& size)
 void RingBuffer::pushInto(const void* data, const size_t& size)
 {
     if (capacityAvailable() < size)
-        throw std::runtime_error("trying to read more than available in buffer");
-    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&data);
+        throw std::runtime_error("trying to put more than available in buffer");
+
+    const unsigned char* ptr = reinterpret_cast<const unsigned char*>(data);
     for (size_t i = 0; i < size; i++)
     {
         _buffer[_head] = ptr[i];
         _head          = (_head + 1) % _buffer.size();
         _size++;
     }
+    std::cout << "Push into good" << std::endl;
 }
 
 void RingBuffer::popInto(void* data, const size_t& size)
@@ -105,7 +105,7 @@ void RingBuffer::popInto(void* data, const size_t& size)
     if (size > _size)
         throw std::runtime_error("trying to read more than available in buffer or empty buffer");
 
-    unsigned char* ptr = reinterpret_cast<unsigned char*>(&data);
+    unsigned char* ptr = reinterpret_cast<unsigned char*>(data);
     for (size_t i = 0; i < size; i++)
     {
         ptr[i] = _buffer[_tail];
@@ -114,7 +114,7 @@ void RingBuffer::popInto(void* data, const size_t& size)
     }
 }
 
-unsigned char RingBuffer::peek()
+unsigned char RingBuffer::peek() const
 {
     if (isEmpty())
         throw std::runtime_error("trying to read on empty buffer");
@@ -124,7 +124,7 @@ unsigned char RingBuffer::peek()
     return byte;
 }
 
-std::vector<unsigned char> RingBuffer::peek(const size_t& size)
+std::vector<unsigned char> RingBuffer::peek(const size_t& size) const
 {
     if (isEmpty())
         throw std::runtime_error("trying to read on empty buffer");
@@ -143,7 +143,6 @@ std::vector<unsigned char> RingBuffer::peek(const size_t& size)
 
 void RingBuffer::clear()
 {
-    _buffer.clear();
     _tail = 0;
     _head = 0;
     _size = 0;

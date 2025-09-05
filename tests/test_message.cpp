@@ -63,8 +63,8 @@ TEST(MessageTest, OutOfBoundsThrows)
 TEST(MessageTest, ResetWorks)
 {
     Message msg(2);
-    int     valIn  = 2025;
-    int     valOut = 0;
+    int     valIn = 2025;
+    int     valOut;
 
     msg << valIn;
     msg >> valOut;

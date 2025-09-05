@@ -13,7 +13,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "message/message.hpp"
+#include "../message/message.hpp"
 
 class Client
 {
@@ -22,11 +22,12 @@ private:
     std::unordered_map<Message::Type, std::vector<std::function<void(const Message& msg)>>>
         _triggers;
 
-    int    _fd = 0;
-    fd_set _readyRead;
-    fd_set _readyWrite;
+    int     _fd = 0;
+    fd_set  _readyRead;
+    Message _tmpMsg;
 
 public:
+    Client() : _tmpMsg(0) {}
     void error(std::string&& errorMessage);
 
     void connect(const std::string& address, const size_t& port);

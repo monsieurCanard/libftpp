@@ -30,13 +30,13 @@ public:
     std::vector<unsigned char> pop(const size_t& size);
     void                       popInto(void* data, const size_t& size);
 
-    unsigned char peek();
+    unsigned char peek() const;
 
-    std::vector<unsigned char> peek(const size_t& size);
+    std::vector<unsigned char> peek(const size_t& size) const;
     void                       clear();
 
-    bool   isEmpty();
-    bool   isFull();
+    bool   isEmpty() const;
+    bool   isFull() const;
     size_t size();
     size_t capacity();
     size_t capacityAvailable();

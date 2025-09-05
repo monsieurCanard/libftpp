@@ -50,6 +50,41 @@ bool Message::isComplet()
     return true;
 }
 
+int Message::getType()
+{
+    try
+    {
+        auto header = _buffer.peek(sizeof(int));
+        int  messageType;
+        memcpy(&messageType, header.data(), sizeof(int));
+        return messageType;
+    }
+    catch (const std::runtime_error& e)
+    {
+        throw;
+    }
+}
+
+std::vector<unsigned char> Message::getData() const
+{
+    std::vector<unsigned char> data;
+    auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
+    size_t                     messageSize;
+    memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
+    std::cout << messageSize;
+    return _buffer.peek(sizeof(int) + sizeof(size_t) + messageSize);
+}
+
+std::vector<unsigned char> Message::popData()
+{
+    std::vector<unsigned char> data;
+    auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
+    size_t                     messageSize;
+    memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
+    std::cout << messageSize;
+    return _buffer.pop(sizeof(int) + sizeof(size_t) + messageSize);
+}
+
 void Message::reset()
 {
     _buffer.clear();

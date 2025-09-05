@@ -1,42 +1,43 @@
-// #ifndef CLIENT_HPP
-// #define CLIENT_HPP
+#ifndef CLIENT_HPP
+#define CLIENT_HPP
 
-// #include <arpa/inet.h>
-// #include <netinet/in.h>
-// #include <string.h>
-// #include <sys/socket.h>
-// #include <sys/types.h>
-// #include <unistd.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-// #include <cstddef>
-// #include <functional>
-// #include <string>
-// #include <unordered_map>
+#include <cstddef>
+#include <functional>
+#include <string>
+#include <unordered_map>
 
-// #include "message/message.hpp"
+#include "message/message.hpp"
 
-// class Client
-// {
-// private:
-//     std::vector<Message> _msgs;
-//     std::unordered_map<Message::Type, std::vector<std::function<void(const Message& msg)>>>
-//            _triggers;
-//     int    _fd = 0;
-//     fd_set _readyRead;
-//     fd_set _readyWrite;
+class Client
+{
+private:
+    std::vector<Message> _msgs;
+    std::unordered_map<Message::Type, std::vector<std::function<void(const Message& msg)>>>
+        _triggers;
 
-// public:
-//     void error(int& fd, std::string&& errorMessage);
+    int    _fd = 0;
+    fd_set _readyRead;
+    fd_set _readyWrite;
 
-//     void connect(const std::string& address, const size_t& port);
+public:
+    void error(std::string&& errorMessage);
 
-//     void disconnect();
+    void connect(const std::string& address, const size_t& port);
 
-//     void defineAction(const Message::Type&                           messageType,
-//                       const std::function<void(const Message& msg)>& action);
-//     void send(const Message& message);
-//     void receiveMessage();
-//     void update();
-// };
+    void disconnect();
 
-// #endif
+    void defineAction(const Message::Type&                           messageType,
+                      const std::function<void(const Message& msg)>& action);
+    void send(const Message& message);
+    void receiveMessage();
+    void update();
+};
+
+#endif

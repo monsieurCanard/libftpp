@@ -36,4 +36,5 @@ public:
 
 template <typename TType>
 std::unique_ptr<TType> Singleton<TType>::_instance = nullptr;
+
 #endif

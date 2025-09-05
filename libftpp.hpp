@@ -14,7 +14,11 @@
 #include "src/design_patterns/state_machine/state_machine.hpp"
 
 // Network
+#include "src/network/client/client.hpp"
+#include "src/network/message/message.hpp"
 #include "src/network/ring_buffer/ring_buffer.hpp"
+#include "src/network/server/server.hpp"
+
 // Threading
 #include "src/thread/persistent_worker/persistent_worker.hpp"
 #include "src/thread/thread/thread.hpp"

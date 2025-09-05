@@ -8,20 +8,18 @@
 #include <string>
 #include <vector>
 
-#include "ring_buffer.hpp"
+#include "../ring_buffer/ring_buffer.hpp"
 
 class Message
 {
 private:
     int        _type;
     RingBuffer _buffer;
-    size_t     _cursor = 0;
 
 public:
     using Type = int;
     Message(Type type);
 
-    // bool canRead(); // Pour verifier si j'ai un message complet
     bool isComplet();
 
     template <typename T>
@@ -33,7 +31,7 @@ public:
         }
         catch (const std::runtime_error& e)
         {
-        TODO:
+            // TODO:
             throw;
         }
         return *this;
@@ -46,7 +44,7 @@ public:
         {
             _buffer.pushInto(&value, sizeof(T));
         }
-        catch (const std::runtime_error7 e)
+        catch (const std::runtime_error& e)
         {
             throw;
         }
@@ -61,9 +59,6 @@ public:
         return _type;
     }
 
-    void reset()
-    {
-        _cursor = 0;
-    }
+    void reset();
 };
 #endif

@@ -23,7 +23,6 @@ public:
         _queue.push_front(newElement);
     }
 
-    // Debattre de l'argument const pour pop back qui ne sert a rien
     TType pop_back()
     {
         std::lock_guard<std::mutex> lock(_mutex);

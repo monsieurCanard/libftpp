@@ -2,9 +2,9 @@
 #define OBSERVER_HPP
 
 #include <functional>
-#include <map>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 template <typename TEvent>

@@ -12,6 +12,15 @@ ThreadSafeIOStream& ThreadSafeIOStream::operator<<(std::ostream& (*funct)(std::o
 {
 
     std::lock_guard<std::mutex> lock(_mutex);
+    if (_needPrefix)
+    {
+        std::cout << _prefix;
+        _needPrefix = false;
+    }
     funct(std::cout);
+    if (funct == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
+    {
+        _needPrefix = true;
+    }
     return *this;
 }

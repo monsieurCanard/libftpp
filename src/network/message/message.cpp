@@ -8,7 +8,7 @@ Message& Message::operator<<(const std::string& value)
     *this << size;
     try
     {
-        _buffer.pushInto(value.data(), size);
+        _buffer.pushInto(value.c_str(), size);
     }
     catch (const std::runtime_error& e)
     {
@@ -25,7 +25,10 @@ Message& Message::operator>>(std::string& value)
         throw std::runtime_error("Read out of Buffer !");
     try
     {
-        _buffer.popInto(&value, size);
+        std::vector<char> temp(size + 1, '\0');
+        _buffer.popInto(temp.data(), size); // Lire les données
+
+        value = std::string(temp.data());
     }
     catch (const std::runtime_error& e)
     {
@@ -47,17 +50,17 @@ bool Message::isComplet()
     {
         return false;
     }
+    setType();
     return true;
 }
 
-int Message::getType()
+void Message::setType()
 {
     try
     {
         auto header = _buffer.peek(sizeof(int));
-        int  messageType;
-        memcpy(&messageType, header.data(), sizeof(int));
-        return messageType;
+        memcpy(&_type, header.data(), sizeof(int));
+        return;
     }
     catch (const std::runtime_error& e)
     {
@@ -88,4 +91,14 @@ std::vector<unsigned char> Message::popData()
 void Message::reset()
 {
     _buffer.clear();
+}
+
+Message::Type Message::type() const
+{
+    return _type;
+}
+
+RingBuffer& Message::data()
+{
+    return _buffer;
 }

@@ -1,6 +1,6 @@
 #include "client.hpp"
 
-void Client::error(std::string&& errorMessage)
+void Client::error(const std::string& errorMessage)
 {
     disconnect();
     throw std::runtime_error(errorMessage);
@@ -53,7 +53,9 @@ void Client::receiveMessage()
     std::cout << " Message recu " << std::endl;
     if (bytes == 0)
     {
-        error("Server closed connection");
+        std::cout << "Server closed connection" << std::endl;
+        disconnect();
+        return;
     }
     if (bytes == -1)
     {
@@ -67,7 +69,7 @@ void Client::receiveMessage()
     while (_tmpMsg.isComplet())
     {
         std::cout << "Message complete" << std::endl;
-        Message newMsg(_tmpMsg.getType());
+        Message newMsg(_tmpMsg.type());
         newMsg.data().push(_tmpMsg.popData());
         _msgs.push_back(newMsg);
         _tmpMsg.reset();

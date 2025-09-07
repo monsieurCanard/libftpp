@@ -336,6 +336,7 @@ TEST(ClientIntegrationTest, HandleServerDisconnect)
 
     // update() doit gérer la déconnexion sans planter
     EXPECT_NO_THROW(c.update());
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     c.disconnect();
     server.join();
@@ -404,14 +405,13 @@ TEST(ClientIntegrationTest, HandlePartialData)
     DummyMessage msg(999);
     c.send(msg);
 
-    // Plusieurs appels à update() pour assembler le message complet
-    // for (int i = 0; i < 10; i++)
-    // {
-    c.update();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    // if (received)
-    // break;
-    // }
+    for (int i = 0; i < 2; i++)
+    {
+        c.update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        if (received)
+            break;
+    }
 
     EXPECT_TRUE(received);
 

@@ -28,7 +28,7 @@ private:
 
 public:
     Client() : _tmpMsg(0) {}
-    void error(std::string&& errorMessage);
+    void error(const std::string& errorMessage);
 
     void connect(const std::string& address, const size_t& port);
 

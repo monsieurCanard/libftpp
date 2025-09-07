@@ -10,17 +10,23 @@
 
 #include "../ring_buffer/ring_buffer.hpp"
 
+/*
+ * @note Expected Message format [type(int)][sizeofData(size_t)][data]
+ */
 class Message
 {
-private:
-    int        _type;
-    RingBuffer _buffer;
-
 public:
     using Type = int;
-    Message(Type type);
 
-    bool isComplet();
+private:
+    RingBuffer _buffer;
+    Type       _type;
+
+    void setType();
+
+public:
+    Message(Type type);
+    Message() {}
 
     template <typename T>
     Message& operator>>(T& value)
@@ -54,24 +60,12 @@ public:
     Message& operator<<(const std::string& value);
     Message& operator>>(std::string& value);
 
-    Type type() const
-    {
-        return _type;
-    }
     std::vector<unsigned char> popData();
     std::vector<unsigned char> getData() const;
-    int                        getType();
 
-    RingBuffer& data()
-    {
-        return _buffer;
-    }
-
-    int type()
-    {
-        return _type;
-    }
-
-    void reset();
+    Message::Type type() const;
+    RingBuffer&   data();
+    bool          isComplet();
+    void          reset();
 };
 #endif

@@ -19,9 +19,10 @@
 class Server
 {
 private:
-    int _socket;
-    int _max_fd;
-    int _next_id;
+    int  _socket;
+    int  _max_fd;
+    int  _next_id;
+    bool _running = true;
 
     fd_set _active;
     fd_set _readyRead;

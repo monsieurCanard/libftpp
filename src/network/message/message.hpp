@@ -32,6 +32,7 @@ public:
     {
         try
         {
+            _buffer.pop(sizeof(int));
             _buffer.popInto(&value, sizeof(T));
         }
         catch (const std::runtime_error& e)

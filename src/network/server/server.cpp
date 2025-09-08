@@ -2,37 +2,58 @@
 
 void Server::stop()
 {
+    _running = false;
     for (auto& pair : _clients)
     {
         close(pair.second);
         FD_CLR(pair.second, &_active);
+    }
+    _clients.clear();
+    if (_socket >= 0)
+    {
+        FD_CLR(_socket, &_active);
+        close(_socket);
+        _socket = -1;
     }
 }
 
 void Server::start(const size_t& port)
 {
     _socket = socket(AF_INET, SOCK_STREAM, 0);
-    if (_socket <= 0)
+    if (_socket < 0)
     {
         throw std::runtime_error("Cannot create socket");
     }
+
     sockaddr_in sockaddr;
     sockaddr.sin_family      = AF_INET;
     sockaddr.sin_addr.s_addr = INADDR_ANY;
     sockaddr.sin_port        = htons(port);
+
     if (bind(_socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
+    {
+        stop();
         throw std::runtime_error("Failed to bind on socket. errno: " + std::to_string(errno));
+    }
 
     _max_fd = _socket;
     FD_ZERO(&_active);
     FD_SET(_socket, &_active);
 
     if (listen(_socket, NB_CONNECTION) < 0)
+    {
+        stop();
         throw std::runtime_error("Failed to listen on socket. errno: " + std::to_string(errno));
-    while (1)
+    }
+
+    _running = true;
+
+    while (_running)
     {
         _readyRead = _readyWrite = _active;
-        if (select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, NULL) < 0)
+        timeval timeout          = {0, 10000}; // Pour que le select soit non bloquant
+
+        if (select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, &timeout) <= 0)
             continue;
         for (int fd = 0; fd <= _max_fd; fd++)
         {
@@ -72,7 +93,6 @@ bool Server::receiveClientMsg(const int& fd)
     std::cout << " Message recu " << std::endl;
     if (bytes == 0)
     {
-        std::cout << "Client closed connection" << std::endl;
         // disconnect();
         return false;
     }
@@ -88,7 +108,6 @@ bool Server::receiveClientMsg(const int& fd)
 
     while (_partialMsgs[fd].isComplet())
     {
-        std::cout << "Message complete" << std::endl;
         Message newMsg(_partialMsgs[fd].type());
         newMsg.data().push(_partialMsgs[fd].popData());
         _msgs.push_back(newMsg);
@@ -99,15 +118,22 @@ bool Server::receiveClientMsg(const int& fd)
 
 void Server::sendTo(const Message& message, long long clientID)
 {
-    const auto& data = message.getData();
-    if (data.empty())
-        return;
-
-    ssize_t bytes_sent = send(_clients[clientID], data.data(), data.size(), 0);
-    if (bytes_sent == -1)
+    try
     {
-        // Gérer l'erreur d'envoi
-        std::cerr << "Failed to send message to client " << clientID << std::endl;
+        const auto& data = message.getData();
+        if (data.empty())
+            return;
+
+        ssize_t bytes_sent = send(_clients[clientID], data.data(), data.size(), 0);
+        if (bytes_sent == -1)
+        {
+            // Gérer l'erreur d'envoi
+            std::cerr << "Failed to send message to client " << clientID << std::endl;
+        }
+    }
+    catch (std::runtime_error& e)
+    {
+        throw;
     }
 }
 

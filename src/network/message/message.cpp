@@ -1,6 +1,9 @@
 #include "message.hpp"
 
-Message::Message(Type type) : _type(type) {}
+Message::Message(Type type) : _type(type)
+{
+    *this << type;
+}
 
 Message& Message::operator<<(const std::string& value)
 {
@@ -19,15 +22,17 @@ Message& Message::operator<<(const std::string& value)
 
 Message& Message::operator>>(std::string& value)
 {
-    size_t size;
-    *this >> size;
-    if (size > _buffer.capacityAvailable())
-        throw std::runtime_error("Read out of Buffer !");
+    if (_buffer.size() < sizeof(int) + sizeof(size_t))
+        throw std::runtime_error("No data in buffer");
+
     try
     {
-        std::vector<char> temp(size + 1, '\0');
-        _buffer.popInto(temp.data(), size); // Lire les données
+        auto   header = _buffer.peek(sizeof(int) + sizeof(size_t));
+        size_t messageSize;
+        memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
 
+        std::vector<char> temp(messageSize + 1, '\0');
+        _buffer.popInto(temp.data(), messageSize);
         value = std::string(temp.data());
     }
     catch (const std::runtime_error& e)
@@ -39,7 +44,6 @@ Message& Message::operator>>(std::string& value)
 
 bool Message::isComplet()
 {
-    std::cout << "BUffer size = " << _buffer.size() << std::endl;
     if (_buffer.size() < sizeof(int) + sizeof(size_t))
         return false;
     try
@@ -47,9 +51,8 @@ bool Message::isComplet()
         auto   header = _buffer.peek(sizeof(int) + sizeof(size_t));
         size_t messageSize;
         memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
-        std::cout << "Message size = " << sizeof(int) + sizeof(size_t) + messageSize << std::endl;
 
-        return (_buffer.size() <= sizeof(int) + sizeof(size_t) + messageSize);
+        return (_buffer.size() >= sizeof(int) + sizeof(size_t) + messageSize);
     }
     catch (const std::runtime_error& e)
     {
@@ -75,8 +78,10 @@ void Message::setType()
 std::vector<unsigned char> Message::getData() const
 {
     std::vector<unsigned char> data;
-    auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
     size_t                     messageSize;
+
+    auto header = _buffer.peek(sizeof(int) + sizeof(size_t));
+
     memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
     return _buffer.peek(sizeof(int) + sizeof(size_t) + messageSize);
 }
@@ -84,8 +89,10 @@ std::vector<unsigned char> Message::getData() const
 std::vector<unsigned char> Message::popData()
 {
     std::vector<unsigned char> data;
-    auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
     size_t                     messageSize;
+
+    auto header = _buffer.peek(sizeof(int) + sizeof(size_t));
+
     memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
     return _buffer.pop(sizeof(int) + sizeof(size_t) + messageSize);
 }

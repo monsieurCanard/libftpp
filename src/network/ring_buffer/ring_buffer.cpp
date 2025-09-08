@@ -63,6 +63,7 @@ unsigned char RingBuffer::pop()
 {
     if (isEmpty())
         throw std::runtime_error("trying to read on empty buffer");
+
     unsigned char byte;
     byte  = _buffer[_tail];
     _tail = (_tail + 1) % _buffer.size();
@@ -127,10 +128,13 @@ std::vector<unsigned char> RingBuffer::peek(const size_t& size) const
 {
     if (isEmpty())
         throw std::runtime_error("trying to read on empty buffer");
+
     if (size > _size)
         throw std::runtime_error("trying to read more than available in buffer");
+
     std::vector<unsigned char> byte(size);
     size_t                     tmp_idx = _tail;
+
     for (size_t i = 0; i < size; i++)
     {
         byte[i] = _buffer[tmp_idx];

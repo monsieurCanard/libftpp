@@ -77,3 +77,67 @@ TEST(MessageTest, ResetWorks)
     msg >> valOut;
     EXPECT_EQ(valOut, 0); // relu encore une fois
 }
+
+class MessageComplexTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        message = std::make_unique<Message>(10);
+    }
+
+    std::unique_ptr<Message> message;
+};
+
+TEST_F(MessageComplexTest, MessageWithMultipleDataTypes)
+{
+    int         testInt    = 42;
+    double      testDouble = 3.14159;
+    std::string testString = "Test String";
+
+    *message << testInt << testDouble << testString;
+
+    int         retrievedInt;
+    double      retrievedDouble;
+    std::string retrievedString;
+
+    *message >> retrievedInt >> retrievedDouble >> retrievedString;
+
+    EXPECT_EQ(retrievedInt, testInt);
+    EXPECT_DOUBLE_EQ(retrievedDouble, testDouble);
+    EXPECT_EQ(retrievedString, testString);
+}
+
+TEST_F(MessageComplexTest, MessageLargeString)
+{
+    std::string largeString(1000, 'A');
+    *message << largeString;
+
+    std::cout << "coucou" << std::endl;
+    std::string retrievedString;
+    *message >> retrievedString;
+
+    EXPECT_EQ(retrievedString, largeString);
+}
+
+class MessageEdgeCaseTest : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        message = std::make_unique<Message>(20);
+    }
+
+    std::unique_ptr<Message> message;
+};
+
+TEST_F(MessageEdgeCaseTest, MessageWithEmptyString)
+{
+    std::string emptyString = "";
+    *message << emptyString;
+
+    std::string retrievedString;
+    *message >> retrievedString;
+
+    EXPECT_EQ(retrievedString, emptyString);
+}

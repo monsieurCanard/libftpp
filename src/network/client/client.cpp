@@ -47,7 +47,7 @@ void Client::send(const Message& message)
 {
     try
     {
-        auto data = message.getData();
+        auto data = message.getSerializedData();
         ::send(_fd, data.data(), data.size(), 0);
     }
     catch (std::runtime_error& e)
@@ -78,9 +78,10 @@ void Client::receiveMessage()
         while (_tmpMsg.isComplet())
         {
             Message newMsg;
-            auto    data = _tmpMsg.popData();
+            newMsg.setType(_tmpMsg.popType());
+
+            auto data = _tmpMsg.popData();
             newMsg.data().pushInto(data.data(), data.size());
-            newMsg.setType();
 
             _msgs.push_back(newMsg);
             _tmpMsg.reset();
@@ -107,9 +108,9 @@ void Client::update()
                 break;
             receiveMessage();
         }
-
         for (auto& msg : _msgs)
         {
+            std::cout << "Message recu go traiter" << std::endl;
             int  type = msg.type();
             auto it   = _triggers.find(type);
             if (it == _triggers.end()) // Maybe Throw Exception

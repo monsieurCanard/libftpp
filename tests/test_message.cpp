@@ -113,7 +113,6 @@ TEST_F(MessageComplexTest, MessageLargeString)
     std::string largeString(1000, 'A');
     *message << largeString;
 
-    std::cout << "coucou" << std::endl;
     std::string retrievedString;
     *message >> retrievedString;
 

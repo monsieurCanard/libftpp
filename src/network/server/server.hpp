@@ -30,7 +30,7 @@ private:
 
     std::unordered_map<Message::Type, std::function<void(long long& clientID, const Message& msg)>>
                                        _tasks;
-    std::unordered_map<long long, int> _clients;
+    std::unordered_map<int, long long> _clients;
     std::vector<Message>               _msgs;
     std::unordered_map<int, Message>   _partialMsgs;
 

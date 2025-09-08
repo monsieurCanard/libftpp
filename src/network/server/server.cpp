@@ -52,7 +52,6 @@ void Server::start(const size_t& port)
     {
         _readyRead = _readyWrite = _active;
         timeval timeout          = {0, 10000}; // Pour que le select soit non bloquant
-
         if (select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, &timeout) <= 0)
             continue;
         for (int fd = 0; fd <= _max_fd; fd++)
@@ -70,18 +69,20 @@ void Server::start(const size_t& port)
                 FD_CLR(fd, &_active);
             }
         }
+        update();
     }
 }
 
 void Server::acceptNewConnection()
 {
     int connfd = accept(_socket, 0, 0);
+    std::cout << "Nw connection " << std::endl;
     if (connfd < 0)
         return;
     if (_max_fd < connfd)
         _max_fd = connfd;
     FD_SET(connfd, &_active);
-    _clients[_next_id++] = connfd;
+    _clients[connfd] = _next_id++;
 }
 
 bool Server::receiveClientMsg(const int& fd)
@@ -108,8 +109,13 @@ bool Server::receiveClientMsg(const int& fd)
 
     while (_partialMsgs[fd].isComplet())
     {
-        Message newMsg(_partialMsgs[fd].type());
-        newMsg.data().push(_partialMsgs[fd].popData());
+        Message newMsg;
+        newMsg.setType(_partialMsgs[fd].popType());
+
+        auto data = _partialMsgs[fd].popData();
+        newMsg.data().pushInto(data.data(), data.size());
+        newMsg.setMessageFd(fd);
+
         _msgs.push_back(newMsg);
         _partialMsgs[fd].reset();
     }
@@ -120,11 +126,20 @@ void Server::sendTo(const Message& message, long long clientID)
 {
     try
     {
-        const auto& data = message.getData();
+        int sendFd = -1;
+        for (auto& [fd, id] : _clients)
+        {
+            if (id == clientID)
+                sendFd = fd;
+        }
+        if (sendFd == -1)
+            return;
+
+        const auto& data = message.getSerializedData();
         if (data.empty())
             return;
 
-        ssize_t bytes_sent = send(_clients[clientID], data.data(), data.size(), 0);
+        ssize_t bytes_sent = send(sendFd, data.data(), data.size(), 0);
         if (bytes_sent == -1)
         {
             // Gérer l'erreur d'envoi
@@ -164,4 +179,21 @@ void Server::defineAction(
     const std::function<void(long long& clientID, const Message& msg)>& action)
 {
     _tasks[messageType] = action;
+}
+
+void Server::update()
+{
+    for (size_t i = 0; i < _msgs.size(); i++)
+    {
+        auto it = _tasks.find(_msgs[i].type());
+
+        if (it == _tasks.end())
+            continue;
+
+        auto it2 = _clients.find(_msgs[i].getMessageFd());
+        if (it2 == _clients.end())
+            continue;
+        long long clientId = it2->second;
+        it->second(clientId, _msgs[i]);
+    }
 }

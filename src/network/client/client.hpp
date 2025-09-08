@@ -24,7 +24,7 @@ private:
 
     int     _fd = 0;
     fd_set  _readyRead;
-    Message _tmpMsg;
+    Message _tmpMsg{0};
 
 public:
     Client() : _tmpMsg(0) {}

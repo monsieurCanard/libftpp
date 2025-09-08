@@ -50,7 +50,6 @@ void Client::receiveMessage()
 {
     char buffRead[16000];
     int  bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
-    std::cout << " Message recu " << std::endl;
     if (bytes == 0)
     {
         std::cout << "Server closed connection" << std::endl;
@@ -64,41 +63,60 @@ void Client::receiveMessage()
             return; // Pas assez de données, on reviendra plus tard
         error("Cannot receive message");
     }
-    _tmpMsg.data().pushInto(buffRead, bytes);
+    std::cout << "BEFROE Push into good size = " << _tmpMsg.data().size() << std::endl;
+    try
+    {
+        _tmpMsg.data().pushInto(buffRead, bytes);
+    }
+    catch (std::runtime_error& e)
+    {
+        std::cout << "Error" << std::endl;
+        throw;
+    }
+    std::cout << "AFTER Push into good size = " << _tmpMsg.data().size() << std::endl;
 
     while (_tmpMsg.isComplet())
     {
-        std::cout << "Message complete" << std::endl;
-        Message newMsg(_tmpMsg.type());
+        Message newMsg;
         newMsg.data().push(_tmpMsg.popData());
+        std::cout << "Message complete" << std::endl;
+        newMsg.setType();
         _msgs.push_back(newMsg);
+
         _tmpMsg.reset();
     }
 }
 
 void Client::update()
 {
-    while (_fd > 0)
+    try
     {
-        FD_ZERO(&_readyRead);
-        FD_SET(_fd, &_readyRead);
+        while (_fd > 0)
+        {
+            FD_ZERO(&_readyRead);
+            FD_SET(_fd, &_readyRead);
 
-        timeval timeout = {0, 0}; // Pour que le select soit non bloquant
-        int     ready   = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
-        if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
-            break;
-        receiveMessage();
+            timeval timeout = {0, 0}; // Pour que le select soit non bloquant
+            int     ready   = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
+            if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
+                break;
+            receiveMessage();
+        }
+        std::cout << "Processing " << _msgs.size() << " messages" << std::endl;
+        for (auto& msg : _msgs)
+        {
+            int type = msg.type();
+            std::cout << "message type" << type << std::endl;
+            auto it = _triggers.find(type);
+            if (it == _triggers.end()) // Maybe Throw Exception
+                continue;
+            for (auto& funct : it->second)
+                funct(msg);
+        }
+        _msgs.clear();
     }
-    std::cout << "Processing " << _msgs.size() << " messages" << std::endl;
-    for (auto& msg : _msgs)
+    catch (std::runtime_error& e)
     {
-        int type = msg.type();
-        std::cout << "message type" << type << std::endl;
-        auto it = _triggers.find(type);
-        if (it == _triggers.end()) // Maybe Throw Exception
-            continue;
-        for (auto& funct : it->second)
-            funct(msg);
+        std::cerr << "UPDATE CLIENT ERROR" << std::endl;
     }
-    _msgs.clear();
 }

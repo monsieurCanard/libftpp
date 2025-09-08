@@ -39,19 +39,23 @@ Message& Message::operator>>(std::string& value)
 
 bool Message::isComplet()
 {
+    std::cout << "BUffer size = " << _buffer.size() << std::endl;
+    if (_buffer.size() < sizeof(int) + sizeof(size_t))
+        return false;
     try
     {
         auto   header = _buffer.peek(sizeof(int) + sizeof(size_t));
         size_t messageSize;
         memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
-        _buffer.peek(sizeof(int) + sizeof(size_t) + messageSize);
+        std::cout << "Message size = " << sizeof(int) + sizeof(size_t) + messageSize << std::endl;
+
+        return (_buffer.size() <= sizeof(int) + sizeof(size_t) + messageSize);
     }
     catch (const std::runtime_error& e)
     {
+        std::cout << "Exception in isComplet: " << e.what() << std::endl;
         return false;
     }
-    setType();
-    return true;
 }
 
 void Message::setType()
@@ -74,7 +78,6 @@ std::vector<unsigned char> Message::getData() const
     auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
     size_t                     messageSize;
     memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
-    std::cout << messageSize;
     return _buffer.peek(sizeof(int) + sizeof(size_t) + messageSize);
 }
 
@@ -84,7 +87,6 @@ std::vector<unsigned char> Message::popData()
     auto                       header = _buffer.peek(sizeof(int) + sizeof(size_t));
     size_t                     messageSize;
     memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
-    std::cout << messageSize;
     return _buffer.pop(sizeof(int) + sizeof(size_t) + messageSize);
 }
 

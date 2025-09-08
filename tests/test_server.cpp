@@ -273,7 +273,7 @@ TEST_F(ServerStressTest, ServerHandlesMultipleActionDefinitions)
         {
             std::cout << clientID << std::endl;
             msg.getData();
-            // Action simple
+            (void)i;
         };
         EXPECT_NO_THROW(server->defineAction(i, action));
     }

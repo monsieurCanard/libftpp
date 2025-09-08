@@ -21,14 +21,14 @@ void Server::start(const size_t& port)
     sockaddr.sin_addr.s_addr = INADDR_ANY;
     sockaddr.sin_port        = htons(port);
     if (bind(_socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
-        throw std::runtime_error("Failed to bind on socket. errno: " + errno);
+        throw std::runtime_error("Failed to bind on socket. errno: " + std::to_string(errno));
 
     _max_fd = _socket;
     FD_ZERO(&_active);
     FD_SET(_socket, &_active);
 
     if (listen(_socket, NB_CONNECTION) < 0)
-        throw std::runtime_error("Failed to listen on socket. errno: " + errno);
+        throw std::runtime_error("Failed to listen on socket. errno: " + std::to_string(errno));
     while (1)
     {
         _readyRead = _readyWrite = _active;

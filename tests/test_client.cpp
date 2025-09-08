@@ -98,14 +98,15 @@ TEST(ClientIntegrationTest, ConnectSendReceive)
                    });
 
     // Envoi d'un message factice
-    DummyMessage msg(10);
+    DummyMessage msg(999);
     c.send(msg);
 
     // Petit délai pour être sûr que le serveur a répondu
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
     // Update (récupère ET traite ce que le serveur a envoyé)
     c.update();
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
     EXPECT_TRUE(received);
 
@@ -332,11 +333,10 @@ TEST(ClientIntegrationTest, HandleServerDisconnect)
     DummyMessage msg(999);
     c.send(msg);
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    EXPECT_NO_THROW(c.update());
 
     // update() doit gérer la déconnexion sans planter
-    EXPECT_NO_THROW(c.update());
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
     c.disconnect();
     server.join();
@@ -402,13 +402,15 @@ TEST(ClientIntegrationTest, HandlePartialData)
                        EXPECT_EQ(m.type(), 200);
                    });
 
-    DummyMessage msg(999);
+    DummyMessage msg(200);
     c.send(msg);
 
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 10; i++)
     {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         c.update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
         if (received)
             break;
     }

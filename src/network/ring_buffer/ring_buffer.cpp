@@ -97,7 +97,6 @@ void RingBuffer::pushInto(const void* data, const size_t& size)
         _head          = (_head + 1) % _buffer.size();
         _size++;
     }
-    std::cout << "Push into good size = " << size << std::endl;
 }
 
 void RingBuffer::popInto(void* data, const size_t& size)

@@ -22,11 +22,10 @@ private:
     RingBuffer _buffer;
     Type       _type;
 
-    void setType();
-
 public:
     Message(Type type);
     Message() {}
+    void setType();
 
     template <typename T>
     Message& operator>>(T& value)

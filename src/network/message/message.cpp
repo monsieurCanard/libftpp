@@ -1,6 +1,6 @@
 #include "message.hpp"
 
-Message::Message(Type type) : _type(type) {}
+Message::Message(Message::Type type) : _type(type) {}
 
 Message& Message::operator<<(const std::string& value)
 {
@@ -19,9 +19,6 @@ Message& Message::operator<<(const std::string& value)
 
 Message& Message::operator>>(std::string& value)
 {
-    if (_buffer.isEmpty())
-        throw std::runtime_error("No data in buffer");
-
     try
     {
         size_t size;
@@ -39,7 +36,36 @@ Message& Message::operator>>(std::string& value)
     return *this;
 }
 
-bool Message::isComplet()
+std::string Message::valueToString() const
+{
+    try
+    {
+        auto data = getSerializedData();
+
+        if (data.size() < sizeof(int) + sizeof(size_t))
+            return "";
+
+        size_t offset = sizeof(int);
+
+        size_t dataSize;
+        memcpy(&dataSize, data.data() + offset, sizeof(size_t));
+        offset += sizeof(size_t);
+
+        if (data.size() < offset + dataSize)
+            return "";
+
+        std::string result(reinterpret_cast<const char*>(data.data() + offset), dataSize);
+
+        return result;
+    }
+    catch (std::runtime_error& e)
+    {
+        std::cerr << e.what() << std::endl;
+        return "";
+    }
+}
+
+bool Message::isComplet() const
 {
     if (_buffer.size() < sizeof(int) + sizeof(size_t))
         return false;
@@ -53,8 +79,7 @@ bool Message::isComplet()
     }
     catch (const std::runtime_error& e)
     {
-        std::cout << "Exception in isComplet: " << e.what() << std::endl;
-        return false;
+        throw;
     }
 }
 
@@ -62,16 +87,23 @@ std::vector<unsigned char> Message::getSerializedData() const
 {
     std::vector<unsigned char> result;
 
-    result.resize(sizeof(int));
-    memcpy(result.data(), &_type, sizeof(int));
+    try
+    {
+        result.resize(sizeof(int));
+        memcpy(result.data(), &_type, sizeof(int));
 
-    auto   header = _buffer.peek(sizeof(size_t));
-    size_t messageSize;
-    memcpy(&messageSize, header.data(), sizeof(size_t));
-    auto bufferData = _buffer.peek(sizeof(size_t) + messageSize);
-    result.insert(result.end(), bufferData.begin(), bufferData.end());
+        auto   header = _buffer.peek(sizeof(size_t));
+        size_t messageSize;
+        memcpy(&messageSize, header.data(), sizeof(size_t));
+        auto bufferData = _buffer.peek(sizeof(size_t) + messageSize);
+        result.insert(result.end(), bufferData.begin(), bufferData.end());
 
-    return result;
+        return result;
+    }
+    catch (std::runtime_error& e)
+    {
+        throw;
+    }
 }
 
 std::vector<unsigned char> Message::popData()
@@ -79,20 +111,34 @@ std::vector<unsigned char> Message::popData()
     std::vector<unsigned char> data;
     size_t                     messageSize;
 
-    auto header = _buffer.peek(sizeof(size_t));
+    try
+    {
+        auto header = _buffer.peek(sizeof(size_t));
 
-    memcpy(&messageSize, header.data(), sizeof(size_t));
-    return _buffer.pop(sizeof(size_t) + messageSize);
+        memcpy(&messageSize, header.data(), sizeof(size_t));
+        return _buffer.pop(sizeof(size_t) + messageSize);
+    }
+    catch (std::runtime_error& e)
+    {
+        throw;
+    }
 }
 
 int Message::popType()
 {
     std::vector<unsigned char> data;
     int                        type;
-    auto                       header = _buffer.pop(sizeof(int));
 
-    memcpy(&type, header.data(), sizeof(int));
-    return type;
+    try
+    {
+        auto header = _buffer.pop(sizeof(int));
+        memcpy(&type, header.data(), sizeof(int));
+        return type;
+    }
+    catch (std::runtime_error& e)
+    {
+        throw;
+    }
 }
 
 void Message::reset()
@@ -105,7 +151,7 @@ Message::Type Message::type() const
     return _type;
 }
 
-void Message::setType(int type)
+void Message::setType(Message::Type type)
 {
     _type = type;
     return;

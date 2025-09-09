@@ -11,17 +11,29 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#define NB_CONNECTION     128
-#define READ_BUFFER_SIZE  4096
-#define MAX_CLIENT_BUFFER 32768
+#define NB_CONNECTION    256
+#define READ_BUFFER_SIZE 4096
 
 #include "libftpp.hpp"
+
+/*
+ * @brief Classe serveur TCP basique utilisant des sockets POSIX et select()
+ * @note Gère les connexions, déconnexions, envois et réceptions de messages
+ * @note Utilise la classe Message pour le format des messages
+ * @note Permet de définir des actions (callbacks) pour différents types de messages
+ * @note Non thread-safe, doit être utilisé dans un seul thread (généralement le thread principal)
+ * @note Limité par le nombre de connections simultanées (NB_CONNECTION)
+ * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (READ_BUFFER_SIZE)
+ *
+ * @exception Lance des runtime_error en cas d'erreur
+ *
+ */
 class Server
 {
 private:
     int  _socket;
     int  _max_fd;
-    int  _next_id;
+    int  _next_id = 0;
     bool _running = true;
 
     fd_set _active;
@@ -31,11 +43,16 @@ private:
     std::unordered_map<Message::Type, std::function<void(long long& clientID, const Message& msg)>>
                                        _tasks;
     std::unordered_map<int, long long> _clients;
-    std::vector<Message>               _msgs;
-    std::unordered_map<int, Message>   _partialMsgs;
+    std::unordered_map<long long, int> _clientsToFd;
+
+    std::vector<Message>             _msgs;
+    std::unordered_map<int, Message> _partialMsgs;
 
     void acceptNewConnection();
     bool receiveClientMsg(const int& fd);
+
+    void clearAll();
+    void clearClient(int& fd, long long& clientId);
 
 public:
     void start(const size_t& port);
@@ -43,10 +60,10 @@ public:
     void defineAction(const Message::Type& messageType,
                       const std::function<void(long long& clientID, const Message& msg)>& action);
 
-    void update();
-    void stop();
     void sendTo(const Message& message, long long clientID);
     void sendToArray(const Message& message, std::vector<long long> clientIDs);
     void sendToAll(const Message& message);
+    void update();
+    void stop();
 };
 #endif

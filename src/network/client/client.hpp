@@ -13,8 +13,17 @@
 #include <string>
 #include <unordered_map>
 
+#define MAX_READ_BUFFER 16000
+
 #include "../message/message.hpp"
 
+/*
+ * @brief Classe client TCP basique utilisant des sockets POSIX et select()
+ * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (MAX_READ_BUFFER)
+ *
+ * @exception Lance des runtime_error en cas d'erreur
+ *
+ */
 class Client
 {
 private:
@@ -26,18 +35,20 @@ private:
     fd_set  _readyRead;
     Message _tmpMsg{0};
 
-public:
-    Client() : _tmpMsg(0) {}
     void error(std::string&& errorMessage);
+    void receiveMessage();
+
+public:
+    Client();
+    Client(const std::string& address, const size_t& port);
 
     void connect(const std::string& address, const size_t& port);
 
-    void disconnect();
-
     void defineAction(const Message::Type&                           messageType,
                       const std::function<void(const Message& msg)>& action);
+
+    void disconnect();
     void send(const Message& message);
-    void receiveMessage();
     void update();
 };
 

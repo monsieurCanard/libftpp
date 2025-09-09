@@ -13,17 +13,17 @@ bool RingBuffer::isFull() const
     return _buffer.size() == _size;
 }
 
-size_t RingBuffer::size()
+size_t RingBuffer::size() const
 {
     return _size;
 }
 
-size_t RingBuffer::capacity()
+size_t RingBuffer::capacity() const
 {
     return _buffer.size();
 }
 
-size_t RingBuffer::capacityAvailable()
+size_t RingBuffer::capacityAvailable() const
 {
     return _buffer.size() - _size;
 }

@@ -11,7 +11,15 @@
 #include "../ring_buffer/ring_buffer.hpp"
 
 /*
- * @note Expected Message format [type(int)][sizeofData(size_t)][data]
+ * @brief Classe représentant un message structuré pour la communication réseau
+ * @note Utilise un RingBuffer pour stocker les données du message
+ * @note Le format de transfert du message est le suivant : [type (int)][taille (size_t)][données
+ * (variable)]
+ * @note A l'utilisation le buffer contient uniquement les données (sans le type) et le
+ * Message::Type est defini dans _type
+ *
+ * @exception Lance des runtime_error en cas d'erreur
+ *
  */
 class Message
 {
@@ -26,28 +34,15 @@ private:
 public:
     Message(Type type);
     Message() {}
-    void setType(int type);
+    void setType(Message::Type type);
 
     template <typename T>
     Message& operator>>(T& value)
     {
-        if (_buffer.isEmpty())
-            throw std::runtime_error("No data in buffer");
-
         try
         {
-            // TODO : Voir si ca vaux la peine de verifier si la data est coherente avec le sizeT
-            //  auto   header = _buffer.peek(sizeof(size_t));
-            //  size_t dataSize;
-            //  memcpy(&dataSize, header.data(), sizeof(size_t));
-
-            // if (dataSize != sizeof(T))
-            //     throw std::runtime_error("Size mismatch for type");
-
             _buffer.pop(sizeof(size_t));
-
             _buffer.popInto(&value, sizeof(T));
-            // std::cout << _buffer.pop(sizeof(size_t)) << std::endl;
         }
         catch (const std::runtime_error& e)
         {
@@ -79,10 +74,38 @@ public:
     int                        popType();
 
     std::vector<unsigned char> getSerializedData() const;
+    std::string                valueToString() const;
+
+    template <typename T>
+    void insertValue(T& value) const
+    {
+        try
+        {
+            auto data = getSerializedData();
+
+            if (data.size() < sizeof(Message::Type) + sizeof(size_t))
+                return;
+
+            size_t offset = sizeof(Message::Type);
+
+            size_t dataSize;
+            memcpy(&dataSize, data.data() + offset, sizeof(size_t));
+            offset += sizeof(size_t);
+
+            if (data.size() < offset + dataSize)
+                return;
+
+            memcpy(&value, data.data() + sizeof(Message::Type) + sizeof(size_t), sizeof(T));
+        }
+        catch (std::runtime_error& e)
+        {
+            throw;
+        }
+    }
 
     Message::Type type() const;
     RingBuffer&   data();
-    bool          isComplet();
+    bool          isComplet() const;
     void          reset();
     void          setMessageFd(int fd)
     {

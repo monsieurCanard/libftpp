@@ -1,5 +1,19 @@
 #include "client.hpp"
 
+Client::Client() : _tmpMsg(0) {}
+
+Client::Client(const std::string& address, const size_t& port) : _tmpMsg(0)
+{
+    try
+    {
+        connect(address, port);
+    }
+    catch (const std::runtime_error& e)
+    {
+        throw;
+    }
+}
+
 void Client::error(std::string&& errorMsg)
 {
     disconnect();
@@ -12,28 +26,29 @@ void Client::connect(const std::string& address, const size_t& port)
 {
     if (_fd)
         close(_fd);
+
     _fd = ::socket(AF_INET, SOCK_STREAM, 0);
     if (_fd < 0)
-    {
-        throw std::runtime_error("Cannot create socket");
-    }
+        return error("Cannot create socket");
+
     sockaddr_in sockaddr;
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_port   = htons(port);
 
-    // Convertion de l'adresse IP (Obligatoire)
     if (inet_pton(AF_INET, address.c_str(), &sockaddr.sin_addr) <= 0)
-        error("Adresse Ip invalid !");
+        return error("Adresse Ip invalid !");
+
     if (::connect(_fd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
-    {
-        error("Cannot connect to socket: ");
-    }
+        return error("Cannot connect to socket: ");
 }
 
 void Client::disconnect()
 {
-    shutdown(_fd, SHUT_RDWR);
-    close(_fd);
+    if (_fd > 0)
+    {
+        shutdown(_fd, SHUT_RDWR);
+        close(_fd);
+    }
     _fd = 0;
 }
 
@@ -52,13 +67,13 @@ void Client::send(const Message& message)
     }
     catch (std::runtime_error& e)
     {
-        std::cerr << "SEND ERROR" << std::endl;
+        throw;
     }
 }
 
 void Client::receiveMessage()
 {
-    char buffRead[16000];
+    char buffRead[MAX_READ_BUFFER];
     int  bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
     if (bytes == 0)
     {
@@ -70,8 +85,9 @@ void Client::receiveMessage()
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return;
 
-        error("Cannot receive message");
+        error("Cannot receive message: ");
     }
+
     try
     {
         _tmpMsg.data().pushInto(buffRead, bytes);
@@ -103,18 +119,20 @@ void Client::update()
             FD_SET(_fd, &_readyRead);
 
             timeval timeout = {0, 10000}; // Pour que le select soit non bloquant
-            int     ready   = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
+
+            int ready = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
             if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
                 break;
+
             receiveMessage();
         }
+
         for (auto& msg : _msgs)
         {
-            std::cout << "Message recu go traiter" << std::endl;
-            int  type = msg.type();
-            auto it   = _triggers.find(type);
-            if (it == _triggers.end()) // Maybe Throw Exception
+            auto it = _triggers.find(msg.type());
+            if (it == _triggers.end())
                 continue;
+
             for (auto& funct : it->second)
                 funct(msg);
         }
@@ -122,6 +140,6 @@ void Client::update()
     }
     catch (std::runtime_error& e)
     {
-        std::cerr << "UPDATE CLIENT ERROR" << std::endl;
+        throw;
     }
 }

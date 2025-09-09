@@ -1,22 +1,5 @@
 #include "server.hpp"
 
-void Server::stop()
-{
-    _running = false;
-    for (auto& pair : _clients)
-    {
-        close(pair.second);
-        FD_CLR(pair.second, &_active);
-    }
-    _clients.clear();
-    if (_socket >= 0)
-    {
-        FD_CLR(_socket, &_active);
-        close(_socket);
-        _socket = -1;
-    }
-}
-
 void Server::start(const size_t& port)
 {
     _socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,14 +29,26 @@ void Server::start(const size_t& port)
         throw std::runtime_error("Failed to listen on socket. errno: " + std::to_string(errno));
     }
 
-    _running = true;
-
     while (_running)
     {
+
         _readyRead = _readyWrite = _active;
         timeval timeout          = {0, 10000}; // Pour que le select soit non bloquant
-        if (select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, &timeout) <= 0)
+        int     select_result    = select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, &timeout);
+
+        if (select_result < 0)
+        {
+            if (errno == EBADF || errno == EINTR)
+            {
+                std::cout << "Select interrupted, stopping server..." << std::endl;
+                break;
+            }
             continue;
+        }
+
+        if (select_result == 0)
+            continue;
+
         for (int fd = 0; fd <= _max_fd; fd++)
         {
             if (!FD_ISSET(fd, &_readyRead))
@@ -65,46 +60,62 @@ void Server::start(const size_t& port)
             }
             if (!receiveClientMsg(fd))
             {
-                close(fd);
-                FD_CLR(fd, &_active);
+                auto clientIt = _clients.find(fd);
+                if (clientIt != _clients.end())
+                {
+                    clearClient(fd, clientIt->second);
+                }
+                _partialMsgs.erase(fd);
             }
         }
         update();
     }
+    stop();
 }
 
 void Server::acceptNewConnection()
 {
     int connfd = accept(_socket, 0, 0);
-    std::cout << "Nw connection " << std::endl;
     if (connfd < 0)
         return;
+
+    if (_clients.size() >= NB_CONNECTION)
+    {
+        std::cerr << "Max connections reached, closing new connection" << std::endl;
+        close(connfd);
+        return;
+    }
+
     if (_max_fd < connfd)
         _max_fd = connfd;
+
     FD_SET(connfd, &_active);
-    _clients[connfd] = _next_id++;
+    _clients[connfd]       = _next_id;
+    _clientsToFd[_next_id] = connfd;
+    _next_id++;
 }
 
 bool Server::receiveClientMsg(const int& fd)
 {
+
     if (!FD_ISSET(fd, &_readyRead))
-        return false; // Maybe throw something
+        return false;
+
     char buffRead[16000];
     int  bytes = recv(fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
-    std::cout << " Message recu " << std::endl;
+
     if (bytes == 0)
-    {
-        // disconnect();
         return false;
-    }
+
     if (bytes == -1)
     {
         // Gérer le cas où il n'y a pas assez de données
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return true; // Pas assez de données, on reviendra plus tard
-                         // error("Cannot receive message");
+
         return false;
     }
+
     _partialMsgs[fd].data().pushInto(buffRead, bytes);
 
     while (_partialMsgs[fd].isComplet())
@@ -126,23 +137,22 @@ void Server::sendTo(const Message& message, long long clientID)
 {
     try
     {
-        int sendFd = -1;
-        for (auto& [fd, id] : _clients)
-        {
-            if (id == clientID)
-                sendFd = fd;
-        }
-        if (sendFd == -1)
+        auto fdIt = _clientsToFd.find(clientID);
+        if (fdIt == _clientsToFd.end())
+            return;
+
+        if (!FD_ISSET(fdIt->second, &_active))
             return;
 
         const auto& data = message.getSerializedData();
         if (data.empty())
             return;
 
-        ssize_t bytes_sent = send(sendFd, data.data(), data.size(), 0);
+        ssize_t bytes_sent = send(fdIt->second, data.data(), data.size(), 0);
         if (bytes_sent == -1)
         {
-            // Gérer l'erreur d'envoi
+            clearClient(fdIt->second, clientID);
+
             std::cerr << "Failed to send message to client " << clientID << std::endl;
         }
     }
@@ -156,21 +166,16 @@ void Server::sendToArray(const Message& message, std::vector<long long> clientID
 {
     for (auto& id : clientIDs)
     {
-        if (FD_ISSET(_clients[id], &_active))
-        {
-            sendTo(message, id);
-        }
+        sendTo(message, id);
     }
 }
 
 void Server::sendToAll(const Message& message)
 {
-    for (auto& [id, fd] : _clients)
+
+    for (auto& [fd, clientId] : _clients)
     {
-        if (FD_ISSET(fd, &_active))
-        {
-            sendTo(message, id);
-        }
+        sendTo(message, clientId);
     }
 }
 
@@ -196,4 +201,55 @@ void Server::update()
         long long clientId = it2->second;
         it->second(clientId, _msgs[i]);
     }
+    _msgs.clear();
+}
+
+void Server::clearAll()
+{
+    _clients.clear();
+    _clientsToFd.clear();
+    _partialMsgs.clear();
+    _msgs.clear();
+    FD_ZERO(&_active);
+}
+
+void Server::clearClient(int& fd, long long& clientId)
+{
+    if (_clients.find(fd) == _clients.end())
+    {
+        return;
+    }
+
+    if (fd > 2) // Sécurité contre les fd système
+    {
+        close(fd);
+        FD_CLR(fd, &_active);
+    }
+
+    _clients.erase(fd);
+    _clientsToFd.erase(clientId);
+    _partialMsgs.erase(fd);
+}
+
+void Server::stop()
+{
+    _running = false;
+    if (_socket >= 0)
+    {
+        close(_socket);
+        _socket = -1;
+    }
+
+    for (auto& [fd, clientId] : _clients)
+    {
+        if (fd <= 2)
+        {
+            continue;
+        }
+
+        close(fd);
+        FD_CLR(fd, &_active);
+    }
+
+    clearAll();
 }

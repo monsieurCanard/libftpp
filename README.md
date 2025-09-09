@@ -114,14 +114,193 @@ Système de **sérialisation/désérialisation** utilisant les streams C++ pour 
 **Fonctionnalités :**
 - Sérialisation via `reinterpret_cast<unsigned int*>` pour copier les octets
 - Désérialisation via `memcpy` pour restaurer les données
-- Compatible avec tous les types de streams (`file`, `stringstream`, etc.)
 
-**Types de streams supportés :**
-- `std::istream` : flux en lecture
-- `std::ostream` : flux en écriture
-- `std::iostream` : flux lecture + écriture
-- `std::ifstream/ofstream` : fichiers
-- `std::stringstream` : flux en mémoire
+
+## 🧵 Programmation concurrente
+
+### 🔄 Condition Variables
+
+Les **condition variables** (`std::condition_variable`) permettent la synchronisation entre threads en bloquant un thread jusqu'à ce qu'une condition soit remplie.
+
+**Principe :**
+Une condition variable est toujours associée à un mutex et permet à un thread d'attendre qu'un autre thread signale un changement d'état.
+
+**Utilisation typique :**
+```cpp
+std::mutex mtx;
+std::condition_variable cv;
+bool ready = false;
+
+// Thread producteur
+{
+    std::lock_guard<std::mutex> lock(mtx);
+    ready = true;
+}
+cv.notify_one(); // Réveille un thread en attente
+
+// Thread consommateur  
+{
+    std::unique_lock<std::mutex> lock(mtx);
+    cv.wait(lock, [] { return ready; }); // Attend que ready soit true
+}
+```
+
+**Méthodes principales :**
+- `wait(lock, predicate)` : Bloque jusqu'à ce que le prédicat soit vrai
+- `notify_one()` : Réveille un thread en attente
+- `notify_all()` : Réveille tous les threads en attente
+
+**Pattern Worker Pool :**
+```cpp
+// Condition pour réveiller les workers
+cv.wait(lock, [this] { return stop || !jobs.empty(); });
+// Se réveille quand il y a du travail OU qu'on demande l'arrêt
+```
+
+### 🏭 WorkerPool
+
+Un **WorkerPool** est un pattern de concurrence qui maintient un groupe de threads workers qui exécutent des tâches à partir d'une queue partagée.
+
+**Architecture :**
+- **Queue de jobs** : `std::queue<std::function<void()>>`
+- **Workers** : `std::vector<std::thread>` qui exécutent la boucle principale
+- **Synchronisation** : `std::mutex` + `std::condition_variable`
+
+**Fonctionnement :**
+```cpp
+WorkerPool pool(4); // 4 threads workers
+pool.addJob([]() { 
+    // Votre tâche ici
+    processData(); 
+});
+// Le destructeur attend que tous les jobs se terminent
+```
+
+**Avantages :**
+- Évite la création/destruction répétée de threads
+- Contrôle du niveau de parallélisme
+- Distribution automatique des tâches
+- Gestion propre de l'arrêt
+
+**Pattern de boucle worker :**
+```cpp
+void WorkerPool::loop() {
+    while (!_stop) {
+        std::function<void()> job;
+        {
+            std::unique_lock<std::mutex> lock(_mtx);
+            _cv.wait(lock, [this] { return _stop || !_jobs.empty(); });
+            
+            if (_stop || _jobs.empty()) break;
+            
+            job = _jobs.front();
+            _jobs.pop();
+        }
+        job(); // Exécution hors du lock
+    }
+}
+```
+
+## 🌐 Architecture réseau
+
+### 📨 Message
+
+Classe pour la communication réseau structurée utilisant un protocole de messaging personnalisé.
+
+**Format de transfert :**
+```
+[Type (int)][Taille (size_t)][Données (variable)]
+```
+
+**Caractéristiques :**
+- **Sérialisation automatique** : Operators `<<` et `>>` pour tous types
+- **RingBuffer interne** : Stockage efficace des données  
+- **Type safety** : Chaque message a un type pour le dispatch
+- **Gestion des strings** : Spécialisations pour `std::string`
+
+**Utilisation :**
+```cpp
+Message msg(MESSAGE_LOGIN);
+msg << userId << username << password;
+
+// Côté réception
+int userId;
+string username, password;  
+msg >> userId >> username >> password;
+```
+
+**API principale :**
+- `operator<<(const T&)` : Ajout de données typées
+- `operator>>(T&)` : Extraction de données typées  
+- `getSerializedData()` : Données complètes pour transmission
+- `isComplet()` : Vérification de l'intégrité du message
+
+### 🖥️ Server
+
+Serveur TCP multi-clients utilisant `select()` pour la gestion asynchrone des connexions.
+
+**Architecture :**
+- **Sockets POSIX** : API système pour les communications TCP
+- **select()** : Multiplexage I/O pour gérer plusieurs clients
+- **Callbacks** : Actions définissables par type de message
+- **Gestion d'état** : Tracking des connexions et messages partiels
+
+**Fonctionnalités :**
+```cpp
+Server server;
+server.start(8080);
+
+// Définir une action pour un type de message
+server.defineAction(MSG_CHAT, [](long long clientId, const Message& msg) {
+    std::string content;
+    msg >> content;
+    // Broadcast à tous les clients
+    server.sendToAll(createChatMessage(content));
+});
+
+server.update(); // Traite les événements réseau
+```
+
+**Limitations :**
+- **Non thread-safe** : Utilisation mono-thread uniquement
+- **Connexions limitées** : Maximum `NB_CONNECTION` (256) clients
+- **Buffer fixe** : `READ_BUFFER_SIZE` (4096) octets par lecture
+
+### 💻 Client  
+
+Client TCP utilisant les mêmes primitives que le serveur pour la communication.
+
+**Fonctionnalités :**
+- **Connexion simple** : `connect(address, port)`
+- **Messaging** : Envoi/réception de messages structurés
+- **Callbacks** : Actions sur réception de messages
+- **Gestion d'état** : Reconstruction des messages fragmentés
+
+**Utilisation :**
+```cpp
+Client client("127.0.0.1", 8080);
+
+client.defineAction(MSG_WELCOME, [](const Message& msg) {
+    std::string welcome;
+    msg >> welcome;
+    std::cout << welcome << std::endl;
+});
+
+Message loginMsg(MSG_LOGIN);
+loginMsg << "username" << "password";
+client.send(loginMsg);
+
+client.update(); // Traite les messages entrants
+```
+
+**Pattern d'utilisation typique :**
+```cpp
+while (running) {
+    client.update();           // Traite les messages entrants
+    handleInputEvents();       // Interface utilisateur
+    std::this_thread::sleep_for(16ms); // ~60 FPS
+}
+```
 
 ## 🎨 Details - Design Patterns (✅ = implémentés)
 

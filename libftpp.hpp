@@ -27,4 +27,9 @@
 #include "src/thread/threading.hpp"
 #include "src/thread/worker_pool/worker_pool.hpp"
 
+// Mathematic
+#include "src/mathematics/IVector2/ivector2.hpp"
+#include "src/mathematics/IVector3/ivector3.hpp"
+#include "src/mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.hpp"
+
 #endif

@@ -33,4 +33,7 @@
 #include "src/mathematics/perlin_noise/perlin_noise.hpp"
 #include "src/mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.hpp"
 
+// Bonus
+#include "src/bonus/chronometre/chronometre.hpp"
+
 #endif

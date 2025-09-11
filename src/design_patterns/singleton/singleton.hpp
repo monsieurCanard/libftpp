@@ -9,6 +9,8 @@ class Singleton
 {
 private:
     static std::unique_ptr<TType> _instance;
+    // Singleton(const Singleton& other)            = delete;
+    // Singleton& operator=(const Singleton& other) = delete;
 
 public:
     TType* instance()

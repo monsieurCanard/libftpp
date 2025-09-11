@@ -1,6 +1,7 @@
 #ifndef PERSISTENT_WORKER_HPP
 #define PERSISTENT_WORKER_HPP
 
+#include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <stack>
@@ -20,6 +21,7 @@ class PersistentWorker
 {
 private:
     std::mutex                                             _mtx;
+    std::condition_variable                                _cv;
     std::unordered_map<std::string, std::function<void()>> _tasks;
     bool                                                   _running = true;
     std::thread                                            _thread;

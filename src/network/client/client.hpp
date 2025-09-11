@@ -37,6 +37,7 @@ private:
 
     void error(std::string&& errorMessage);
     void receiveMessage();
+    bool isConnected() const;
 
 public:
     Client();

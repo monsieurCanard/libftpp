@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#define NB_CONNECTION    256
+#define NB_CONNECTION    50
 #define READ_BUFFER_SIZE 4096
 
 #include "libftpp.hpp"

@@ -8,6 +8,15 @@ void Server::start(const size_t& port)
         throw std::runtime_error("Cannot create socket");
     }
 
+    int opt = 1;
+    if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        std::cerr << "setsockopt(SO_REUSEADDR) failed: " << strerror(errno) << " (" << errno
+                  << ")\n";
+        close(_socket);
+        return;
+    }
+
     sockaddr_in sockaddr;
     sockaddr.sin_family      = AF_INET;
     sockaddr.sin_addr.s_addr = INADDR_ANY;

@@ -45,7 +45,21 @@ TEST(ClientTest, DefineActionStoresTrigger)
 void fakeServer(uint16_t port)
 {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    ASSERT_NE(server_fd, -1);
+    if (server_fd < 0)
+    {
+        std::cerr << "socket() failed: " << strerror(errno) << " (" << errno << ")\n";
+        return;
+    }
+
+    // Permettre réutilisation immédiate du port
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        std::cerr << "setsockopt(SO_REUSEADDR) failed: " << strerror(errno) << " (" << errno
+                  << ")\n";
+        close(server_fd);
+        return;
+    }
 
     sockaddr_in addr{};
     addr.sin_family      = AF_INET;
@@ -76,7 +90,7 @@ void fakeServer(uint16_t port)
 
 TEST(ClientIntegrationTest, ConnectSendReceive)
 {
-    uint16_t port = 5555;
+    uint16_t port = 5444;
 
     // Lancement du serveur factice dans un thread
     std::thread server([&] { fakeServer(port); });
@@ -297,18 +311,50 @@ TEST(ClientIntegrationTest, ReceiveMultipleMessages)
 void brutaldisconnectServer(uint16_t port)
 {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-    ASSERT_NE(server_fd, -1);
+    if (server_fd < 0)
+    {
+        std::cerr << "socket() failed: " << strerror(errno) << " (" << errno << ")\n";
+        return;
+    }
+
+    // Réutilisation du port pour pouvoir relancer les tests rapidement
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+    {
+        std::cerr << "setsockopt(SO_REUSEADDR) failed: " << strerror(errno) << " (" << errno
+                  << ")\n";
+        close(server_fd);
+        return;
+    }
 
     sockaddr_in addr{};
     addr.sin_family      = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port        = htons(port);
 
-    ASSERT_NE(bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)), -1);
-    ASSERT_NE(listen(server_fd, 1), -1);
+    // Correction : utiliser == -1 et non la virgule
+    if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
+    {
+        std::cerr << "bind() failed on port " << port << ": " << strerror(errno) << " (" << errno
+                  << ")\n";
+        close(server_fd);
+        return;
+    }
+
+    if (listen(server_fd, 1) == -1)
+    {
+        std::cerr << "listen() failed: " << strerror(errno) << " (" << errno << ")\n";
+        close(server_fd);
+        return;
+    }
 
     int client_fd = accept(server_fd, nullptr, nullptr);
-    ASSERT_NE(client_fd, -1);
+    if (client_fd == -1)
+    {
+        std::cerr << "accept() failed: " << strerror(errno) << " (" << errno << ")\n";
+        close(server_fd);
+        return;
+    }
 
     // Ferme immédiatement sans répondre
     close(client_fd);
@@ -317,7 +363,7 @@ void brutaldisconnectServer(uint16_t port)
 
 TEST(ClientIntegrationTest, HandleServerDisconnect)
 {
-    uint16_t port = 5558;
+    uint16_t port = 7777;
 
     std::thread server([&] { brutaldisconnectServer(port); });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

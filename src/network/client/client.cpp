@@ -46,7 +46,12 @@ void Client::disconnect()
 {
     if (_fd > 0)
     {
-        shutdown(_fd, SHUT_RDWR);
+        struct linger lg;
+        lg.l_onoff  = 1;
+        lg.l_linger = 0;
+        setsockopt(_fd, SOL_SOCKET, SO_LINGER, &lg, sizeof(lg));
+
+        // shutdown(_fd, SHUT_RDWR);
         close(_fd);
     }
     _fd = 0;
@@ -71,8 +76,19 @@ void Client::send(const Message& message)
     }
 }
 
+bool Client::isConnected() const
+{
+    if (_fd <= 0)
+        return false;
+
+    int       error = 0;
+    socklen_t len   = sizeof(error);
+    return (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &error, &len) == 0 && error == 0);
+}
+
 void Client::receiveMessage()
 {
+
     char buffRead[MAX_READ_BUFFER];
     int  bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
     if (bytes == 0)
@@ -84,6 +100,16 @@ void Client::receiveMessage()
     {
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return;
+
+        // Déconnexions réseau (ne pas lever d'exception)
+        if (errno == ENOTCONN ||   // Transport endpoint is not connected
+            errno == ECONNRESET || // Connection reset by peer
+            errno == EPIPE ||      // Broken pipe
+            errno == EBADF)        // Bad file descriptor
+        {
+            disconnect();
+            return;
+        }
 
         error("Cannot receive message: ");
     }
@@ -113,6 +139,8 @@ void Client::update()
 {
     try
     {
+        if (!isConnected())
+            return;
         while (_fd > 0)
         {
             FD_ZERO(&_readyRead);

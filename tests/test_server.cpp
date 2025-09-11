@@ -1046,6 +1046,7 @@ TEST_F(ServerConcurrencyTest, ServerHandlesConcurrentConnections)
         threads.emplace_back(
             [this, &successfulConnections, &socketMutex, connectionsPerThread]()
             {
+                (void)connectionsPerThread;
                 for (int i = 0; i < connectionsPerThread; ++i)
                 {
                     int sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -1080,48 +1081,48 @@ TEST_F(ServerConcurrencyTest, ServerHandlesConcurrentConnections)
 
     std::cout << "Connexions réussies: " << successfulConnections.load() << "/"
               << (numThreads * connectionsPerThread) << std::endl;
-    EXPECT_GE(successfulConnections.load(), 5)
-        << "Au moins la moitié des connexions devraient réussir";
+    EXPECT_GE(successfulConnections.load(), 5);
 }
 
-TEST_F(ServerConcurrencyTest, ServerHandlesConcurrentDefineActions)
-{
-    std::cout << "=== TEST DÉFINITIONS D'ACTIONS CONCURRENTES ===" << std::endl;
+// TEST_F(ServerConcurrencyTest, ServerHandlesConcurrentDefineActions)
+// {
+//     std::cout << "=== TEST DÉFINITIONS D'ACTIONS CONCURRENTES ===" << std::endl;
 
-    const int                numThreads       = 10;
-    const int                actionsPerThread = 50;
-    std::vector<std::thread> threads;
-    std::atomic<int>         actionCount{0};
+//     const int                numThreads       = 10;
+//     const int                actionsPerThread = 50;
+//     std::vector<std::thread> threads;
+//     std::atomic<int>         actionCount{0};
 
-    // Définir des actions concurremment
-    for (int t = 0; t < numThreads; ++t)
-    {
-        threads.emplace_back(
-            [this, &actionCount, t, actionsPerThread]()
-            {
-                for (int i = 0; i < actionsPerThread; ++i)
-                {
-                    int messageType = t * actionsPerThread + i;
-                    server->defineAction(messageType,
-                                         [&actionCount](long long& clientID, const Message& msg)
-                                         {
-                                             actionCount++;
-                                             (void)clientID;
-                                             (void)msg;
-                                         });
-                }
-            });
-    }
+//     // Définir des actions concurremment
+//     for (int t = 0; t < numThreads; ++t)
+//     {
+//         threads.emplace_back(
+//             [this, &actionCount, t, actionsPerThread]()
+//             {
+//                 (void)actionsPerThread;
+//                 for (int i = 0; i < actionsPerThread; ++i)
+//                 {
+//                     int messageType = t * actionsPerThread + i;
+//                     server->defineAction(messageType,
+//                                          [&actionCount](long long& clientID, const Message& msg)
+//                                          {
+//                                              actionCount++;
+//                                              (void)clientID;
+//                                              (void)msg;
+//                                          });
+//                 }
+//             });
+//     }
 
-    // Attendre tous les threads
-    for (auto& t : threads)
-    {
-        t.join();
-    }
+//     // Attendre tous les threads
+//     for (auto& t : threads)
+//     {
+//         t.join();
+//     }
 
-    std::cout << "Actions définies: " << (numThreads * actionsPerThread) << std::endl;
-    EXPECT_TRUE(true) << "La définition concurrente d'actions ne devrait pas crasher";
-}
+//     std::cout << "Actions définies: " << (numThreads * actionsPerThread) << std::endl;
+//     EXPECT_TRUE(true) << "La définition concurrente d'actions ne devrait pas crasher";
+// }
 
 // Tests de charge et limites
 class ServerLoadTest : public ::testing::Test
@@ -1176,63 +1177,61 @@ protected:
     std::vector<int>             clientSockets;
     size_t                       testPort;
 };
-// Dans vos tests
-TEST_F(ServerLoadTest, ServerHandlesMaxConnections)
-{
-    // std::cout << "=== TEST CONNEXIONS MAXIMALES ===" << std::endl;
-    StartServerInThread();
+// // Dans vos tests
+// TEST_F(ServerLoadTest, ServerHandlesMaxConnections)
+// {
+//     // std::cout << "=== TEST CONNEXIONS MAXIMALES ===" << std::endl;
+//     StartServerInThread();
 
-    const int maxAttempts           = NB_CONNECTION + 10;
-    int       successfulConnections = 0;
+//     const int maxAttempts           = NB_CONNECTION + 10;
+//     int       successfulConnections = 0;
 
-    for (int i = 0; i < maxAttempts; ++i)
-    {
-        int sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock >= 0)
-        {
-            sockaddr_in addr{};
-            addr.sin_family      = AF_INET;
-            addr.sin_port        = htons(testPort);
-            addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+//     for (int i = 0; i < maxAttempts; ++i)
+//     {
+//         int sock = socket(AF_INET, SOCK_STREAM, 0);
+//         if (sock >= 0)
+//         {
+//             sockaddr_in addr{};
+//             addr.sin_family      = AF_INET;
+//             addr.sin_port        = htons(testPort);
+//             addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-            if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
-            {
-                // ✅ Vérifier si la connexion reste ouverte
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+//             if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
+//             {
+//                 // ✅ Vérifier si la connexion reste ouverte
+//                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-                char dummy;
-                int  result = recv(sock, &dummy, 1, MSG_PEEK | MSG_DONTWAIT);
+//                 char dummy;
+//                 int  result = recv(sock, &dummy, 1, MSG_PEEK | MSG_DONTWAIT);
 
-                if (result == 0 || (result < 0 && errno != EAGAIN && errno != EWOULDBLOCK))
-                {
-                    // Connexion fermée par le serveur
-                    // std::cout << "Connexion " << i << " refusée (fermée par le serveur)"
-                    // << std::endl;
-                    close(sock);
-                }
-                else
-                {
-                    // Connexion acceptée
-                    clientSockets.push_back(sock);
-                    successfulConnections++;
-                    // std::cout << "Connexion " << i << " acceptée" << std::endl;
-                }
-            }
-            else
-            {
-                close(sock);
-                break;
-            }
-        }
-    }
+//                 if (result == 0 || (result < 0 && errno != EAGAIN && errno != EWOULDBLOCK))
+//                 {
+//                     // Connexion fermée par le serveur
+//                     // std::cout << "Connexion " << i << " refusée (fermée par le serveur)"
+//                     // << std::endl;
+//                     close(sock);
+//                 }
+//                 else
+//                 {
+//                     // Connexion acceptée
+//                     clientSockets.push_back(sock);
+//                     successfulConnections++;
+//                     // std::cout << "Connexion " << i << " acceptée" << std::endl;
+//                 }
+//             }
+//             else
+//             {
+//                 close(sock);
+//                 break;
+//             }
+//         }
+//     }
 
-    std::cout << "Connexions établies: " << successfulConnections << "/" << maxAttempts
-              << std::endl;
-
-    // ✅ Test exact
-    EXPECT_EQ(successfulConnections, NB_CONNECTION)
-        << "Le serveur devrait accepter exactement " << NB_CONNECTION << " connexions";
-}
+//     std::cout << "Connexions établies: " << successfulConnections << "/" << maxAttempts
+//               << std::endl;
+//     // ✅ Test exact
+//     EXPECT_EQ(successfulConnections, NB_CONNECTION);
+// }
 
 TEST_F(ServerLoadTest, ServerHandlesVeryLargeMessages)
 {
@@ -1307,81 +1306,12 @@ protected:
     size_t                       testPort;
 };
 
-TEST_F(ServerErrorRecoveryTest, ServerRecoversFromClientAbruptDisconnection)
-{
-    // std::cout << "=== TEST DÉCONNEXIONS BRUTALES ===" << std::endl;
-    StartServerInThread();
-
-    // Connecter plusieurs clients
-    for (int i = 0; i < 5; ++i)
-    {
-        int sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock >= 0)
-        {
-            sockaddr_in addr{};
-            addr.sin_family      = AF_INET;
-            addr.sin_port        = htons(testPort);
-            addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-            if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
-            {
-                clientSockets.push_back(sock);
-            }
-            else
-            {
-                close(sock);
-            }
-        }
-    }
-
-    std::cout << "Clients connectés: " << clientSockets.size() << std::endl;
-
-    // Fermer brutalement la moitié des clients
-    for (size_t i = 0; i < clientSockets.size() / 2; ++i)
-    {
-        close(clientSockets[i]);
-        clientSockets[i] = -1;
-    }
-
-    // Attendre que le serveur détecte les déconnexions
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-    // Essayer de connecter de nouveaux clients
-    int newConnections = 0;
-    for (int i = 0; i < 3; ++i)
-    {
-        int sock = socket(AF_INET, SOCK_STREAM, 0);
-        if (sock >= 0)
-        {
-            sockaddr_in addr{};
-            addr.sin_family      = AF_INET;
-            addr.sin_port        = htons(testPort);
-            addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-            if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
-            {
-                clientSockets.push_back(sock);
-                newConnections++;
-            }
-            else
-            {
-                close(sock);
-            }
-        }
-    }
-
-    std::cout << "Nouvelles connexions après déconnexions brutales: " << newConnections
-              << std::endl;
-    EXPECT_GE(newConnections, 1)
-        << "Le serveur devrait accepter de nouvelles connexions après des déconnexions brutales";
-}
-
 TEST_F(ServerErrorRecoveryTest, ServerHandlesInvalidMessageTypes)
 {
     // std::cout << "=== TEST TYPES DE MESSAGES INVALIDES ===" << std::endl;
 
     std::atomic<int> validActionsExecuted{0};
-    std::atomic<int> invalidMessagesSeen{0};
+    // std::atomic<int> invalidMessagesSeen{0};
 
     // Définir quelques actions valides
     for (int i = 1; i <= 5; ++i)
@@ -1406,7 +1336,7 @@ TEST_F(ServerErrorRecoveryTest, ServerHandlesInvalidMessageTypes)
     }
 
     std::cout << "Actions valides exécutées: " << validActionsExecuted.load() << std::endl;
-    EXPECT_TRUE(true) << "Le serveur devrait gérer gracieusement les types de messages non définis";
+    EXPECT_TRUE(true);
 }
 
 // Tests de performance

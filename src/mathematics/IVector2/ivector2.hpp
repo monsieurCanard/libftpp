@@ -2,8 +2,8 @@
 #define IVECTOR2_HPP
 
 #include <cmath>
+#include <stdexcept>
 
-// Debattre sur l'utilite du fichier cpp
 template <typename TType>
 struct IVector2
 {

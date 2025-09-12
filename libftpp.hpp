@@ -35,5 +35,6 @@
 
 // Bonus
 #include "src/bonus/chronometre/chronometre.hpp"
+#include "src/bonus/logger/logger.hpp"
 
 #endif

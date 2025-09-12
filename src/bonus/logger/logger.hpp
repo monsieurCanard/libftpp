@@ -1,49 +1,61 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <cerrno>
+#include <chrono>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <mutex>
 #include <string>
 
 #include "../../thread/thread_safe_iostream/thread_safe_iostream.hpp"
 
-enum class logLevel
+enum class LogLevel
 {
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    CRITICAL
+    DEBUG   = 0,
+    INFO    = 1,
+    WARNING = 2,
+    ERROR   = 3
 };
-
+/*
+ * @brief Logger class for logging messages to console and file with different log levels.
+ * This class is implemented as a singleton to ensure a single instance throughout the application.
+ * @note Thread safety is ensured for console output and file output
+ * @note You must call setOutputFile before logging to file, if you didn't provide a filename a
+ * timestamped one will be generated
+ */
 class Logger
 {
 private:
-    logLevel    _currentLevel = logLevel::DEBUG;
-    std::string _logFilenamePrefix;
+    LogLevel    _currentLevel = LogLevel::DEBUG;
+    std::string _logFilename;
+    std::string _outputFilePath;
 
+    std::mutex         _fileMutex;
     ThreadSafeIOStream _writer;
-    std::ofstream      logFile;
+    std::ofstream      _logFile;
+
+    std::string getCurrentTime() const;
+    std::string logLevelToString(LogLevel level) const;
 
 public:
-    bool _outputConsole = false;
+    Logger();
+    ~Logger();
 
-    static Logger& instance()
-    {
-        static Logger instance;
-        return instance;
-    }
+    static Logger& instance();
 
-    void setLogLevel(logLevel level)
-    {
-        _currentLevel = level;
-    }
+    void setLogLevel(LogLevel level);
+    void setOutputFile(const std::string& filename);
 
-    void setOuputFile(const std::string& filename)
-    {
-        auto cwd = std::filesystem::current_path();
-    }
+    const std::string getOutputPathFile() const;
 
-    void log(logLevel level, const std::string& message) {}
+    void log(LogLevel level, const std::string& message);
+    void logConsole(LogLevel level, const std::string& message);
 };
+
 #endif

@@ -8,9 +8,9 @@
 #include <string>
 #include <vector>
 
-#include "../ring_buffer/ring_buffer.hpp"
+#include "../../bonus/ring_buffer/ring_buffer.hpp"
 
-/*
+/**
  * @brief Classe représentant un message structuré pour la communication réseau
  * @note Utilise un RingBuffer pour stocker les données du message
  * @note Le format de transfert du message est le suivant : [type (int)][taille (size_t)][données

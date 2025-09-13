@@ -7,7 +7,7 @@
 #include <iostream>
 #include <vector>
 
-/*
+/**
  * @brief A simple data buffer for serialization and deserialization.
  * @note This class doesn't handle Data Structures like vectors or maps.
  */

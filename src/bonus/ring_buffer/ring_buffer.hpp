@@ -9,7 +9,7 @@
 
 #define MAX_BUFFER_SIZE 65550 // 16 KB
 
-/*
+/**
  * @brief Classe de buffer circulaire (ring buffer) pour la gestion efficace des flux de données
  * @note Utilise un tableau circulaire pour stocker les données
  * @note Limité par la taille maximale définie (MAX_BUFFER_SIZE)

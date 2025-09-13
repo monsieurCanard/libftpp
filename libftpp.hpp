@@ -16,7 +16,6 @@
 // Network
 #include "src/network/client/client.hpp"
 #include "src/network/message/message.hpp"
-#include "src/network/ring_buffer/ring_buffer.hpp"
 #include "src/network/server/server.hpp"
 
 // Threading
@@ -36,7 +35,9 @@
 // Bonus
 #include "src/bonus/chronometre/chronometre.hpp"
 #include "src/bonus/logger/logger.hpp"
-#include "src/bonus/observable_value/observable_value.hpp"
+#include "src/bonus/n_ary_tree/n_ary_tree.hpp"
 #include "src/bonus/observable_value/IObserver/IObserver.hpp"
+#include "src/bonus/observable_value/observable_value.hpp"
+#include "src/bonus/ring_buffer/ring_buffer.hpp"
 
 #endif

@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
-/*
+/**
  * @brief Memento Design Pattern
  * @warning You must implement _saveToSnapshot and _loadFromSnapshot
  *

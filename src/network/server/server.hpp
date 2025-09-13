@@ -14,9 +14,9 @@
 #define NB_CONNECTION    50
 #define READ_BUFFER_SIZE 4096
 
-#include "libftpp.hpp"
+#include "../message/message.hpp"
 
-/*
+/**
  * @brief Classe serveur TCP basique utilisant des sockets POSIX et select()
  * @note Gère les connexions, déconnexions, envois et réceptions de messages
  * @note Utilise la classe Message pour le format des messages

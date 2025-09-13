@@ -17,7 +17,7 @@
 
 #include "../message/message.hpp"
 
-/*
+/**
  * @brief Classe client TCP basique utilisant des sockets POSIX et select()
  * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (MAX_READ_BUFFER)
  *

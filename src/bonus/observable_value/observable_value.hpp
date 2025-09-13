@@ -6,7 +6,7 @@
 
 #include "IObserver/IObserver.hpp"
 
-/*
+/**
  * @brief ObservableValue class template that implements the Observer design pattern.
  *        It allows observers to subscribe and be notified when the value changes.
  *
@@ -21,12 +21,6 @@ private:
     TType                       _value;
     std::set<IObserver<TType>*> _subscriber;
 
-public:
-    ObservableValue(TType value)
-    {
-        _value = std::move(value);
-    }
-
     void notify() const
     {
         for (auto* observer : _subscriber)
@@ -34,6 +28,20 @@ public:
             if (observer)
                 observer->update(_value);
         }
+    }
+
+public:
+    ObservableValue(TType value)
+    {
+        _value = std::move(value);
+    }
+
+    ObservableValue& operator=(const TType& newValue)
+    {
+        if (newValue != _value)
+            set(newValue);
+
+        return *this;
     }
 
     void subscribe(IObserver<TType>* observer)

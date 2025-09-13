@@ -13,7 +13,7 @@ Pool<TType>::~Pool()
 #endif
 }
 
-/*
+/**
  * @brief Resize the pool to contain n objects
  * @warning If n is less than the current size, objects will be lost
  * @param numberOfObjectStored Number of objects to allocate

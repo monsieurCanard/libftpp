@@ -10,7 +10,7 @@
 #include <unordered_map>
 
 #define PAUSE_BT_TASK 0 // ms
-/*
+/**
  * @brief thread persistant qui exécute des tâches en boucle
  * @note Permet d'ajouter/supprimer des tâches dynamiquement
  * @note Possibilite de mettre en pause entre chaque tâche (PAUSE_BT_TASK)

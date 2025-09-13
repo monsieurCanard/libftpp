@@ -36,5 +36,7 @@
 // Bonus
 #include "src/bonus/chronometre/chronometre.hpp"
 #include "src/bonus/logger/logger.hpp"
+#include "src/bonus/observable_value/observable_value.hpp"
+#include "src/bonus/observable_value/IObserver/IObserver.hpp"
 
 #endif

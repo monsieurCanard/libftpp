@@ -7,7 +7,7 @@ Memento::Snapshot Memento::save()
     return snap;
 }
 
-void Memento::Snapshot::reset()
+void Memento::Snapshot::reset() const
 {
     _cursor = 0;
 }
@@ -33,7 +33,9 @@ Memento::Snapshot& Memento::Snapshot::operator>>(std::string& value)
     *this >> size;
     if (size + _cursor > _buffer.size())
         throw std::runtime_error("Read out of Buffer !");
+
     value.assign(_buffer.begin() + _cursor, _buffer.begin() + _cursor + size);
+
     _cursor += size;
     return *this;
 }

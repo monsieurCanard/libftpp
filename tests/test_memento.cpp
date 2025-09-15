@@ -40,32 +40,18 @@ private:
 
     void _saveToSnapshot(Memento::Snapshot& snapshot) const override
     {
-        snapshot << _a << _b;
-        size_t len = _s.size();
-        snapshot << len;
-        for (char c : _s)
-            snapshot << c;
+        snapshot << _a << _b << _s; // Utilisation de l'opérateur
     }
 
     void _loadFromSnapshot(const Memento::Snapshot& snapshot) override
     {
-        Memento::Snapshot copy = snapshot; // on bosse sur une copie car snapshot avance le curseur
-        copy >> _a >> _b;
-        size_t len;
-        copy >> len;
-        _s.clear();
-        for (size_t i = 0; i < len; i++)
-        {
-            char c;
-            copy >> c;
-            _s.push_back(c);
-        }
+        snapshot >> _a >> _b >> _s;
+        snapshot.reset();
+        // Note: On remet le curseur a 0 pour eventuellement relire les memes donnees
+        //  Sinon on considere que les donnees du snapshot sont consommees
+        //  Aussi possible de faire une copie locale du snapshot et de lire dedans
     }
 };
-
-// ========================
-// Tests unitaires GTest
-// ========================
 
 TEST(MementoTest, SaveAndLoadRestoresState)
 {
@@ -98,5 +84,5 @@ TEST(MementoTest, SnapshotThrowsOnReadOutOfBounds)
     Memento::Snapshot snap;
     int               val = 0;
     // Pas de données dans le snapshot → exception attendue
-    EXPECT_THROW(snap >> val, std::runtime_error);
+    EXPECT_THROW(snap >> val, std::out_of_range);
 }

@@ -21,15 +21,16 @@ public:
 
     void notify(const TEvent& event)
     {
+        // We can also use auto to simplify the code
+        // auto it = _events.find(event);
+
+        // Note: On doit typename les iterators dans les templates
         typename std::unordered_map<TEvent, std::vector<std::function<void()>>>::iterator it =
             _events.find(event);
 
-        // We can also use auto to simplify the code
-        // auto it = _events.find(event);
         if (it == _events.end())
-        {
-            throw std::runtime_error("No event found");
-        }
+            throw std::out_of_range("Event not found, cannot notify.");
+
         for (const auto& funct : it->second)
             funct();
     }

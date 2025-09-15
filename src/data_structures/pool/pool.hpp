@@ -26,17 +26,16 @@ class Pool
         friend class Pool<TType>;
 
     private:
-        Pool<TType>*                                                       _pool_ptr;
-        size_t                                                             _idx;
-        typename std::aligned_storage<sizeof(TType), alignof(TType)>::type _myself;
-
-    public:
-        Object();
-        ~Object();
+        Pool<TType>*                                          _pool_ptr;
+        size_t                                                _idx;
+        std::aligned_storage_t<sizeof(TType), alignof(TType)> _myself;
 
         template <typename... TArgs>
         Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args);
 
+    public:
+        ~Object();
+        Object();
         TType* operator->();
         TType* get();
     };
@@ -46,16 +45,12 @@ private:
     std::stack<size_t>  _available;
 
 public:
-    Pool();
-    ~Pool();
+    Pool()  = default;
+    ~Pool() = default;
 
     /**
-
      * @brief Pre-allocates memory for a given number of objects.
      * @param numberOfObjectStored Number of objects to pre-allocate.
-     * @see acquire()
-     * @see release()
-
      */
     void resize(const size_t& numberOfObjectStored);
 
@@ -70,25 +65,16 @@ public:
      * @param p_args Arguments forwarded to TType's constructor.
      * @return A Pool::Object wrapper containing the allocated TType.
      *
-     * @see release()
-
+     * @throw std::out_of_range if no objects are available in the pool.
      * */
     template <typename... TArgs>
     Object acquire(TArgs&&... p_args);
 
     /**
-
      * @brief Releases an object back into the pool.
-     *
      * Destroys the contained TType object and return its slot to the available Stack.
-     *
-     * @param obj Pool::Object to release.
-     * @see acquire()
-
      */
     void release(Object& obj);
-
-    void setAvailable(size_t& idx);
 };
 
 #include "pool.tpp"

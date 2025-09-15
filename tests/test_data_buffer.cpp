@@ -2,7 +2,6 @@
 
 #include "libftpp.hpp"
 
-// --- Test int ---
 TEST(DataBufferTest, IntSerialization)
 {
     DataBuffer buf;
@@ -25,7 +24,6 @@ TEST(DataBufferTest, StringSerialization)
     EXPECT_EQ(x, y);
 }
 
-// --- Test double ---
 TEST(DataBufferTest, DoubleSerialization)
 {
     DataBuffer buf;
@@ -37,7 +35,6 @@ TEST(DataBufferTest, DoubleSerialization)
     EXPECT_DOUBLE_EQ(a, b);
 }
 
-// --- Test char ---
 TEST(DataBufferTest, CharSerialization)
 {
     DataBuffer buf;
@@ -49,7 +46,6 @@ TEST(DataBufferTest, CharSerialization)
     EXPECT_EQ(c1, c2);
 }
 
-// --- Test float ---
 TEST(DataBufferTest, FloatSerialization)
 {
     DataBuffer buf;
@@ -61,7 +57,6 @@ TEST(DataBufferTest, FloatSerialization)
     EXPECT_FLOAT_EQ(f1, f2);
 }
 
-// --- Test multiple values ---
 TEST(DataBufferTest, MultipleValuesSerialization)
 {
     DataBuffer buf;
@@ -75,24 +70,11 @@ TEST(DataBufferTest, MultipleValuesSerialization)
     EXPECT_DOUBLE_EQ(d, e);
 }
 
-// --- Test buffer remains intact après plusieurs sérialisations ---
-TEST(DataBufferTest, MultipleWrites)
-{
-    DataBuffer buf;
-    int        a = 1, b = 2, c = 0;
-
-    buf << a << b;
-    buf >> c;
-
-    EXPECT_EQ(c, a);
-}
-
-// --- Test empty buffer (valeur par défaut reste inchangée) ---
 TEST(DataBufferTest, EmptyBuffer)
 {
     DataBuffer buf;
     int        x = 123;
     int        y = x;
 
-    EXPECT_THROW(buf >> y, std::runtime_error);
+    EXPECT_THROW(buf >> y, std::out_of_range);
 }

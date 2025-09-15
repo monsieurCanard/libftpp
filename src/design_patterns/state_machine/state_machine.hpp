@@ -1,11 +1,8 @@
 #ifndef STATE_MACHINE_HPP
 #define STATE_MACHINE_HPP
 
-#include <stdio.h>
-
 #include <functional>
 #include <map>
-#include <set>
 #include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
@@ -16,8 +13,8 @@ class StateMachine
 private:
     TState                                                     _currentS;
     std::unordered_set<TState>                                 _states;
-    std::map<std::pair<TState, TState>, std::function<void()>> _transitions;
     std::unordered_map<TState, std::function<void()>>          _actions;
+    std::map<std::pair<TState, TState>, std::function<void()>> _transitions;
 
 public:
     void addState(const TState& state)
@@ -35,7 +32,7 @@ public:
     {
         if (_states.find(startState) == _states.end() || _states.find(startState) == _states.end())
         {
-            throw std::runtime_error("Invalid State");
+            throw std::invalid_argument("Invalid State");
         }
         _transitions[std::make_pair(startState, finalState)] = lambda;
     }
@@ -49,14 +46,15 @@ public:
     {
         auto it = _transitions.find(std::make_pair(_currentS, state));
 
-        (it == _transitions.end()) ? throw std::runtime_error("No transition found") : it->second();
+        (it == _transitions.end()) ? throw std::invalid_argument("No transition found")
+                                   : it->second();
         _currentS = state;
     }
 
     void update()
     {
         auto it = _actions.find(_currentS);
-        (it == _actions.end()) ? throw std::runtime_error("No action found") : it->second();
+        (it == _actions.end()) ? throw std::invalid_argument("No action found") : it->second();
     }
 };
 #endif

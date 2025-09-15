@@ -639,6 +639,46 @@ new (ptr) T(args...);  // Placement new
 - Containers personnalisés
 - Éviter les allocations dynamiques
 
+### Default Noexcept Delete
+Indique qu'une fonction ne lance pas d'exception, permettant des optimisations.
+
+```cpp
+void func() noexcept; // Garantie de ne pas lancer d'exception
+```
+
+Pour les constructeurs/destructeurs qui ne font rien dedans on peut les indiquer ` = default `
+
+```cpp
+class MyClass {
+public:
+    MyClass() = default; // Constructeur par défaut sans exception
+    ~MyClass() = default; // Destructeur par défaut sans exception
+};
+```
+Pour les constructeurs/destructeurs, `noexcept` est souvent implicite.
+
+Si une methode ne doit jamais etre possible on peut aussi place r `= delete`
+
+```cpp
+class NonCopyable {
+public:
+    NonCopyable(const NonCopyable&) = delete; // Interdit la copie
+    NonCopyable& operator=(const NonCopyable&) = delete; // Interdit la copie
+};
+```
+### Liste des exceptions des plus courantes
+```
+std::exception
+├── std::logic_error
+│   ├── std::invalid_argument
+│   ├── std::domain_error
+│   ├── std::length_error
+│   └── std::out_of_range
+└── std::runtime_error
+    ├── std::range_error
+    ├── std::overflow_error
+    └── std::underflow_error
+````
 
 ## 🧪 Tests
 

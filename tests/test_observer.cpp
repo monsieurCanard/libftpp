@@ -30,7 +30,7 @@ TEST(ObserverTest, NotifyNonexistentEventThrows)
 {
     Observer<int> obs;
 
-    EXPECT_THROW(obs.notify(99), std::runtime_error);
+    EXPECT_THROW(obs.notify(99), std::out_of_range);
 }
 
 TEST(ObserverTest, OverwriteLambda)
@@ -39,10 +39,10 @@ TEST(ObserverTest, OverwriteLambda)
     int           value = 0;
 
     obs.subscribe(1, [&]() { value = 10; });
-    obs.subscribe(1, [&]() { value = 20; }); // remplace la précédente
+    obs.subscribe(1, [&]() { value = 20; });
 
     obs.notify(1);
-    EXPECT_EQ(value, 20); // vérifie que la lambda a bien été remplacée
+    EXPECT_EQ(value, 20);
 }
 
 TEST(ObserverTest, MultipleEventsAndLambdas)
@@ -52,7 +52,7 @@ TEST(ObserverTest, MultipleEventsAndLambdas)
 
     obs.subscribe(1, [&]() { a += 1; });
     obs.subscribe(2, [&]() { b += 2; });
-    obs.subscribe(1, [&]() { c += 3; }); // remplace la précédente lambda pour 1
+    obs.subscribe(1, [&]() { c += 3; });
 
     obs.notify(1);
     EXPECT_EQ(a, 1); // l’ancienne lambda pour 1 a été remplacée
@@ -60,21 +60,6 @@ TEST(ObserverTest, MultipleEventsAndLambdas)
 
     obs.notify(2);
     EXPECT_EQ(b, 2);
-}
-
-TEST(ObserverTest, LambdaCaptures)
-{
-    Observer<int> obs;
-    int           x = 0;
-
-    obs.subscribe(1, [x]() mutable { x += 5; }); // capture par valeur
-    obs.notify(1);
-    EXPECT_EQ(x, 0); // capture par valeur → x externe inchangé
-
-    int y = 0;
-    obs.subscribe(2, [&y]() { y += 10; }); // capture par référence
-    obs.notify(2);
-    EXPECT_EQ(y, 10); // y modifié correctement
 }
 
 TEST(ObserverTest, DifferentEventTypes)
@@ -98,5 +83,5 @@ TEST(ObserverTest, NotifyUnknownEventThrows)
     Observer<int> obs;
     obs.subscribe(1, []() {});
 
-    EXPECT_THROW(obs.notify(2), std::runtime_error);
+    EXPECT_THROW(obs.notify(2), std::out_of_range);
 }

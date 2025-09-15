@@ -8,9 +8,11 @@ template <typename TType>
 class Singleton
 {
 private:
-    static std::unique_ptr<TType> _instance;
-    // Singleton(const Singleton& other)            = delete;
-    // Singleton& operator=(const Singleton& other) = delete;
+    //
+    // Note : Utiliser inline pour éviter les erreurs de linkage
+    // quand ce header est inclus dans plusieurs fichiers .cpp
+    //
+    static inline std::unique_ptr<TType> _instance = nullptr;
 
 public:
     TType* instance()
@@ -25,7 +27,7 @@ public:
     void instantiate(TArgs... p_args)
     {
         if (_instance != nullptr)
-            throw std::runtime_error("Double Instantiate !");
+            throw std::runtime_error("Instance already exists.");
 
         _instance = std::make_unique<TType>((p_args)...);
     }
@@ -35,8 +37,5 @@ public:
         _instance = nullptr;
     }
 };
-
-template <typename TType>
-std::unique_ptr<TType> Singleton<TType>::_instance = nullptr;
 
 #endif

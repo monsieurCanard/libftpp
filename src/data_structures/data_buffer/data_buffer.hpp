@@ -8,8 +8,10 @@
 #include <vector>
 
 /**
- * @brief A simple data buffer for serialization and deserialization.
- * @note This class doesn't handle Data Structures like vectors or maps.
+ * @brief A simple data buffer for serialization and deserialization for simple data types and
+ * std::string.
+ *
+ * @throw std::out_of_range Thrown when trying to read more data than available in the buffer.
  */
 class DataBuffer
 {
@@ -19,9 +21,13 @@ private:
 
 public:
     DataBuffer();
-    ~DataBuffer();
+    ~DataBuffer() = default;
 
     void reset();
+    void clear();
+
+    DataBuffer& operator<<(const std::string& value);
+    DataBuffer& operator>>(std::string& value);
 
     // Serialization
     template <typename T>
@@ -37,15 +43,12 @@ public:
     DataBuffer& operator>>(T& value)
     {
         if (sizeof(T) + _cursor > _buffer.size())
-            throw std::runtime_error("Read out of Buffer !");
+            throw std::out_of_range("Buffer overflow on read");
 
         memcpy(&value, _buffer.data() + _cursor, sizeof(T));
         _cursor += sizeof(T);
         return *this;
     }
-
-    DataBuffer& operator<<(const std::string& value);
-    DataBuffer& operator>>(std::string& value);
 };
 
 #endif

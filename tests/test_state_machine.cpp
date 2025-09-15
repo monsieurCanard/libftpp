@@ -10,11 +10,6 @@ enum class TestState
     Stopped
 };
 
-// Si la StateMachine initialise l'état courant au premier état ajouté,
-// ces tests supposent ce comportement (c'est la manière la plus logique).
-// Les tests vérifient les effets observables (lambdas appelées) plutôt
-// qu'un accès direct à l'état interne.
-
 TEST(StateMachineTest, AddStateAndActionExecutesOnUpdate)
 {
     StateMachine<TestState> sm;
@@ -23,8 +18,6 @@ TEST(StateMachineTest, AddStateAndActionExecutesOnUpdate)
     bool actionCalled = false;
     sm.addAction(TestState::Idle, [&]() { actionCalled = true; });
 
-    // Si la machine initialise l'état courant au premier état ajouté,
-    // update() doit appeler l'action de Idle.
     EXPECT_NO_THROW(sm.update());
     EXPECT_TRUE(actionCalled);
 }
@@ -56,7 +49,7 @@ TEST(StateMachineTest, TransitionWithoutConfiguredLambdaThrows)
     sm.addState(TestState::Running);
 
     // Pas de transition définie entre Idle et Running : doit lancer
-    EXPECT_THROW(sm.transitionTo(TestState::Running), std::runtime_error);
+    EXPECT_THROW(sm.transitionTo(TestState::Running), std::invalid_argument);
 }
 
 TEST(StateMachineTest, UpdateWithoutActionThrows)
@@ -65,7 +58,7 @@ TEST(StateMachineTest, UpdateWithoutActionThrows)
     sm.addState(TestState::Idle);
 
     // Aucune action définie pour l'état courant (Idle) → update doit jeter
-    EXPECT_THROW(sm.update(), std::runtime_error);
+    EXPECT_THROW(sm.update(), std::invalid_argument);
 }
 
 TEST(StateMachineTest, MultipleTransitionsAndActionsSequence)
@@ -108,5 +101,5 @@ TEST(StateMachineTest, TransitionToUnknownStateThrows)
 
     // On tente de transitionTo vers un état qui n'a pas été ajouté → comportement
     // attendu : lancer une exception (implémentation doit vérifier validité)
-    EXPECT_THROW(sm.transitionTo(TestState::Running), std::runtime_error);
+    EXPECT_THROW(sm.transitionTo(TestState::Running), std::invalid_argument);
 }

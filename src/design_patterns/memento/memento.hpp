@@ -20,7 +20,9 @@ public:
     {
     private:
         std::vector<unsigned char> _buffer;
-        size_t                     _cursor = 0;
+
+        // Mutable car modifié même dans les méthodes const
+        mutable size_t _cursor = 0;
 
     public:
         template <typename T>
@@ -33,10 +35,10 @@ public:
 
         // LECTURE
         template <typename T>
-        Snapshot& operator>>(T& value)
+        Snapshot operator>>(T& value) const
         {
             if (sizeof(T) + _cursor > _buffer.size())
-                throw std::runtime_error("Read out of Buffer !");
+                throw std::out_of_range("Buffer overflow on read");
 
             memcpy(&value, _buffer.data() + _cursor, sizeof(T));
             _cursor += sizeof(T);
@@ -46,7 +48,7 @@ public:
         Snapshot& operator<<(const std::string& value);
         Snapshot& operator>>(std::string& value);
 
-        void reset();
+        void reset() const;
     };
 
     Snapshot save();

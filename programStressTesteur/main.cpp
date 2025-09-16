@@ -17,7 +17,7 @@ int main(void)
                                         [](const Message& msg)
                                         {
                                             std::string value;
-                                            value = msg.valueToString();
+                                            value = msg.messageToString();
                                             std::cout << "Received: " << value << std::endl;
                                         });
         }

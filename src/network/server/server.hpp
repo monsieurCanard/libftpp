@@ -40,19 +40,19 @@ private:
     fd_set _readyRead;
     fd_set _readyWrite;
 
-    std::unordered_map<Message::Type, std::function<void(long long& clientID, const Message& msg)>>
-                                       _tasks;
     std::unordered_map<int, long long> _clients;
     std::unordered_map<long long, int> _clientsToFd;
+    std::unordered_map<Message::Type, std::function<void(long long& clientID, const Message& msg)>>
+        _tasks;
 
     std::vector<Message>             _msgs;
     std::unordered_map<int, Message> _partialMsgs;
 
-    void acceptNewConnection();
-    bool receiveClientMsg(const int& fd);
+    void _acceptNewConnection();
+    bool _receiveClientMsg(const int& fd);
 
-    void clearAll();
-    void clearClient(int& fd, long long& clientId);
+    void _clearAll();
+    void _clearClient(int& fd, long long& clientId);
 
 public:
     void start(const size_t& port);
@@ -63,6 +63,7 @@ public:
     void sendTo(const Message& message, long long clientID);
     void sendToArray(const Message& message, std::vector<long long> clientIDs);
     void sendToAll(const Message& message);
+
     void update();
     void stop();
 };

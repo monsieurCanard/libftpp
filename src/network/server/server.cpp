@@ -2,20 +2,10 @@
 
 void Server::start(const size_t& port)
 {
+
     _socket = socket(AF_INET, SOCK_STREAM, 0);
     if (_socket < 0)
-    {
         throw std::runtime_error("Cannot create socket");
-    }
-
-    // int opt = 1;
-    // if (setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-    // {
-    //     std::cerr << "setsockopt(SO_REUSEADDR) failed: " << strerror(errno) << " (" << errno
-    //               << ")\n";
-    //     close(_socket);
-    //     return;
-    // }
 
     sockaddr_in sockaddr;
     sockaddr.sin_family      = AF_INET;
@@ -64,15 +54,15 @@ void Server::start(const size_t& port)
                 continue;
             if (fd == _socket)
             {
-                acceptNewConnection();
+                _acceptNewConnection();
                 continue;
             }
-            if (!receiveClientMsg(fd))
+            if (!_receiveClientMsg(fd))
             {
                 auto clientIt = _clients.find(fd);
                 if (clientIt != _clients.end())
                 {
-                    clearClient(fd, clientIt->second);
+                    _clearClient(fd, clientIt->second);
                 }
                 _partialMsgs.erase(fd);
             }
@@ -82,7 +72,7 @@ void Server::start(const size_t& port)
     stop();
 }
 
-void Server::acceptNewConnection()
+void Server::_acceptNewConnection()
 {
     int connfd = accept(_socket, 0, 0);
     if (connfd < 0)
@@ -104,13 +94,13 @@ void Server::acceptNewConnection()
     _next_id++;
 }
 
-bool Server::receiveClientMsg(const int& fd)
+bool Server::_receiveClientMsg(const int& fd)
 {
 
     if (!FD_ISSET(fd, &_readyRead))
         return false;
 
-    char buffRead[16000];
+    char buffRead[READ_BUFFER_SIZE];
     int  bytes = recv(fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
 
     if (bytes == 0)
@@ -119,10 +109,7 @@ bool Server::receiveClientMsg(const int& fd)
     if (bytes == -1)
     {
         // Gérer le cas où il n'y a pas assez de données
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            return true; // Pas assez de données, on reviendra plus tard
-
-        return false;
+        return (errno == EAGAIN || errno == EWOULDBLOCK);
     }
 
     _partialMsgs[fd].data().pushInto(buffRead, bytes);
@@ -160,7 +147,7 @@ void Server::sendTo(const Message& message, long long clientID)
         ssize_t bytes_sent = send(fdIt->second, data.data(), data.size(), 0);
         if (bytes_sent == -1)
         {
-            clearClient(fdIt->second, clientID);
+            _clearClient(fdIt->second, clientID);
 
             std::cerr << "Failed to send message to client " << clientID << std::endl;
         }
@@ -213,7 +200,7 @@ void Server::update()
     _msgs.clear();
 }
 
-void Server::clearAll()
+void Server::_clearAll()
 {
     _clients.clear();
     _clientsToFd.clear();
@@ -222,7 +209,7 @@ void Server::clearAll()
     FD_ZERO(&_active);
 }
 
-void Server::clearClient(int& fd, long long& clientId)
+void Server::_clearClient(int& fd, long long& clientId)
 {
     if (_clients.find(fd) == _clients.end())
     {
@@ -260,5 +247,5 @@ void Server::stop()
         FD_CLR(fd, &_active);
     }
 
-    clearAll();
+    _clearAll();
 }

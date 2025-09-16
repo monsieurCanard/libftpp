@@ -19,7 +19,7 @@ TEST(MessageTest, WriteAndReadInt)
     msg << valueIn;
     msg.reset();
 
-    EXPECT_THROW(msg >> valueOut, std::runtime_error);
+    EXPECT_THROW(msg >> valueOut, std::out_of_range);
 }
 
 TEST(MessageTest, WriteAndReadFloat)
@@ -57,7 +57,7 @@ TEST(MessageTest, OutOfBoundsThrows)
             msg.reset();
             msg >> big;
         },
-        std::runtime_error);
+        std::out_of_range);
 }
 
 TEST(MessageTest, ResetWorks)

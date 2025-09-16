@@ -8,7 +8,7 @@
 class PerlinNoise
 {
 private:
-    int seedGlobal = 29874789; // Chiffre choisie aleatoirement
+    int _seedGlobal = 29874789; // Chiffre choisie aleatoirement
 
 public:
     float           linearInterpolation(float a, float b, float t);

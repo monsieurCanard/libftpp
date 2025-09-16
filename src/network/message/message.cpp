@@ -10,7 +10,7 @@ Message& Message::operator<<(const std::string& value)
         _buffer.pushInto(&size, sizeof(size_t));
         _buffer.pushInto(value.c_str(), size);
     }
-    catch (const std::runtime_error& e)
+    catch (const std::out_of_range& e)
     {
         throw;
     }
@@ -29,14 +29,14 @@ Message& Message::operator>>(std::string& value)
 
         value = std::string(temp.data());
     }
-    catch (const std::runtime_error& e)
+    catch (const std::out_of_range& e)
     {
         throw;
     }
     return *this;
 }
 
-std::string Message::valueToString() const
+std::string Message::messageToString() const
 {
     try
     {
@@ -58,7 +58,7 @@ std::string Message::valueToString() const
 
         return result;
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         std::cerr << e.what() << std::endl;
         return "";
@@ -77,7 +77,7 @@ bool Message::isComplet() const
 
         return (_buffer.size() >= sizeof(int) + sizeof(size_t) + messageSize);
     }
-    catch (const std::runtime_error& e)
+    catch (const std::out_of_range& e)
     {
         throw;
     }
@@ -100,7 +100,7 @@ std::vector<unsigned char> Message::getSerializedData() const
 
         return result;
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         throw;
     }
@@ -118,7 +118,7 @@ std::vector<unsigned char> Message::popData()
         memcpy(&messageSize, header.data(), sizeof(size_t));
         return _buffer.pop(sizeof(size_t) + messageSize);
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         throw;
     }
@@ -135,7 +135,7 @@ int Message::popType()
         memcpy(&type, header.data(), sizeof(int));
         return type;
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         throw;
     }

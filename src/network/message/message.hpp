@@ -27,13 +27,14 @@ public:
     using Type = int;
 
 private:
-    RingBuffer _buffer;
-    Type       _type;
     int        _fd;
+    Type       _type;
+    RingBuffer _buffer;
 
 public:
     Message(Type type);
-    Message() {}
+    Message() : _fd(-1), _type(0) {}
+
     void setType(Message::Type type);
 
     template <typename T>
@@ -44,7 +45,7 @@ public:
             _buffer.pop(sizeof(size_t));
             _buffer.popInto(&value, sizeof(T));
         }
-        catch (const std::runtime_error& e)
+        catch (const std::out_of_range& e)
         {
             throw;
         }
@@ -60,7 +61,7 @@ public:
             _buffer.pushInto(&size, sizeof(size_t));
             _buffer.pushInto(&value, sizeof(T));
         }
-        catch (const std::runtime_error& e)
+        catch (const std::out_of_range& e)
         {
             throw;
         }
@@ -74,7 +75,7 @@ public:
     int                        popType();
 
     std::vector<unsigned char> getSerializedData() const;
-    std::string                valueToString() const;
+    std::string                messageToString() const;
 
     template <typename T>
     void insertValue(T& value) const
@@ -97,7 +98,7 @@ public:
 
             memcpy(&value, data.data() + sizeof(Message::Type) + sizeof(size_t), sizeof(T));
         }
-        catch (std::runtime_error& e)
+        catch (std::out_of_range& e)
         {
             throw;
         }

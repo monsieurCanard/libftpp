@@ -14,6 +14,7 @@ private:
 public:
     Random2DCoordinateGenerator();
     Random2DCoordinateGenerator(long long seed);
+
     long long seed();
     long long operator()(const long long& x, const long long& y);
 };

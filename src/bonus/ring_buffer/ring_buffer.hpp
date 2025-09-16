@@ -14,16 +14,16 @@
  * @note Utilise un tableau circulaire pour stocker les données
  * @note Limité par la taille maximale définie (MAX_BUFFER_SIZE)
  *
- * @exception Lance des runtime_error en cas d'erreur
+ * @throw Lance des out_of_range en cas d'erreur
  *
  */
 class RingBuffer
 {
 private:
     std::vector<unsigned char> _buffer;
-    size_t                     _tail = 0;
-    size_t                     _head = 0;
-    size_t                     _size = 0; // Bytes actuellement ecrient sur le buffer
+    size_t                     _head;
+    size_t                     _tail;
+    size_t                     _size;
 
 public:
     RingBuffer();
@@ -38,10 +38,10 @@ public:
     std::vector<unsigned char> pop(const size_t& size);
     void                       popInto(void* data, const size_t& size);
 
-    unsigned char peek() const;
-
+    unsigned char              peek() const;
     std::vector<unsigned char> peek(const size_t& size) const;
-    void                       clear();
+
+    void clear();
 
     bool   isEmpty() const;
     bool   isFull() const;

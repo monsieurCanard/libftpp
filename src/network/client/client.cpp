@@ -1,8 +1,8 @@
 #include "client.hpp"
 
-Client::Client() : _tmpMsg(0) {}
+Client::Client() : _tmpMsg(), _fd(-1) {}
 
-Client::Client(const std::string& address, const size_t& port) : _tmpMsg(0)
+Client::Client(const std::string& address, const size_t& port) : _tmpMsg(), _fd(-1)
 {
     try
     {
@@ -14,7 +14,7 @@ Client::Client(const std::string& address, const size_t& port) : _tmpMsg(0)
     }
 }
 
-void Client::error(std::string&& errorMsg)
+void Client::_networkError(std::string&& errorMsg)
 {
     disconnect();
     errorMsg += strerror(errno);
@@ -25,36 +25,31 @@ void Client::error(std::string&& errorMsg)
 void Client::connect(const std::string& address, const size_t& port)
 {
     if (_fd)
-        close(_fd);
+        disconnect();
 
     _fd = ::socket(AF_INET, SOCK_STREAM, 0);
     if (_fd < 0)
-        return error("Cannot create socket");
+        return _networkError("Cannot create socket");
 
     sockaddr_in sockaddr;
     sockaddr.sin_family = AF_INET;
     sockaddr.sin_port   = htons(port);
 
     if (inet_pton(AF_INET, address.c_str(), &sockaddr.sin_addr) <= 0)
-        return error("Adresse Ip invalid !");
+        return _networkError("Adresse Ip invalid !");
 
     if (::connect(_fd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
-        return error("Cannot connect to socket: ");
+        return _networkError("Cannot connect to socket: ");
 }
 
 void Client::disconnect()
 {
     if (_fd > 0)
     {
-        struct linger lg;
-        lg.l_onoff  = 1;
-        lg.l_linger = 0;
-        setsockopt(_fd, SOL_SOCKET, SO_LINGER, &lg, sizeof(lg));
-
-        // shutdown(_fd, SHUT_RDWR);
+        shutdown(_fd, SHUT_RDWR);
         close(_fd);
     }
-    _fd = 0;
+    _fd = -1;
 }
 
 void Client::defineAction(const Message::Type&                           messageType,
@@ -70,23 +65,25 @@ void Client::send(const Message& message)
         auto data = message.getSerializedData();
         ::send(_fd, data.data(), data.size(), 0);
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         throw;
     }
 }
 
-bool Client::isConnected() const
+bool Client::_isConnected() const
 {
     if (_fd <= 0)
         return false;
 
     int       error = 0;
     socklen_t len   = sizeof(error);
+
+    // Si la socket est fermée, getsockopt va échouer ou renvoyer une erreur
     return (getsockopt(_fd, SOL_SOCKET, SO_ERROR, &error, &len) == 0 && error == 0);
 }
 
-void Client::receiveMessage()
+void Client::_receiveMessage()
 {
 
     char buffRead[MAX_READ_BUFFER];
@@ -98,6 +95,7 @@ void Client::receiveMessage()
     }
     if (bytes == -1)
     {
+        // Pas de données à lire (ne pas lever d'exception)
         if (errno == EAGAIN || errno == EWOULDBLOCK)
             return;
 
@@ -111,7 +109,7 @@ void Client::receiveMessage()
             return;
         }
 
-        error("Cannot receive message: ");
+        _networkError("Cannot receive message: ");
     }
 
     try
@@ -129,7 +127,7 @@ void Client::receiveMessage()
             _tmpMsg.reset();
         }
     }
-    catch (std::runtime_error& e)
+    catch (std::out_of_range& e)
     {
         throw;
     }
@@ -139,7 +137,7 @@ void Client::update()
 {
     try
     {
-        if (!isConnected())
+        if (!_isConnected())
             return;
         while (_fd > 0)
         {
@@ -152,7 +150,7 @@ void Client::update()
             if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
                 break;
 
-            receiveMessage();
+            _receiveMessage();
         }
 
         for (auto& msg : _msgs)
@@ -166,7 +164,7 @@ void Client::update()
         }
         _msgs.clear();
     }
-    catch (std::runtime_error& e)
+    catch (std::exception& e)
     {
         throw;
     }

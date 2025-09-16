@@ -44,7 +44,7 @@ int main()
                            {
                                std::cout << "[CHUCK NORRIS]" << std::endl;
 
-                               //    std::string value = msg.valueToString();
+                               //    std::string value = msg.messageToString();
                                //    if (value.empty())
                                //    {
                                double Tvalue = 0;
@@ -75,7 +75,7 @@ int main()
                              [&](const Message& msg)
                              {
                                  std::cout << "[ANTOINE DANIEL]" << std::endl;
-                                 std::string value = msg.valueToString();
+                                 std::string value = msg.messageToString();
                                  std::cout << value << std::endl;
                                  printAntoine();
                              });

@@ -20,8 +20,10 @@ TEST_F(RingBufferTest, PushPopSingleByte)
 {
     buffer.push(42);
     EXPECT_EQ(buffer.size(), 1u);
+
     unsigned char val = buffer.pop();
     EXPECT_EQ(val, 42);
+    
     EXPECT_TRUE(buffer.isEmpty());
 }
 
@@ -41,7 +43,7 @@ TEST_F(RingBufferTest, PushPopMultipleBytes)
 TEST_F(RingBufferTest, OverflowThrows)
 {
     std::vector<unsigned char> bigData(9, 0xFF); // 9 > 8
-    EXPECT_THROW(buffer.push(bigData), std::runtime_error);
+    EXPECT_THROW(buffer.push(bigData), std::out_of_range);
 }
 
 // Test wrap-around
@@ -80,6 +82,6 @@ TEST_F(RingBufferTest, Clear)
 // Test exception quand pop sur buffer vide
 TEST_F(RingBufferTest, PopEmptyThrows)
 {
-    EXPECT_THROW(buffer.pop(), std::runtime_error);
-    EXPECT_THROW(buffer.pop(1), std::runtime_error);
+    EXPECT_THROW(buffer.pop(), std::out_of_range);
+    EXPECT_THROW(buffer.pop(1), std::out_of_range);
 }

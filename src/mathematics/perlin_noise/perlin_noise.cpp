@@ -7,7 +7,7 @@ float PerlinNoise::linearInterpolation(float a, float b, float t)
 
 IVector2<float> PerlinNoise::gradient(const int& i, const int& j)
 {
-    long long                   hashSeed = i ^ j ^ seedGlobal;
+    long long                   hashSeed = i ^ j ^ _seedGlobal;
     Random2DCoordinateGenerator generator(hashSeed);
 
     long long randVal = generator(i, j);

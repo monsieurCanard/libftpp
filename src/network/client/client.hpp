@@ -21,7 +21,9 @@
  * @brief Classe client TCP basique utilisant des sockets POSIX et select()
  * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (MAX_READ_BUFFER)
  *
- * @exception Lance des runtime_error en cas d'erreur
+ * @throw Lance des std::out_of_range en cas d'erreur de lecture dans un message
+ * @throw Lance des std::runtime_error en cas d'erreur réseau
+ * @throw Relance toutes les exceptions lancées par les callbacks
  *
  */
 class Client
@@ -31,24 +33,25 @@ private:
     std::unordered_map<Message::Type, std::vector<std::function<void(const Message& msg)>>>
         _triggers;
 
-    int     _fd = 0;
-    fd_set  _readyRead;
-    Message _tmpMsg{0};
+    Message _tmpMsg;
+    int     _fd;
 
-    void error(std::string&& errorMessage);
-    void receiveMessage();
-    bool isConnected() const;
+    fd_set _readyRead;
+
+    void _networkError(std::string&& errorMessage);
+    void _receiveMessage();
+    bool _isConnected() const;
 
 public:
     Client();
     Client(const std::string& address, const size_t& port);
 
     void connect(const std::string& address, const size_t& port);
+    void disconnect();
 
     void defineAction(const Message::Type&                           messageType,
                       const std::function<void(const Message& msg)>& action);
 
-    void disconnect();
     void send(const Message& message);
     void update();
 };

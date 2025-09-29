@@ -30,7 +30,7 @@ template <typename TType>
 void Pool<TType>::resize(const size_t& numberOfObjectStored)
 {
     _objects.resize(numberOfObjectStored);
-    for (size_t i = 0; i < numberOfObjectStored; ++i)
+    for (int i = 0; i < static_cast<int>(numberOfObjectStored); ++i)
     {
         _available.push(i);
     }
@@ -52,7 +52,7 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
         throw std::out_of_range(
             "No available objects in the pool. Maybe try to increase its size.");
 
-    size_t i = _available.top();
+    int i = _available.top();
     _available.pop();
 
     return Object(this, i, std::forward<TArgs&&>(p_args)...);

@@ -14,6 +14,17 @@ struct TestStruct
     }
 };
 
+struct TestStructComplex
+{
+    std::string name;
+    int         value;
+    TestStructComplex(const std::string& n, int v) : name(n), value(v) {}
+    void display() const
+    {
+        std::cout << "Name: " << name << ", Value: " << value << std::endl;
+    }
+};
+
 // --- Test acquisition simple ---
 TEST(PoolTest, AcquireSingleInt)
 {
@@ -76,6 +87,18 @@ TEST(PoolTest, AcquireCustomStruct)
     obj->increment();
     EXPECT_EQ(obj->x, 4);
     EXPECT_EQ(obj->y, 5);
+}
+
+TEST(PoolTest, AcquireComplexStruct)
+{
+    Pool<TestStructComplex> pool;
+    pool.resize(2);
+
+    auto obj = pool.acquire("Test", 100);
+    EXPECT_EQ(obj->name, "Test");
+    EXPECT_EQ(obj->value, 100);
+
+    obj->display(); // Just to see it works
 }
 
 // --- Test multiple acquires/releases ---

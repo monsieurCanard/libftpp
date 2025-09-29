@@ -42,7 +42,7 @@ class Pool
 
 private:
     std::vector<Object> _objects;
-    std::stack<size_t>  _available;
+    std::stack<int>     _available;
 
 public:
     Pool()  = default;

@@ -43,7 +43,7 @@ private:
         snapshot << _a << _b << _s; // Utilisation de l'opérateur
     }
 
-    void _loadFromSnapshot(const Memento::Snapshot& snapshot) override
+    void _loadFromSnapshot(Memento::Snapshot& snapshot) override
     {
         snapshot >> _a >> _b >> _s;
         snapshot.reset();

@@ -7,7 +7,7 @@ Memento::Snapshot Memento::save()
     return snap;
 }
 
-void Memento::Snapshot::reset() const
+void Memento::Snapshot::reset()
 {
     _cursor = 0;
 }

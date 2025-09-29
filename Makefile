@@ -1,8 +1,6 @@
 NAME = libftpp.a
 
-CFLAGS = -std=c++11 -Wall -Wextra -Werror -I
-
-# CFLAGS_DEBUG = -std=c++11 -DDEBUG -Wall -Wextra -Werror
+CFLAGS = -std=c++17 -Wall -Wextra -Werror -I
 
 SRCS_DIR = src/
 
@@ -23,7 +21,7 @@ INCLUDE_DIRS = -I$(SRCS_DIR) \
                -I$(THREAD_DIR) \
                -I$(BONUS_DIR)
 
-OBJ_DIR = src/objs/
+OBJ_DIR = objs/
 
 OBJS = $(patsubst $(SRCS_DIR)%.cpp, $(OBJ_DIR)%.o, $(SRCS))
 
@@ -39,6 +37,7 @@ $(OBJ_DIR):
 
 
 $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
+	@mkdir -p $(dir $@)
 	g++ $(CFLAGS) -I$(INCLUDE_DIRS) -c $< -o $@
 	echo "\033[0;34m[✔] Compiled $<\
 	\033[0m"

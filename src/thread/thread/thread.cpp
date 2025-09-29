@@ -1,4 +1,5 @@
 #include "thread.hpp"
+
 Thread::~Thread()
 {
     this->stop();

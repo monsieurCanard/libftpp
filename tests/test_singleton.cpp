@@ -9,6 +9,7 @@
 // Une classe simple pour tester le Singleton
 class MyClass
 {
+    friend class Singleton<MyClass>; // Permet d’accéder aux méthodes privées
 public:
     int         value;
     std::string name;
@@ -27,6 +28,7 @@ public:
 TEST(SingletonTest, InstantiateOnce)
 {
     Singleton<MyClass> s;
+
     EXPECT_NO_THROW(s.instantiate());
     EXPECT_NE(s.instance(), nullptr);
 }

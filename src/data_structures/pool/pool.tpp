@@ -14,11 +14,6 @@ Pool<TType>::Object::~Object()
 {
     if (_pool_ptr != nullptr)
         _pool_ptr->release(*this);
-
-#ifdef DEBUG // Just For 42 Eval
-    if (_pool_ptr != nullptr)
-        std::cout << "Release Object Called" << std::endl;
-#endif
 }
 
 template <typename TType>

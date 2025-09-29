@@ -32,7 +32,6 @@ TEST(Thread_Basic, StopWithoutStartDoesNothing) {
 
 TEST(Thread_Basic, StopMultipleTimesIsSafe) {
     Thread t("SafeStop", []() {
-        // court
     });
 
     t.start();

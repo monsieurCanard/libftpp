@@ -1,4 +1,5 @@
 #include "worker_pool.hpp"
+
 WorkerPool::WorkerPool(const int& nbWorkers)
 {
     _workers.reserve(nbWorkers);
@@ -8,7 +9,7 @@ WorkerPool::WorkerPool(const int& nbWorkers)
         _workers.emplace_back(&WorkerPool::loop, this);
     }
 }
-#include <iostream>
+
 void WorkerPool::loop()
 {
     while (!_stop)
@@ -26,7 +27,6 @@ void WorkerPool::loop()
         }
         try
         {
-
             action();
         }
         catch (...)

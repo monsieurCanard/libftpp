@@ -27,14 +27,14 @@ class Pool
 
     private:
         Pool<TType>*                                          _pool_ptr;
-        size_t                                                _idx;
+        int                                                   _idx;
         std::aligned_storage_t<sizeof(TType), alignof(TType)> _myself;
 
         template <typename... TArgs>
-        Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args);
+        Object(Pool<TType>* pool, int& index, TArgs&&... p_args);
 
     public:
-        ~Object();
+        virtual ~Object();
         Object();
         TType* operator->();
         TType* get();

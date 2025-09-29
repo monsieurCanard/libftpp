@@ -41,6 +41,7 @@ void PersistentWorker::loop()
 
         if (!_running)
             return;
+            
         copy = _tasks;
         lock.unlock();
 

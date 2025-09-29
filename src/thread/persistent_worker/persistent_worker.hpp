@@ -30,7 +30,6 @@ private:
 
 public:
     PersistentWorker();
-
     ~PersistentWorker();
 
     void addTask(const std::string& name, const std::function<void()>& jobToExecute);

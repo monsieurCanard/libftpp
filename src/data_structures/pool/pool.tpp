@@ -3,7 +3,7 @@
 /// --- Implementation of Pool::Object ---
 template <typename TType>
 template <typename... TArgs>
-Pool<TType>::Object::Object(Pool<TType>* pool, size_t& index, TArgs&&... p_args)
+Pool<TType>::Object::Object(Pool<TType>* pool, int& index, TArgs&&... p_args)
     : _pool_ptr(pool), _idx(index)
 {
     new (&_myself) TType(std::forward<TArgs&&>(p_args)...);

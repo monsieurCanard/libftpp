@@ -43,20 +43,11 @@ int main()
                            [&chuckSpeaker](const Message& msg)
                            {
                                std::cout << "[CHUCK NORRIS]" << std::endl;
-
-                               //    std::string value = msg.messageToString();
-                               //    if (value.empty())
-                               //    {
                                double Tvalue = 0;
                                std::cout << Tvalue << std::endl;
 
                                msg.insertValue(Tvalue);
                                std::cout << Tvalue << std::endl;
-                               //    }
-                               //    else
-                               //    {
-                               //        std::cout << value << std::endl;
-                               //    }
                                printChuckNorris(chuckSpeaker);
                            });
         chuck.defineAction(1,

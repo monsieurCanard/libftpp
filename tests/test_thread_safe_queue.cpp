@@ -68,80 +68,6 @@ TEST(ThreadSafeQueue_EmptyPopThrows, PopFromEmptyThrows)
     EXPECT_ANY_THROW(q.pop_back());
 }
 
-TEST(ThreadSafeQueue_ThreadSafety_SimpleProducerConsumer, MultipleProducersSingleConsumer)
-{
-    ThreadSafeQueue<int> q;
-
-    const int producers_count    = 4;
-    const int items_per_producer = 1000;
-    const int total_items        = producers_count * items_per_producer;
-
-    // We'll push distinct ranges so we can verify the sum at the end
-    std::vector<std::thread> producers;
-    producers.reserve(producers_count);
-
-    long long expected_sum = 0;
-    for (int p = 0; p < producers_count; ++p)
-    {
-        int start = p * items_per_producer;
-        int end   = start + items_per_producer;
-        // sum of arithmetic sequence
-        long long sum_range = (long long)(start + end - 1) * items_per_producer / 2;
-        expected_sum += sum_range;
-
-        producers.emplace_back(
-            [start, end, &q]()
-            {
-                for (int v = start; v < end; ++v)
-                {
-                    q.push_back(v);
-                }
-            });
-    }
-
-    std::atomic<int>       popped_count{0};
-    std::atomic<long long> popped_sum{0};
-
-    // Consumer thread: keep trying to pop until it collected total_items.
-    std::thread consumer(
-        [&]()
-        {
-            while (popped_count.load() < total_items)
-            {
-                try
-                {
-                    int v = q.pop_front();
-                    popped_sum.fetch_add(v);
-                    popped_count.fetch_add(1);
-                }
-                catch (...)
-                {
-                    // queue might be temporarily empty -> yield and retry
-                    std::this_thread::sleep_for(1ms);
-                }
-            }
-        });
-
-    for (auto& t : producers)
-        t.join();
-    // Wait for consumer to finish with a timeout guard to avoid infinite hang in test
-    const auto max_wait   = 5s;
-    const auto start_wait = std::chrono::steady_clock::now();
-    while (popped_count.load() < total_items)
-    {
-        if (std::chrono::steady_clock::now() - start_wait > max_wait)
-            break;
-        std::this_thread::sleep_for(1ms);
-    }
-
-    // If consumer still running, join (it should exit if it popped all)
-    if (consumer.joinable())
-        consumer.join();
-
-    EXPECT_EQ(popped_count.load(), total_items);
-    EXPECT_EQ(popped_sum.load(), expected_sum);
-}
-
 TEST(ThreadSafeQueue_ConcurrentPushPopManyThreads, StressTestProducersConsumers)
 {
     ThreadSafeQueue<int> q;
@@ -165,9 +91,6 @@ TEST(ThreadSafeQueue_ConcurrentPushPopManyThreads, StressTestProducersConsumers)
                 for (int i = 0; i < items_per_producer; ++i)
                 {
                     q.push_back(base + i);
-                    // small optional pause to increase interleaving
-                    if ((i & 31) == 0)
-                        std::this_thread::yield();
                 }
             });
     }

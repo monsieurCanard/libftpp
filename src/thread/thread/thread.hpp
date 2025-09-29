@@ -18,6 +18,7 @@ private:
 public:
     Thread(const std::string& name, std::function<void()> funcToExecute);
     ~Thread();
+
     void start();
     void stop();
 };

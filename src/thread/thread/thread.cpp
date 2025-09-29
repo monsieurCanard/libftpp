@@ -23,7 +23,6 @@ void Thread::start()
 
 void Thread::stop()
 {
-
     if (!_t.joinable())
         return;
     _t.join();

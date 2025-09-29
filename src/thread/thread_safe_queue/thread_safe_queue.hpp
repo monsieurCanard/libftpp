@@ -17,6 +17,7 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _queue.push_back(newElement);
     }
+    
     void push_front(const TType& newElement)
     {
         std::lock_guard<std::mutex> lock(_mutex);

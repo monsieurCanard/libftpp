@@ -11,8 +11,9 @@ class Chronometre
 private:
     std::vector<double>                        _timestamps;
     std::chrono::_V2::system_clock::time_point _now;
-    void                                       error();
-    void                                       createTimestamp();
+
+    void error();
+    void createTimestamp();
 
 public:
     void start();
@@ -26,4 +27,5 @@ public:
     double      getTimeSeconds();
     std::string getTimeString();
 };
+
 #endif

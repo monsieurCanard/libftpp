@@ -25,6 +25,7 @@ void WorkerPool::loop()
             action = _jobs.front();
             _jobs.pop();
         }
+
         try
         {
             action();
@@ -63,6 +64,15 @@ void WorkerPool::addJob(const std::function<void()>& jobToExecute)
     {
         std::lock_guard<std::mutex> lock(_mtx);
         _jobs.push(jobToExecute);
+    }
+    _cv.notify_one();
+}
+
+void WorkerPool::addJob(IJobs& jobToExecute)
+{
+    {
+        std::lock_guard<std::mutex> lock(_mtx);
+        _jobs.push([&jobToExecute]() { jobToExecute.start(); });
     }
     _cv.notify_one();
 }

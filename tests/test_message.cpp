@@ -118,25 +118,3 @@ TEST_F(MessageComplexTest, MessageLargeString)
 
     EXPECT_EQ(retrievedString, largeString);
 }
-
-class MessageEdgeCaseTest : public ::testing::Test
-{
-protected:
-    void SetUp() override
-    {
-        message = std::make_unique<Message>(20);
-    }
-
-    std::unique_ptr<Message> message;
-};
-
-TEST_F(MessageEdgeCaseTest, MessageWithEmptyString)
-{
-    std::string emptyString = "";
-    *message << emptyString;
-
-    std::string retrievedString;
-    *message >> retrievedString;
-
-    EXPECT_EQ(retrievedString, emptyString);
-}

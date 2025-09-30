@@ -33,5 +33,6 @@ public:
 
     void loop();
     void addJob(const std::function<void()>& jobToExecute);
+    void addJob(IJobs& jobToExecute);
 };
 #endif

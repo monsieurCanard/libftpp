@@ -7,7 +7,6 @@ Logger::Logger()
 
 const std::string Logger::getOutputPathFile() const
 {
-    std::cout << "Squalal path: " << _outputFilePath + _logFilename + ".log" << std::endl;
     return _outputFilePath + _logFilename + ".log";
 }
 
@@ -80,7 +79,7 @@ std::string Logger::getCurrentTime() const
 
     localtime_r(&clock, &localTime); // Linux / Mac
     std::ostringstream oss;
-    oss << std::put_time(&localTime, "%Y-%m-%d_%H-%M-%S");
+    oss << std::put_time(&localTime, "%Y-%m-%d-%H:%M:%S");
     return oss.str();
 }
 

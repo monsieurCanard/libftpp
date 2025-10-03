@@ -42,8 +42,9 @@ public:
     {
         try
         {
-            _buffer.pop(sizeof(size_t));
-            _buffer.popInto(&value, sizeof(T));
+            size_t size;
+            _buffer.popInto(&size, sizeof(size_t));
+            _buffer.popInto(&value, size);
         }
         catch (const std::out_of_range& e)
         {
@@ -59,7 +60,7 @@ public:
         {
             size_t size = sizeof(T);
             _buffer.pushInto(&size, sizeof(size_t));
-            _buffer.pushInto(&value, sizeof(T));
+            _buffer.pushInto(&value, size);
         }
         catch (const std::out_of_range& e)
         {

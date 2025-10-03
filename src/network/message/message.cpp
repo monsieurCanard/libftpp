@@ -42,10 +42,10 @@ std::string Message::messageToString() const
     {
         auto data = getSerializedData();
 
-        if (data.size() < sizeof(int) + sizeof(size_t))
+        if (data.size() < sizeof(Message::Type) + sizeof(size_t))
             return "";
 
-        size_t offset = sizeof(int);
+        size_t offset = sizeof(Message::Type);
 
         size_t dataSize;
         memcpy(&dataSize, data.data() + offset, sizeof(size_t));
@@ -67,15 +67,15 @@ std::string Message::messageToString() const
 
 bool Message::isComplet() const
 {
-    if (_buffer.size() < sizeof(int) + sizeof(size_t))
+    if (_buffer.size() < sizeof(Message::Type) + sizeof(size_t))
         return false;
     try
     {
-        auto   header = _buffer.peek(sizeof(int) + sizeof(size_t));
+        auto   header = _buffer.peek(sizeof(Message::Type) + sizeof(size_t));
         size_t messageSize;
-        memcpy(&messageSize, header.data() + sizeof(int), sizeof(size_t));
+        memcpy(&messageSize, header.data() + sizeof(Message::Type), sizeof(size_t));
 
-        return (_buffer.size() >= sizeof(int) + sizeof(size_t) + messageSize);
+        return (_buffer.size() >= sizeof(Message::Type) + sizeof(size_t) + messageSize);
     }
     catch (const std::out_of_range& e)
     {
@@ -89,8 +89,8 @@ std::vector<unsigned char> Message::getSerializedData() const
 
     try
     {
-        result.resize(sizeof(int));
-        memcpy(result.data(), &_type, sizeof(int));
+        result.resize(sizeof(Message::Type));
+        memcpy(result.data(), &_type, sizeof(Message::Type));
 
         auto   header = _buffer.peek(sizeof(size_t));
         size_t messageSize;

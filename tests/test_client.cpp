@@ -259,7 +259,7 @@ void multiMessageServer(uint16_t port)
 
 TEST(ClientIntegrationTest, ReceiveMultipleMessages)
 {
-    uint16_t port = 5557;
+    uint16_t port = 6000;
 
     std::thread server([&] { multiMessageServer(port); });
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

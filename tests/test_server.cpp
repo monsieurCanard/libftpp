@@ -443,6 +443,7 @@ TEST_F(ServerMultiClientTest, ServerBasicConnectionTest)
 
     EXPECT_TRUE(true); // Test minimal
 }
+
 TEST_F(ServerMultiClientTest, ServerHandlesMultipleConnections)
 {
     std::cout << "=== DÉBUT TEST CONNEXIONS MULTIPLES ===" << std::endl;
@@ -743,7 +744,7 @@ TEST_F(ServerClientCommunicationTest, ClientSendsMessageToServer)
     client->send(clientMessage);
 
     // Attendre et traiter les messages
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < 200; i++)
     {
         client->update();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));

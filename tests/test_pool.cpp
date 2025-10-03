@@ -19,6 +19,7 @@ struct TestStructComplex
     std::string name;
     int         value;
     TestStructComplex(const std::string& n, int v) : name(n), value(v) {}
+    
     void display() const
     {
         std::cout << "Name: " << name << ", Value: " << value << std::endl;

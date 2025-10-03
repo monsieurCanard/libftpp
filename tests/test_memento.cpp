@@ -82,7 +82,8 @@ TEST(MementoTest, LoadChangesState)
 TEST(MementoTest, SnapshotThrowsOnReadOutOfBounds)
 {
     Memento::Snapshot snap;
-    int               val = 0;
+    SaveableDummy     obj;
+    // int               val = 0;
     // Pas de données dans le snapshot → exception attendue
-    EXPECT_THROW(snap >> val, std::out_of_range);
+    EXPECT_THROW(obj.load(snap), std::out_of_range);
 }

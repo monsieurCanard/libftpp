@@ -8,7 +8,7 @@
 #include <vector>
 
 /**
- * @brief A simple data buffer for serialization and deserialization for simple data types and
+ * @brief A simple LIFO data buffer for serialization and deserialization for simple data types and
  * std::string.
  *
  * @throw std::out_of_range Thrown when trying to read more data than available in the buffer.

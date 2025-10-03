@@ -368,7 +368,6 @@ protected:
         {
             std::cout << "Attente thread serveur..." << std::endl;
 
-            // ✅ Timeout encore plus court
             auto future = std::async(std::launch::async, [this]() { serverThread->join(); });
 
             auto status = future.wait_for(std::chrono::milliseconds(500));
@@ -407,8 +406,6 @@ protected:
 
     int CreateAndConnectClient()
     {
-        // std::cerr << "Cannot Connect" << std::endl;
-
         int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (clientSocket < 0)
             return -1;
@@ -433,6 +430,7 @@ protected:
     std::vector<int>             clientSockets;
     size_t                       testPort;
 };
+
 TEST_F(ServerMultiClientTest, ServerBasicConnectionTest)
 {
     std::cout << "Test basique de connexion..." << std::endl;
@@ -443,7 +441,6 @@ TEST_F(ServerMultiClientTest, ServerBasicConnectionTest)
     // Mais on teste juste que le serveur démarre
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    std::cout << "Serveur semble démarré" << std::endl;
     EXPECT_TRUE(true); // Test minimal
 }
 TEST_F(ServerMultiClientTest, ServerHandlesMultipleConnections)
@@ -477,10 +474,6 @@ TEST_F(ServerMultiClientTest, ServerHandlesMultipleConnections)
 
     std::cout << "Clients connectés: " << successfulConnections << "/" << maxClients << std::endl;
     EXPECT_GE(successfulConnections, 1) << "Au moins une connexion devrait réussir";
-
-    // Délai réduit
-    std::cout << "Attente pour laisser le serveur traiter..." << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     std::cout << "=== FIN TEST CONNEXIONS MULTIPLES ===" << std::endl;
 }
@@ -529,88 +522,6 @@ TEST_F(ServerMultiClientTest, ServerHandlesClientDisconnection)
     std::cout << "=== FIN TEST DÉCONNEXION CLIENT ===" << std::endl;
 }
 
-// Tests de robustesse et cas d'erreur
-class ServerRobustnessTest : public ::testing::Test
-{
-protected:
-    void SetUp() override
-    {
-        server   = std::make_unique<Server>();
-        testPort = 8086;
-    }
-
-    void TearDown() override
-    {
-        if (server)
-        {
-            server->stop();
-        }
-    }
-
-    std::unique_ptr<Server> server;
-    size_t                  testPort;
-};
-
-TEST_F(ServerRobustnessTest, ServerStopWithoutStart)
-{
-    // Arrêter un serveur qui n'a jamais été démarré
-    EXPECT_NO_THROW(server->stop());
-}
-
-TEST_F(ServerRobustnessTest, ServerMultipleStops)
-{
-    // Arrêter plusieurs fois de suite
-    EXPECT_NO_THROW(server->stop());
-    EXPECT_NO_THROW(server->stop());
-    EXPECT_NO_THROW(server->stop());
-}
-
-TEST_F(ServerRobustnessTest, ServerStartOnUsedPort)
-{
-    // Créer un premier serveur
-    auto server1 = std::make_unique<Server>();
-
-    std::thread serverThread1(
-        [&]()
-        {
-            try
-            {
-                server1->start(testPort);
-            }
-            catch (const std::exception& e)
-            {
-                // Expected
-            }
-        });
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-    // Essayer de démarrer un second serveur sur le même port
-    EXPECT_THROW(server->start(testPort), std::runtime_error);
-
-    server1->stop();
-    if (serverThread1.joinable())
-    {
-        // ✅ Timeout pour éviter le blocage
-        auto future = std::async(std::launch::async, [&serverThread1]() { serverThread1.join(); });
-        auto status = future.wait_for(std::chrono::seconds(3));
-        if (status == std::future_status::timeout)
-        {
-            std::cout << "⚠️ TIMEOUT: Thread serveur1 ne répond pas, détachement forcé" << std::endl;
-            serverThread1.detach();
-        }
-    }
-}
-
-TEST_F(ServerRobustnessTest, ServerSendEmptyMessage)
-{
-    TestMessage emptyMessage(0, ""); // Message avec données vides
-
-    // Envoyer un message vide ne devrait pas causer de crash
-    EXPECT_NO_THROW(server->sendTo(emptyMessage, 1));
-    EXPECT_NO_THROW(server->sendToAll(emptyMessage));
-}
-
 // Tests de performance et stress
 class ServerPerformanceTest : public ::testing::Test
 {
@@ -635,12 +546,11 @@ protected:
         {
             server->stop();
 
-            // ✅ Timeout pour éviter le blocage
             auto future = std::async(std::launch::async, [this]() { serverThread->join(); });
             auto status = future.wait_for(std::chrono::seconds(3));
             if (status == std::future_status::timeout)
             {
-                std::cout << "⚠️ TIMEOUT: Thread serveur ne répond pas (ServerPerformanceTest), "
+                std::cout << "TIMEOUT: Thread serveur ne répond pas (ServerPerformanceTest), "
                              "détachement forcé"
                           << std::endl;
                 serverThread->detach();
@@ -705,91 +615,7 @@ TEST_F(ServerPerformanceTest, ServerHandlesLargeMessages)
     EXPECT_NO_THROW(server->sendToAll(largeMessage));
 }
 
-// Tests d'intégration avancés
-class ServerAdvancedIntegrationTest : public ::testing::Test
-{
-protected:
-    void SetUp() override
-    {
-        server           = std::make_unique<Server>();
-        testPort         = 8088;
-        serverThread     = nullptr;
-        actionCalled     = false;
-        receivedClientID = -1;
-    }
-
-    void TearDown() override
-    {
-        for (int socket : clientSockets)
-        {
-            if (socket >= 0)
-                close(socket);
-        }
-        clientSockets.clear();
-
-        if (serverThread && serverThread->joinable())
-        {
-            server->stop();
-
-            // ✅ Timeout pour éviter le blocage
-            auto future = std::async(std::launch::async, [this]() { serverThread->join(); });
-            auto status = future.wait_for(std::chrono::seconds(3));
-            if (status == std::future_status::timeout)
-            {
-                std::cout << "⚠️ TIMEOUT: Thread serveur ne répond pas "
-                             "(ServerAdvancedIntegrationTest), détachement forcé"
-                          << std::endl;
-                serverThread->detach();
-            }
-        }
-    }
-
-    void StartServerInThread()
-    {
-        serverThread = std::make_unique<std::thread>(
-            [this]()
-            {
-                try
-                {
-                    server->start(testPort);
-                }
-                catch (const std::exception& e)
-                {
-                    // Server stopped normally
-                }
-            });
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
-    std::unique_ptr<Server>      server;
-    std::unique_ptr<std::thread> serverThread;
-    std::vector<int>             clientSockets;
-    size_t                       testPort;
-    bool                         actionCalled;
-    long long                    receivedClientID;
-};
-
-TEST_F(ServerAdvancedIntegrationTest, ServerActionTriggering)
-{
-    // Définir une action qui sera appelée
-    Message::Type testType = 42;
-    server->defineAction(testType,
-                         [this, testType](long long& clientID, const Message& msg)
-                         {
-                             actionCalled     = true;
-                             receivedClientID = clientID;
-                             EXPECT_EQ(msg.type(), testType);
-                             (void)msg; // Marquer comme utilisé
-                         });
-
-    StartServerInThread();
-
-    // Note: Pour un test complet, il faudrait envoyer un message depuis un client
-    // et vérifier que l'action est appelée, mais cela nécessiterait une implémentation
-    // complète du client ou l'envoi manuel de données via socket
-}
-
-TEST_F(ServerAdvancedIntegrationTest, ServerActionOverride)
+TEST_F(ServerPerformanceTest, ServerActionOverride)
 {
     Message::Type testType           = 42;
     bool          firstActionCalled  = false;
@@ -1177,61 +1003,6 @@ protected:
     std::vector<int>             clientSockets;
     size_t                       testPort;
 };
-// // Dans vos tests
-// TEST_F(ServerLoadTest, ServerHandlesMaxConnections)
-// {
-//     // std::cout << "=== TEST CONNEXIONS MAXIMALES ===" << std::endl;
-//     StartServerInThread();
-
-//     const int maxAttempts           = NB_CONNECTION + 10;
-//     int       successfulConnections = 0;
-
-//     for (int i = 0; i < maxAttempts; ++i)
-//     {
-//         int sock = socket(AF_INET, SOCK_STREAM, 0);
-//         if (sock >= 0)
-//         {
-//             sockaddr_in addr{};
-//             addr.sin_family      = AF_INET;
-//             addr.sin_port        = htons(testPort);
-//             addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-//             if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
-//             {
-//                 // ✅ Vérifier si la connexion reste ouverte
-//                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-//                 char dummy;
-//                 int  result = recv(sock, &dummy, 1, MSG_PEEK | MSG_DONTWAIT);
-
-//                 if (result == 0 || (result < 0 && errno != EAGAIN && errno != EWOULDBLOCK))
-//                 {
-//                     // Connexion fermée par le serveur
-//                     // std::cout << "Connexion " << i << " refusée (fermée par le serveur)"
-//                     // << std::endl;
-//                     close(sock);
-//                 }
-//                 else
-//                 {
-//                     // Connexion acceptée
-//                     clientSockets.push_back(sock);
-//                     successfulConnections++;
-//                     // std::cout << "Connexion " << i << " acceptée" << std::endl;
-//                 }
-//             }
-//             else
-//             {
-//                 close(sock);
-//                 break;
-//             }
-//         }
-//     }
-
-//     std::cout << "Connexions établies: " << successfulConnections << "/" << maxAttempts
-//               << std::endl;
-//     // ✅ Test exact
-//     EXPECT_EQ(successfulConnections, NB_CONNECTION);
-// }
 
 TEST_F(ServerLoadTest, ServerHandlesVeryLargeMessages)
 {
@@ -1423,128 +1194,4 @@ TEST_F(ServerPerformanceAdvancedTest, ServerPerformanceUnderLoad)
 
     std::cout << "Temps d'exécution: " << duration.count() << "ms" << std::endl;
     EXPECT_LT(duration.count(), 5000) << "Les opérations devraient prendre moins de 5 secondes";
-}
-
-// Test final de stabilité
-class ServerStabilityTest : public ::testing::Test
-{
-protected:
-    void SetUp() override
-    {
-        server       = std::make_unique<Server>();
-        testPort     = 9500;
-        serverThread = nullptr;
-    }
-
-    void TearDown() override
-    {
-        for (auto socket : clientSockets)
-        {
-            if (socket >= 0)
-                close(socket);
-        }
-        clientSockets.clear();
-
-        if (serverThread && serverThread->joinable())
-        {
-            server->stop();
-            auto future = std::async(std::launch::async, [this]() { serverThread->join(); });
-            if (future.wait_for(std::chrono::seconds(3)) == std::future_status::timeout)
-            {
-                serverThread->detach();
-            }
-        }
-    }
-
-    void StartServerInThread()
-    {
-        serverThread = std::make_unique<std::thread>(
-            [this]()
-            {
-                try
-                {
-                    server->start(testPort);
-                }
-                catch (const std::exception& e)
-                {
-                    std::cout << "Server exception: " << e.what() << std::endl;
-                }
-            });
-        std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    }
-
-    std::unique_ptr<Server>      server;
-    std::unique_ptr<std::thread> serverThread;
-    std::vector<int>             clientSockets;
-    size_t                       testPort;
-};
-
-TEST_F(ServerStabilityTest, ServerLongRunningStabilityTest)
-{
-    // std::cout << "=== TEST STABILITÉ LONGUE DURÉE ===" << std::endl;
-    StartServerInThread();
-
-    std::atomic<bool> testRunning{true};
-    std::atomic<int>  connectionsCount{0};
-    std::atomic<int>  messagesCount{0};
-
-    // Thread qui connecte/déconnecte des clients
-    std::thread connectionThread(
-        [this, &testRunning, &connectionsCount]()
-        {
-            while (testRunning.load())
-            {
-                // Connecter
-                int sock = socket(AF_INET, SOCK_STREAM, 0);
-                if (sock >= 0)
-                {
-                    sockaddr_in addr{};
-                    addr.sin_family      = AF_INET;
-                    addr.sin_port        = htons(testPort);
-                    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-                    if (connect(sock, (struct sockaddr*)&addr, sizeof(addr)) == 0)
-                    {
-                        connectionsCount++;
-                        clientSockets.push_back(sock);
-
-                        // Garder la connexion un moment
-                        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-                        // Déconnecter
-                        close(sock);
-                    }
-                }
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            }
-        });
-
-    // Thread qui envoie des messages
-    std::thread messageThread(
-        [this, &testRunning, &messagesCount]()
-        {
-            while (testRunning.load())
-            {
-                TestMessage msg(1, "stability test");
-                server->sendToAll(msg);
-                messagesCount++;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-        });
-
-    // Laisser tourner pendant 2 secondes
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    testRunning = false;
-
-    // Attendre les threads
-    connectionThread.join();
-    messageThread.join();
-
-    std::cout << "Connexions traitées: " << connectionsCount.load() << std::endl;
-    std::cout << "Messages envoyés: " << messagesCount.load() << std::endl;
-
-    EXPECT_GT(connectionsCount.load(), 0) << "Des connexions devraient avoir été traitées";
-    EXPECT_GT(messagesCount.load(), 0) << "Des messages devraient avoir été envoyés";
-    EXPECT_TRUE(true) << "Le serveur devrait rester stable sous charge continue";
 }

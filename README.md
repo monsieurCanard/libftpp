@@ -1,4 +1,4 @@
-# libftpp
+# Libftpp 📚
 
 ![C++](https://img.shields.io/badge/C%2B%2B-blue.svg)
 
@@ -9,7 +9,6 @@
 ## 🚀 Installation et compilation
 
 ### Prérequis
-- CMake ≥ 3.14
 - Compilateur C++11 ou supérieur
 
 ### Installation
@@ -20,18 +19,18 @@ cd libftpp
 git submodule update --init --recursive
 ```
 
-### Compilation
+### Compilation for Test
 ```bash
 mkdir -p build
 cd build
 cmake ..
 make
+./tests
 ```
 
-### Tests
+### Compilation lib
 ```bash
-cd build
-./tests
+make
 ```
 
 ## 📁 Structure du projet
@@ -351,7 +350,9 @@ public:
 - Garantit la cohérence entre produits
 
 #### Builder
-**But :** Sépare la construction complexe d'un objet de sa représentation finale.
+**But :** Sépare la construction complexeecho "\033[0;34m[✔] Compiled src/data_structures/data_buffer/data_buffer.cpp\
+\033[0m"
+ d'un objet de sa représentation finale.
 
 **Utilisation :** Objets avec de nombreux paramètres optionnels, configurations complexes.
 

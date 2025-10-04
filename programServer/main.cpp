@@ -93,15 +93,24 @@ int main()
                 server.stop();
                 break;
             }
-
-            Message sender(7);
-            if (input == "antoine")
-                sender.setType(8);
-            else if (input == "ping")
-                sender.setType(1);
-            sender << 3.1444444444;
-            server.sendToAll(sender);
-
+            {
+                Message sender(7);
+                if (input == "antoine")
+                {
+                    sender.setType(8);
+                    sender << "Coucou toi !";
+                }
+                else if (input == "ping")
+                {
+                    sender.setType(1);
+                }
+                else
+                {
+                    sender.setType(7);
+                    sender << 3.1444444;
+                }
+                server.sendToAll(sender);
+            }
             chuck.update();
             antoine.update();
         }

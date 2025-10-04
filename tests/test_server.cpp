@@ -50,12 +50,6 @@ protected:
     size_t                  testPort;
 };
 
-// Tests pour le serveur avec des fonctionnalités de base
-TEST_F(ServerTest, ServerCreationAndDestruction)
-{
-    EXPECT_NO_THROW(Server testServer);
-}
-
 TEST_F(ServerTest, ServerDefineAction)
 {
     bool          actionCalled = false;

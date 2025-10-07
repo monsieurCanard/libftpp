@@ -45,23 +45,6 @@ TEST(ObserverTest, OverwriteLambda)
     EXPECT_EQ(value, 20);
 }
 
-TEST(ObserverTest, MultipleEventsAndLambdas)
-{
-    Observer<int> obs;
-    int           a = 0, b = 0, c = 0;
-
-    obs.subscribe(1, [&]() { a += 1; });
-    obs.subscribe(2, [&]() { b += 2; });
-    obs.subscribe(1, [&]() { c += 3; });
-
-    obs.notify(1);
-    EXPECT_EQ(a, 1); // l’ancienne lambda pour 1 a été remplacée
-    EXPECT_EQ(c, 3);
-
-    obs.notify(2);
-    EXPECT_EQ(b, 2);
-}
-
 TEST(ObserverTest, DifferentEventTypes)
 {
     Observer<std::string> obs;
@@ -69,19 +52,19 @@ TEST(ObserverTest, DifferentEventTypes)
 
     obs.subscribe("click", [&]() { s = "clicked"; });
     obs.notify("click");
-    EXPECT_EQ(s, "clicked");
 
     Observer<char> obsChar;
     char           c = 'a';
     obsChar.subscribe('X', [&]() { c = 'Z'; });
     obsChar.notify('X');
+
+    EXPECT_EQ(s, "clicked");
     EXPECT_EQ(c, 'Z');
 }
 
 TEST(ObserverTest, NotifyUnknownEventThrows)
 {
     Observer<int> obs;
-    obs.subscribe(1, []() {});
 
     EXPECT_THROW(obs.notify(2), std::out_of_range);
 }

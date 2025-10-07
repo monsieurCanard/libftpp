@@ -4,14 +4,7 @@ Client::Client() : _tmpMsg(), _fd(-1) {}
 
 Client::Client(const std::string& address, const size_t& port) : _tmpMsg(), _fd(-1)
 {
-    try
-    {
-        connect(address, port);
-    }
-    catch (const std::runtime_error& e)
-    {
-        throw;
-    }
+    connect(address, port);
 }
 
 void Client::_networkError(std::string&& errorMsg)
@@ -24,8 +17,7 @@ void Client::_networkError(std::string&& errorMsg)
 
 void Client::connect(const std::string& address, const size_t& port)
 {
-    if (_fd)
-        disconnect();
+    disconnect();
 
     _fd = ::socket(AF_INET, SOCK_STREAM, 0);
     if (_fd < 0)
@@ -60,15 +52,8 @@ void Client::defineAction(const Message::Type&                           message
 
 void Client::send(const Message& message)
 {
-    try
-    {
-        auto data = message.getSerializedData();
-        ::send(_fd, data.data(), data.size(), 0);
-    }
-    catch (std::out_of_range& e)
-    {
-        throw;
-    }
+    auto data = message.getSerializedData();
+    ::send(_fd, data.data(), data.size(), 0);
 }
 
 bool Client::_isConnected() const
@@ -112,60 +97,46 @@ void Client::_receiveMessage()
         _networkError("Cannot receive message: ");
     }
 
-    try
+    _tmpMsg.data().pushInto(buffRead, bytes);
+    while (_tmpMsg.isComplet())
     {
-        _tmpMsg.data().pushInto(buffRead, bytes);
-        while (_tmpMsg.isComplet())
-        {
-            Message newMsg;
-            newMsg.setType(_tmpMsg.popType());
+        Message newMsg;
+        newMsg.setType(_tmpMsg.popType());
 
-            auto data = _tmpMsg.popData();
-            newMsg.data().pushInto(data.data(), data.size());
+        auto data = _tmpMsg.popData();
+        newMsg.data().pushInto(data.data(), data.size());
 
-            _msgs.push_back(newMsg);
-            _tmpMsg.reset();
-        }
-    }
-    catch (std::out_of_range& e)
-    {
-        throw;
+        _msgs.push_back(newMsg);
+        _tmpMsg.reset();
     }
 }
 
 void Client::update()
 {
-    try
+    if (!_isConnected())
+        return;
+    while (_fd > 0)
     {
-        if (!_isConnected())
-            return;
-        while (_fd > 0)
-        {
-            FD_ZERO(&_readyRead);
-            FD_SET(_fd, &_readyRead);
+        FD_ZERO(&_readyRead);
+        FD_SET(_fd, &_readyRead);
 
-            timeval timeout = {0, 10000}; // Pour que le select soit non bloquant
+        timeval timeout = {0, 10000}; // Pour que le select soit non bloquant
 
-            int ready = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
-            if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
-                break;
+        int ready = select(_fd + 1, &_readyRead, NULL, NULL, &timeout);
+        if (ready <= 0 || !FD_ISSET(_fd, &_readyRead))
+            break;
 
-            _receiveMessage();
-        }
-
-        for (auto& msg : _msgs)
-        {
-            auto it = _triggers.find(msg.type());
-            if (it == _triggers.end())
-                continue;
-
-            for (auto& funct : it->second)
-                funct(msg);
-        }
-        _msgs.clear();
+        _receiveMessage();
     }
-    catch (std::exception& e)
+
+    for (auto& msg : _msgs)
     {
-        throw;
+        auto it = _triggers.find(msg.type());
+        if (it == _triggers.end())
+            continue;
+
+        for (auto& funct : it->second)
+            funct(msg);
     }
+    _msgs.clear();
 }

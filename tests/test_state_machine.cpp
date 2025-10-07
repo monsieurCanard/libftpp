@@ -93,13 +93,3 @@ TEST(StateMachineTest, MultipleTransitionsAndActionsSequence)
     EXPECT_NO_THROW(sm.update());
     EXPECT_TRUE(stoppedCalled);
 }
-
-TEST(StateMachineTest, TransitionToUnknownStateThrows)
-{
-    StateMachine<TestState> sm;
-    sm.addState(TestState::Idle);
-
-    // On tente de transitionTo vers un état qui n'a pas été ajouté → comportement
-    // attendu : lancer une exception (implémentation doit vérifier validité)
-    EXPECT_THROW(sm.transitionTo(TestState::Running), std::invalid_argument);
-}

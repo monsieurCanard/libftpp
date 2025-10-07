@@ -6,12 +6,13 @@
 #include "libftpp.hpp"
 
 // Petit message factice pour tester
-class DummyMessage : public Message
+class DummyMessage
 {
 public:
-    DummyMessage(int t, const std::string& data = "test") : Message(t)
+    Message message;
+    DummyMessage(int t, const std::string& data = "test") : message(t)
     {
-        *this << data; // Format cohérent [taille][données]
+        message << data; // Format cohérent [taille][données]
     }
 };
 
@@ -25,7 +26,7 @@ TEST(ClientTest, DefineActionStoresTrigger)
 
     // Simule un message
     DummyMessage msg(1);
-    c.send(msg); // pas de vrai socket, mais test compilable
+    c.send(msg.message); // pas de vrai socket, mais test compilable
     // On "force" le update en poussant le message dans _msgs
     // (hack pour tester sans réseau)
     // normallement on devrait rendre _msgs accessible via friend ou public API
@@ -79,7 +80,7 @@ void fakeServer(uint16_t port)
     std::cout << "server get message" << std::endl;
     // Envoie un message de retour avec le bon format [type][taille][données]
     DummyMessage response(42, "abc");
-    auto         data = response.getSerializedData();
+    auto         data = response.message.getSerializedData();
     send(client_fd, data.data(), data.size(), 0);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -110,7 +111,7 @@ TEST(ClientIntegrationTest, ConnectSendReceive)
 
     // Envoi d'un message factice
     DummyMessage msg(42, "test");
-    c.send(msg);
+    c.send(msg.message);
 
     // Petit délai pour être sûr que le serveur a répondu
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -247,7 +248,7 @@ void multiMessageServer(uint16_t port)
     for (int i = 1; i <= 3; i++)
     {
         DummyMessage msg(100 + i, "A" + std::to_string(i));
-        auto         data = msg.getSerializedData();
+        auto         data = msg.message.getSerializedData();
         send(client_fd, data.data(), data.size(), 0);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -290,7 +291,7 @@ TEST(ClientIntegrationTest, ReceiveMultipleMessages)
 
     // Envoi d'un message pour déclencher la réponse du serveur
     DummyMessage msg(999, "trigger");
-    c.send(msg);
+    c.send(msg.message);
 
     for (int i = 0; i < 5; i++)
     {
@@ -372,7 +373,7 @@ TEST(ClientIntegrationTest, HandleServerDisconnect)
     ASSERT_NO_THROW(c.connect("127.0.0.1", port));
 
     DummyMessage msg(999, "trigger");
-    c.send(msg);
+    c.send(msg.message);
 
     EXPECT_NO_THROW(c.update());
 
@@ -406,7 +407,7 @@ void partialDataServer(uint16_t port)
 
     // Envoie un message avec le bon format
     DummyMessage response(200, "HELLO");
-    auto         data = response.getSerializedData();
+    auto         data = response.message.getSerializedData();
     send(client_fd, data.data(), data.size(), 0);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -433,7 +434,7 @@ TEST(ClientIntegrationTest, HandlePartialData)
                    });
 
     DummyMessage msg(200, "test");
-    c.send(msg);
+    c.send(msg.message);
 
     for (int i = 0; i < 10; i++)
     {

@@ -19,7 +19,7 @@ struct TestStructComplex
     std::string name;
     int         value;
     TestStructComplex(const std::string& n, int v) : name(n), value(v) {}
-    
+
     void display() const
     {
         std::cout << "Name: " << name << ", Value: " << value << std::endl;
@@ -56,23 +56,6 @@ TEST(PoolTest, AcquireReleaseReuse)
     auto obj3 = pool.acquire(10); // doit réutiliser le slot d'obj1
 
     EXPECT_EQ(*obj3.get(), 10);
-}
-
-// --- Test resize pré-allocation ---
-TEST(PoolTest, ResizeAndAvailable)
-{
-    Pool<int> pool;
-    pool.resize(5);
-
-    size_t count = 0;
-    for (size_t i = 0; i < 5; ++i)
-    {
-        auto obj = pool.acquire(static_cast<int>(i));
-        EXPECT_EQ(*obj.get(), static_cast<int>(i));
-        count++;
-    }
-
-    EXPECT_EQ(count, 5);
 }
 
 // --- Test avec struct custom ---

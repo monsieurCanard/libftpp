@@ -79,7 +79,7 @@ std::string Logger::getCurrentTime() const
 
     localtime_r(&clock, &localTime); // Linux / Mac
     std::ostringstream oss;
-    oss << std::put_time(&localTime, "%Y-%m-%d-%H:%M:%S");
+    oss << std::put_time(&localTime, "%Y-%m-%d | %H:%M:%S");
     return oss.str();
 }
 
@@ -105,7 +105,7 @@ void Logger::log(LogLevel level, const std::string& message)
     if (level < _currentLevel)
         return;
     std::lock_guard<std::mutex> lock(_fileMutex);
-    _logFile << "[" << logLevelToString(level) << "]" << "[" << getCurrentTime() << "]" << message
+    _logFile << "[" << logLevelToString(level) << "]" << "[" << getCurrentTime() << "] " << message
              << std::endl;
 }
 
@@ -113,6 +113,6 @@ void Logger::logConsole(LogLevel level, const std::string& message)
 {
     if (level < _currentLevel)
         return;
-    _writer << "[" << logLevelToString(level) << "]" << "[" << getCurrentTime() << "]" << message
+    _writer << "[" << logLevelToString(level) << "]" << "[" << getCurrentTime() << "] " << message
             << std::endl;
 }

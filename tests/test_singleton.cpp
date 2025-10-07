@@ -9,7 +9,6 @@
 // Une classe simple pour tester le Singleton
 class MyClass
 {
-    friend class Singleton<MyClass>; // Permet d’accéder aux méthodes privées
 public:
     int         value;
     std::string name;

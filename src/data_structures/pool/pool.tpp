@@ -1,5 +1,11 @@
 #include "pool.hpp"
 
+template <typename TType>
+Pool<TType>::Pool(const size_t&& size)
+{
+    resize(size);
+}
+
 /// --- Implementation of Pool::Object ---
 template <typename TType>
 template <typename... TArgs>

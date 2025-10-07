@@ -31,10 +31,10 @@ int main()
     // std::cout << "Choose your adress :" << std::endl;
     // std::cin >> address;
     // std::cin.clear();
+    std::thread thread(&Server::start, &server, port);
 
     try
     {
-        std::thread thread(&Server::start, &server, port);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -86,11 +86,18 @@ int main()
         {
             std::string input;
             std::cin >> input;
+            std::cin.clear();
+
             for (auto& letter : input)
                 letter = tolower(letter);
+
             if (input == "stop")
             {
+                chuck.disconnect();
+                antoine.disconnect();
+
                 server.stop();
+                // thread.join();
                 break;
             }
             {
@@ -103,6 +110,7 @@ int main()
                 else if (input == "ping")
                 {
                     sender.setType(1);
+                    sender << "ping";
                 }
                 else
                 {
@@ -114,16 +122,16 @@ int main()
             chuck.update();
             antoine.update();
         }
-
-        if (thread.joinable())
-        {
-            thread.join(); // Permet au thread de continuer en arrière-plan
-        }
     }
-    catch (...)
+    catch (std::exception& e)
     {
-        std::cout << "e.what()" << std::endl;
+        std::cout << e.what() << std::endl;
         return 1;
+    }
+
+    if (thread.joinable())
+    {
+        thread.join(); // Permet au thread de continuer en arrière-plan
     }
     return 0;
 }

@@ -45,6 +45,7 @@ private:
     std::stack<int>     _available;
 
 public:
+    Pool(const size_t&& size);
     Pool()  = default;
     ~Pool() = default;
 

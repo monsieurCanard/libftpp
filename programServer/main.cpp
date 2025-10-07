@@ -1,5 +1,8 @@
+#include <unistd.h>
+
 #include <chrono>
 #include <exception>
+#include <fstream>
 #include <thread>
 #include <vector>
 
@@ -18,10 +21,12 @@ void printAntoine()
 
 int main()
 {
-    Server      server;
-    std::string address = "127.0.0.1";
-    int         port    = 7779;
-    Chuck       chuckSpeaker;
+    Server              server;
+    std::string         address = "127.0.0.1";
+    int                 port    = 7779;
+    Chuck               chuckSpeaker;
+    Logger              logger("server.log", LogLevel::DEBUG);
+    std::vector<Client> clients;
 
     /**
      * ! Rajouter si on veux laisser le choix du port et de l'adresse
@@ -58,8 +63,21 @@ int main()
                                std::cout << "pong" << std::endl;
                            });
 
-        chuck.connect(address, port);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        Client       saver;
+        std::fstream fs("save.txt", std::ios::out | std::ios::trunc);
+        if (!fs.is_open())
+            throw std::runtime_error("Could not open save.txt");
+
+        saver.defineAction(7,
+                           [&fs](const Message& msg) { fs << msg.messageToString() << std::endl; });
+
+        saver.defineAction(1,
+                           [&](const Message& msg)
+                           {
+                               (void)msg;
+                               std::cout << "[CHUCK NORRIS]" << std::endl;
+                               std::cout << "pong" << std::endl;
+                           });
 
         Client antoine;
         antoine.defineAction(8,
@@ -78,10 +96,14 @@ int main()
                                  std::cout << "pong" << std::endl;
                              });
 
+        chuck.connect(address, port);
         antoine.connect(address, port);
+        saver.connect(address, port);
+        clients.insert(clients.end(), {chuck, antoine, saver});
 
-        // Tellement rapide que pour l'instant pas besoin !
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::map<std::string, int> triggers = {
+            {"stop", 0}, {"ping", 1}, {"save", 2}, {"antoine", 8}, {"chuck", 7}};
+
         while (1)
         {
             std::string input;
@@ -91,36 +113,34 @@ int main()
             for (auto& letter : input)
                 letter = tolower(letter);
 
-            if (input == "stop")
-            {
-                chuck.disconnect();
-                antoine.disconnect();
+            Message sender(7);
+            sender.setType(triggers.contains(input) ? triggers[input] : 7);
 
-                server.stop();
-                // thread.join();
+            if (sender.type() == 0)
                 break;
-            }
-            {
-                Message sender(7);
-                if (input == "antoine")
-                {
-                    sender.setType(8);
-                    sender << "Coucou toi !";
-                }
-                else if (input == "ping")
-                {
-                    sender.setType(1);
-                    sender << "ping";
-                }
-                else
-                {
-                    sender.setType(7);
-                    sender << 3.1444444;
-                }
-                server.sendToAll(sender);
-            }
-            chuck.update();
-            antoine.update();
+
+            server.sendToAll(sender);
+
+            // Une premier idee de logger dans un client
+            Message loggerMessage(2);
+            loggerMessage << "Message type " + std::to_string(sender.type()) + " sent to clients";
+            server.sendToAll(loggerMessage);
+
+            // Mon logger code dans la librairy
+            logger.log(LogLevel::INFO,
+                       "Message type " + std::to_string(sender.type()) + " sent to clients");
+
+            for (auto& client : clients)
+                client.update();
+        }
+
+        for (auto& client : clients)
+            client.disconnect();
+
+        server.stop();
+        if (thread.joinable())
+        {
+            thread.join(); // Permet au thread de continuer en arrière-plan
         }
     }
     catch (std::exception& e)
@@ -129,9 +149,5 @@ int main()
         return 1;
     }
 
-    if (thread.joinable())
-    {
-        thread.join(); // Permet au thread de continuer en arrière-plan
-    }
     return 0;
 }

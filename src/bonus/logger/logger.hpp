@@ -45,6 +45,7 @@ private:
 
 public:
     Logger();
+    Logger(const std::string& outputfile, LogLevel level = LogLevel::DEBUG);
     ~Logger();
 
     static Logger& instance();

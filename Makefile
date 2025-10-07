@@ -1,6 +1,6 @@
 NAME = libftpp.a
 
-CFLAGS = -std=c++17 -Wall -Wextra -Werror -I
+CFLAGS = -std=c++17 -Wall -Wextra -Werror
 
 SRCS_DIR = src/
 
@@ -35,12 +35,19 @@ $(NAME): $(OBJS)
 $(OBJ_DIR):
 	mkdir -p $@
 
-
 $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
 	@mkdir -p $(dir $@)
-	g++ $(CFLAGS) -I$(INCLUDE_DIRS) -c $< -o $@
-	echo "\033[0;34m[✔] Compiled $<\
+	g++ $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
+	@echo "\033[0;34m[✔] Compiled $<\
 	\033[0m"
+
+SRCS_TEST = $(shell find tests/ -name "*.cpp")
+
+test: $(SRCS_TEST) $(NAME)
+	if [ ! -d "build/Makefile" ]; then mkdir -p build; fi
+	mkdir -p build
+	cd build && cmake .. && make
+	@echo "\033[0;32m[✔] Tests compiled.\
 
 clean: fclean all
 

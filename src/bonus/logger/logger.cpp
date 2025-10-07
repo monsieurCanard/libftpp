@@ -5,6 +5,11 @@ Logger::Logger()
     setOutputFile("");
 }
 
+Logger::Logger(const std::string& outputfile, LogLevel level) : _currentLevel(level)
+{
+    setOutputFile(outputfile);
+}
+
 const std::string Logger::getOutputPathFile() const
 {
     return _outputFilePath + _logFilename + ".log";

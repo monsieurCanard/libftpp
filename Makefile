@@ -65,7 +65,9 @@ test: $(SRCS_TEST) $(NAME)
 run-test: test
 	./build/tests
 
-clean: fclean all
+clean:
+	rm -rf $(OBJ_DIR)
+	rm -rf build
 
 fclean:
 	rm -rf $(OBJ_DIR)

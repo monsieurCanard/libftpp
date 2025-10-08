@@ -41,8 +41,12 @@ void Pool<TType>::resize(const size_t& numberOfObjectStored)
 template <typename TType>
 void Pool<TType>::release(Object& obj)
 {
+    if (obj._pool_ptr == nullptr)
+        return;
+
     obj.get()->~TType();
     _available.push(obj._idx);
+    obj._pool_ptr = nullptr;
 }
 
 template <typename TType>
@@ -56,7 +60,7 @@ typename Pool<TType>::Object Pool<TType>::acquire(TArgs&&... p_args)
     int i = _available.top();
     _available.pop();
 
-    return Object(this, i, std::forward<TArgs&&>(p_args)...);
+    return Object(this, i, std::forward<TArgs>(p_args)...);
 }
 
 template <typename TType>

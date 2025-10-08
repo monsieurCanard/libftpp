@@ -56,18 +56,24 @@ $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
 
 SRCS_TEST = $(shell find tests/ -name "*.cpp")
 
-test: $(SRCS_TEST) $(NAME)
-	if [ ! -d "build/Makefile" ]; then mkdir -p build; fi
+CMAKE_FILES = CMakeLists.txt
+TEST_BINARY = build/tests
+
+build/Makefile: $(CMAKE_FILES)
 	mkdir -p build
-	cd build && cmake .. && make
+	cd build && cmake ..
+
+$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME)
+	cd build && make tests
 	@echo "\033[0;32m[✔] Tests compiled.\033[0m"
+
+test: $(TEST_BINARY)
 
 run-test: test
 	./build/tests
 
 clean:
 	rm -rf $(OBJ_DIR)
-	rm -rf build
 
 fclean:
 	rm -rf $(OBJ_DIR)

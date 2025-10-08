@@ -18,39 +18,66 @@
 ```bash
 git clone git@github.com:monsieurCanard/libftpp.git
 cd libftpp
-git submodule update --init --recursive
 ```
-
-### Compilation for Test
-```bash
-mkdir -p build
-cd build
-cmake ..
-make
-./tests
-```
-
 ### Compilation lib
 ```bash
 make
 ```
 
+### Compilation for Test
+```bash
+make test
+```
+### Lancement des tests
+```bash
+make run-test
+```
+
+
 ## 📁 Structure du projet
 
 ```
 libftpp/
-├── srcs/
+├── src/
 │   ├── data_structures/
-│   │   ├── data_buffer/     # Sérialisation/désérialisation
-│   │   └── pool/            # Pool de mémoire
-│   └── design_patterns/
-│       ├── memento/         # Sauvegarde d'état
-│       ├── observer/        # Notification d'événements
-│       ├── singleton/       # Instance unique
-│       └── state_machine/   # Machine à états
-├── tests/                   # Tests unitaires avec GoogleTest
-├── extern/googletest/       # Sous-module GoogleTest
-└── libftpp.hpp             # Header unifié
+│   │   ├── data_buffer/         # Sérialisation/désérialisation de données
+│   │   └── pool/                # Pool de mémoire avec allocation optimisée
+│   ├── design_patterns/
+│   │   ├── memento/             # Sauvegarde et restauration d'état
+│   │   ├── observer/            # Notification d'événements
+│   │   ├── singleton/           # Instance unique globale
+│   │   └── state_machine/       # Machine à états finis
+│   ├── mathematics/
+│   │   ├── IVector2/            # Interface vecteur 2D
+│   │   ├── IVector3/            # Interface vecteur 3D
+│   │   ├── perlin_noise/        # Génération de bruit de Perlin
+│   │   └── random_2D_coordinate_generator/  # Générateur de coordonnées aléatoires
+│   ├── network/
+│   │   ├── client/              # Client TCP pour communication réseau
+│   │   ├── message/             # Système de messages structurés
+│   │   └── server/              # Serveur TCP multi-clients avec select()
+│   ├── thread/
+│   │   ├── persistent_worker/   # Worker thread persistant
+│   │   ├── thread/              # Wrapper thread avec fonctionnalités étendues
+│   │   ├── thread_safe_iostream/ # IO thread-safe
+│   │   ├── thread_safe_queue/   # Queue thread-safe
+│   │   └── worker_pool/         # Pool de threads workers
+│   └── bonus/
+│       ├── chronometre/         # Mesure de temps et performance
+│       ├── logger/              # Système de logging avancé
+│       ├── n_ary_tree/          # Arbre n-aire générique
+│       ├── observable_value/    # Valeur observable avec pattern Observer
+│       │   └── IObserver/       # Interface observateur
+│       └── ring_buffer/         # Buffer circulaire optimisé
+├── tests/                       # Tests unitaires avec GoogleTest
+│   ├── test_*.cpp              # Tests pour chaque composant
+│   └── main.cpp                # Point d'entrée des tests
+├── programs_test/               # Programmes d'exemple et de test
+│   ├── programServer/          # Exemple serveur de test
+│   └── programStressTesteur/   # Programme de test de charge
+├── CMakeLists.txt              # Configuration CMake
+├── Makefile                    # Build système Make
+└── libftpp.hpp                 # Header unifié pour toute la librairie
 ```
 
 ## 🎯 Règles de codage

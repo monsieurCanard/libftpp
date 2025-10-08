@@ -25,15 +25,7 @@ void WorkerPool::loop()
             action = _jobs.front();
             _jobs.pop();
         }
-
-        try
-        {
-            action();
-        }
-        catch (...)
-        {
-            throw;
-        }
+        action();
     }
 }
 

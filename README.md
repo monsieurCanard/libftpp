@@ -352,8 +352,7 @@ public:
 - Garantit la cohérence entre produits
 
 #### Builder
-**But :** Sépare la construction complexeecho "\033[0;34m[✔] Compiled src/data_structures/data_buffer/data_buffer.cpp\
-\033[0m"
+**But :** Sépare la construction complexe
  d'un objet de sa représentation finale.
 
 **Utilisation :** Objets avec de nombreux paramètres optionnels, configurations complexes.

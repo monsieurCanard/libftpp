@@ -11,7 +11,7 @@ int main(void)
     ping << "ping";
     for (int j = 0; j < 5; j++)
     {
-        for (int i = 0; i < 150; i++)
+        for (int i = 0; i < 500; i++)
         {
             clients.emplace_back("127.0.0.1", 8001);
             // clients.back().connect("127.0.0.1", 9000);

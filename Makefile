@@ -54,17 +54,19 @@ $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
 	@echo "\033[0;34m[✔] Compiled $<\
 	\033[0m"
 
-SRCS_TEST = $(shell find tests/ -name "*.cpp")
+PROGRAM_SERVER_SRCS = programs_test/programServer/main.cpp
+PROGRAM_STRESS_SRCS = programs_test/programStressTesteur/main.cpp
 
 CMAKE_FILES = CMakeLists.txt
+TEST_PROG = tests/program_server tests/program_stress_testeur
 TEST_BINARY = build/tests
 
-build/Makefile: $(CMAKE_FILES)
+build/Makefile: $(CMAKE_FILES) 
 	mkdir -p build
-	cd build && cmake ..
+	cd build && cmake .. 
 
-$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME)
-	cd build && make tests
+$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME) $(PROGRAM_SERVER_SRCS) $(PROGRAM_STRESS_SRCS)
+	cd build && make
 	@echo "\033[0;32m[✔] Tests compiled.\033[0m"
 
 test: $(TEST_BINARY)

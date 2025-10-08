@@ -58,7 +58,7 @@ PROGRAM_SERVER_SRCS = programs_test/programServer/main.cpp
 PROGRAM_STRESS_SRCS = programs_test/programStressTesteur/main.cpp
 
 CMAKE_FILES = CMakeLists.txt
-TEST_PROG = tests/program_server tests/program_stress_testeur
+
 TEST_BINARY = build/tests
 
 build/Makefile: $(CMAKE_FILES) 

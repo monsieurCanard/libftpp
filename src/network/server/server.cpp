@@ -83,7 +83,7 @@ void Server::start(const size_t& port)
                 auto clientIt = _clients.find(fd);
                 if (clientIt != _clients.end())
                 {
-                    _clearClient(fd, clientIt->second);
+                    _clearClient(fd);
                 }
                 _partialMsgs.erase(fd);
             }
@@ -169,7 +169,7 @@ void Server::sendTo(const Message& message, long long clientID)
         ssize_t bytes_sent = send(fdIt->second, data.data(), data.size(), 0);
         if (bytes_sent == -1)
         {
-            _clearClient(fdIt->second, clientID);
+            _clearClient(fdIt->second);
 
             std::cerr << "Failed to send message to client " << clientID << std::endl;
         }
@@ -231,14 +231,16 @@ void Server::_clearAll()
     FD_ZERO(&_active);
 }
 
-void Server::_clearClient(int& fd, long long& clientId)
+void Server::_clearClient(int& fd)
 {
-    if (_clients.find(fd) == _clients.end())
+    auto clientIt = _clients.find(fd);
+    if (clientIt == _clients.end())
     {
         return;
     }
 
-    if (fd > 2) // Sécurité contre les fd système
+    long long clientId = clientIt->second;
+    if (fd > 2)
     {
         close(fd);
         FD_CLR(fd, &_active);

@@ -25,10 +25,8 @@ int main(void)
 
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        for (int i = 0; i < 1000; i++)
-        {
-            server.sendToAll(ping);
-        }
+
+        server.sendToAll(ping);
 
         for (auto& client : clients)
             client.update();

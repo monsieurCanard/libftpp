@@ -55,7 +55,7 @@ private:
     bool _receiveClientMsg(const int& fd);
 
     void _clearAll();
-    void _clearClient(int& fd, long long& clientId);
+    void _clearClient(int& fd);
 
 public:
     Server();

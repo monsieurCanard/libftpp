@@ -70,12 +70,12 @@ struct IVector3
     }
 
     // Ramène le vecteur à longueur 1, tout en conservant sa direction
-    IVector3<float> normalize()
+    IVector3<TType> normalize()
     {
         float length = this->length();
         if (length == 0)
             throw std::invalid_argument("Cannot normalized zero vector");
-        return IVector3(x / length, y / length, z / length);
+        return IVector3<TType>(x / length, y / length, z / length);
     }
 
     // Dot sans argument : renvoie ∣𝑣∣2, utile pour comparer des longueurs sans racine carrée.

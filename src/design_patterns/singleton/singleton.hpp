@@ -15,7 +15,7 @@ private:
     static inline std::unique_ptr<TType> _instance = nullptr;
 
 public:
-    TType* instance()
+    static TType* instance()
     {
         if (!_instance)
             return nullptr;
@@ -24,7 +24,7 @@ public:
     }
 
     template <typename... TArgs>
-    void instantiate(TArgs... p_args)
+    static void instantiate(TArgs... p_args)
     {
         if (_instance != nullptr)
             throw std::runtime_error("Instance already exists.");
@@ -32,7 +32,7 @@ public:
         _instance = std::make_unique<TType>((p_args)...);
     }
 
-    void reset()
+    static void reset()
     {
         _instance = nullptr;
     }

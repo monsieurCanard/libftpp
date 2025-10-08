@@ -29,7 +29,7 @@ public:
             _events.find(event);
 
         if (it == _events.end())
-            throw std::out_of_range("Event not found, cannot notify.");
+            return;
 
         for (const auto& funct : it->second)
             funct();

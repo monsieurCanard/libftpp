@@ -5,7 +5,7 @@
 
 #include "../IVector2/ivector2.hpp"
 #include "../random_2D_coordinate_generator/random_2D_coordinate_generator.hpp"
-class PerlinNoise
+class PerlinNoise2D
 {
 private:
     int _seedGlobal = 29874789; // Chiffre choisie aleatoirement

@@ -16,7 +16,7 @@ SRCS = $(SRCS_DIR)data_structures/data_buffer/data_buffer.cpp \
 			 $(SRCS_DIR)network/message/message.cpp \
 			 $(SRCS_DIR)network/server/server.cpp \
 			 $(SRCS_DIR)network/client/client.cpp \
-			 $(SRCS_DIR)mathematics/perlin_noise/perlin_noise.cpp \
+			 $(SRCS_DIR)mathematics/perlin_noise_2D/perlin_noise_2D.cpp \
 			 $(SRCS_DIR)mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cpp \
 			 $(SRCS_DIR)thread/thread_safe_iostream/thread_safe_iostream.cpp \
 			 $(SRCS_DIR)thread/persistent_worker/persistent_worker.cpp \
@@ -33,6 +33,7 @@ INCLUDE_DIRS = -I$(SRCS_DIR) \
                -I$(MATHEMATICS_DIR) \
                -I$(THREAD_DIR) \
                -I$(BONUS_DIR)
+
 
 OBJ_DIR = objs/
 

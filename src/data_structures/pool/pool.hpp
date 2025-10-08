@@ -21,6 +21,7 @@
 template <typename TType>
 class Pool
 {
+public:
     class Object
     {
         friend class Pool<TType>;
@@ -40,11 +41,6 @@ class Pool
         TType* get();
     };
 
-private:
-    std::vector<Object> _objects;
-    std::stack<int>     _available;
-
-public:
     Pool(const size_t&& size);
     Pool()  = default;
     ~Pool() = default;
@@ -76,6 +72,10 @@ public:
      * Destroys the contained TType object and return its slot to the available Stack.
      */
     void release(Object& obj);
+
+private:
+    std::vector<Object> _objects;
+    std::stack<int>     _available;
 };
 
 #include "pool.tpp"

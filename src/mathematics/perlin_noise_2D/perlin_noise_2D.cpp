@@ -1,11 +1,11 @@
-#include "perlin_noise.hpp"
+#include "perlin_noise_2D.hpp"
 
-float PerlinNoise::linearInterpolation(float a, float b, float t)
+float PerlinNoise2D::linearInterpolation(float a, float b, float t)
 {
     return a + t * (b - a);
 }
 
-IVector2<float> PerlinNoise::gradient(const int& i, const int& j)
+IVector2<float> PerlinNoise2D::gradient(const int& i, const int& j)
 {
     long long                   hashSeed = i ^ j ^ _seedGlobal;
     Random2DCoordinateGenerator generator(hashSeed);
@@ -16,12 +16,12 @@ IVector2<float> PerlinNoise::gradient(const int& i, const int& j)
     return IVector2<float>(cos(angle), sin(angle)); // vecteur unitaire
 }
 
-float PerlinNoise::fade(const float& t)
+float PerlinNoise2D::fade(const float& t)
 {
     return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
-float PerlinNoise::sample(const float& x, const float& y)
+float PerlinNoise2D::sample(const float& x, const float& y)
 {
     IVector2<float> cell(std::floor(x), std::floor(y));
 

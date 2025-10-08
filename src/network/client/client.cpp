@@ -28,7 +28,13 @@ void Client::connect(const std::string& address, const size_t& port)
     sockaddr.sin_port   = htons(port);
 
     if (inet_pton(AF_INET, address.c_str(), &sockaddr.sin_addr) <= 0)
-        return _networkError("Adresse Ip invalid !");
+    {
+        hostent* host = gethostbyname(address.c_str());
+        if (!host)
+            return _networkError("Cannot resolve hostname: " + address);
+
+        memcpy(&sockaddr.sin_addr, host->h_addr, host->h_length);
+    }
 
     if (::connect(_fd, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
         return _networkError("Cannot connect to socket: ");

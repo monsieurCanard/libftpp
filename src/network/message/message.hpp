@@ -40,32 +40,28 @@ public:
     template <typename T>
     Message& operator>>(T& value)
     {
-        try
-        {
-            size_t size;
-            _buffer.popInto(&size, sizeof(size_t));
-            _buffer.popInto(&value, size);
-        }
-        catch (const std::out_of_range& e)
-        {
-            throw;
-        }
+        size_t size;
+        _buffer.popInto(&size, sizeof(size_t));
+        _buffer.popInto(&value, size);
         return *this;
     }
 
     template <typename T>
     Message& operator<<(const T& value)
     {
-        try
-        {
-            size_t size = sizeof(T);
-            _buffer.pushInto(&size, sizeof(size_t));
-            _buffer.pushInto(&value, size);
-        }
-        catch (const std::out_of_range& e)
-        {
-            throw;
-        }
+        size_t size = sizeof(T);
+        _buffer.pushInto(&size, sizeof(size_t));
+        _buffer.pushInto(&value, size);
+        return *this;
+    }
+
+    template <typename T>
+    const Message& operator>>(T& value) const
+    {
+        // size_t size;
+        _buffer.peek(sizeof(size_t)).data();
+        // _buffer.peek(sizeof(size_t) + size).data();
+        value = *reinterpret_cast<const T*>(_buffer.peek(sizeof(size_t) + sizeof(T)).data());
         return *this;
     }
 
@@ -81,28 +77,21 @@ public:
     template <typename T>
     void insertValue(T& value) const
     {
-        try
-        {
-            auto data = getSerializedData();
+        auto data = getSerializedData();
 
-            if (data.size() < sizeof(Message::Type) + sizeof(size_t))
-                return;
+        if (data.size() < sizeof(Message::Type) + sizeof(size_t))
+            return;
 
-            size_t offset = sizeof(Message::Type);
+        size_t offset = sizeof(Message::Type);
 
-            size_t dataSize;
-            memcpy(&dataSize, data.data() + offset, sizeof(size_t));
-            offset += sizeof(size_t);
+        size_t dataSize;
+        memcpy(&dataSize, data.data() + offset, sizeof(size_t));
+        offset += sizeof(size_t);
 
-            if (data.size() < offset + dataSize)
-                return;
+        if (data.size() < offset + dataSize)
+            return;
 
-            memcpy(&value, data.data() + sizeof(Message::Type) + sizeof(size_t), sizeof(T));
-        }
-        catch (std::out_of_range& e)
-        {
-            throw;
-        }
+        memcpy(&value, data.data() + sizeof(Message::Type) + sizeof(size_t), sizeof(T));
     }
 
     Message::Type type() const;

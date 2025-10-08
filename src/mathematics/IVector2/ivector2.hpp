@@ -65,12 +65,12 @@ struct IVector2
         return std::hypot(x, y);
     }
 
-    IVector2<float> normalize()
+    IVector2<TType> normalize()
     {
         float length = this->length();
         if (length == 0)
             throw std::invalid_argument("Cannot normalized zero vector");
-        return IVector2(x / length, y / length);
+        return IVector2<TType>(x / length, y / length);
     }
 
     // Ceci n'est pas un vrai dot, renvoie juste le scalaire du |v| carre

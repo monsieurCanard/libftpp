@@ -70,6 +70,9 @@ clean: fclean all
 fclean:
 	rm -rf $(OBJ_DIR)
 	rm -f $(NAME)
+	rm -rf build
+	rm -f save.txt
+	rm -rf logs
 	@echo "\033[0;31m[✘] Removed objects and $(NAME).\
 	\033[0m"
 

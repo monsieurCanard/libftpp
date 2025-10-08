@@ -25,13 +25,13 @@ file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
 add_executable(tests ${TEST_SOURCES})
 
 # Ajouter l'exécutable de votre programme serveur
-add_executable(program_server programServer/main.cpp programServer/chuck.hpp)
+add_executable(program_server programs_test/programServer/main.cpp programServer/chuck.hpp)
 target_link_libraries(program_server test_lib)
 target_include_directories(program_server PRIVATE . src)
 
 
 # Ajouter l'exécutable de votre programme serveur
-add_executable(program_stress programStressTesteur/main.cpp)
+add_executable(program_stress programs_test/programStressTesteur/main.cpp)
 target_link_libraries(program_stress test_lib)
 target_include_directories(program_stress PRIVATE . src)
 

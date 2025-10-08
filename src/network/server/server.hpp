@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -11,7 +12,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-#define NB_CONNECTION    50
+#define NB_CONNECTION    1000
 #define READ_BUFFER_SIZE 4096
 
 #include "../message/message.hpp"
@@ -31,10 +32,12 @@
 class Server
 {
 private:
-    int  _socket;
-    int  _max_fd;
-    int  _next_id = 0;
-    bool _running = true;
+    int         _socket  = -1;
+    int         _max_fd  = -1;
+    int         _next_id = 0;
+    bool        _running = true;
+    std::string _address;
+    size_t      _port;
 
     fd_set _active;
     fd_set _readyRead;
@@ -55,7 +58,9 @@ private:
     void _clearClient(int& fd, long long& clientId);
 
 public:
-    void start(const size_t& port);
+    Server();
+    Server(const std::string& address, size_t port);
+    void start(const size_t& port = 0);
 
     void defineAction(const Message::Type& messageType,
                       const std::function<void(long long& clientID, const Message& msg)>& action);

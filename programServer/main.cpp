@@ -19,6 +19,30 @@ void printAntoine()
     std::cout << "Je suis antoine daniel" << std::endl;
 }
 
+void update_client_logger(Server& server, const Message& msg)
+{
+    Message loggerMessage(2);
+    loggerMessage << "Server send message type: " + msg.messageToString();
+    server.sendToAll(loggerMessage);
+}
+
+void clean_exit(std::vector<Client>& clients, Server& server, std::thread& thread)
+{
+    std::cout << "Server is shutting down, disconnecting clients..." << std::endl;
+    server.stop();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    std::cout << "All clients disconnected." << std::endl;
+
+    if (thread.joinable())
+        thread.join();
+
+    for (auto& client : clients)
+        client.disconnect();
+    std::cout << "Server thread joined." << std::endl;
+    return;
+}
+
 int main()
 {
     Server              server;
@@ -47,12 +71,13 @@ int main()
         chuck.defineAction(7,
                            [&chuckSpeaker](const Message& msg)
                            {
+                               (void)msg;
                                std::cout << "[CHUCK NORRIS]" << std::endl;
-                               double Tvalue = 0;
-                               std::cout << Tvalue << std::endl;
+                               //    double Tvalue = 0;
+                               //    std::cout << Tvalue << std::endl;
 
-                               msg.insertValue(Tvalue);
-                               std::cout << Tvalue << std::endl;
+                               //    msg.insertValue(Tvalue);
+                               //    std::cout << Tvalue << std::endl;
                                printChuckNorris(chuckSpeaker);
                            });
         chuck.defineAction(1,
@@ -68,14 +93,14 @@ int main()
         if (!fs.is_open())
             throw std::runtime_error("Could not open save.txt");
 
-        saver.defineAction(7,
+        saver.defineAction(2,
                            [&fs](const Message& msg) { fs << msg.messageToString() << std::endl; });
 
         saver.defineAction(1,
                            [&](const Message& msg)
                            {
                                (void)msg;
-                               std::cout << "[CHUCK NORRIS]" << std::endl;
+                               std::cout << "[SAVER]" << std::endl;
                                std::cout << "pong" << std::endl;
                            });
 
@@ -83,9 +108,8 @@ int main()
         antoine.defineAction(8,
                              [&](const Message& msg)
                              {
+                                 (void)msg;
                                  std::cout << "[ANTOINE DANIEL]" << std::endl;
-                                 std::string value = msg.messageToString();
-                                 std::cout << value << std::endl;
                                  printAntoine();
                              });
         antoine.defineAction(1,
@@ -96,10 +120,10 @@ int main()
                                  std::cout << "pong" << std::endl;
                              });
 
-        chuck.connect(address, port);
-        antoine.connect(address, port);
-        saver.connect(address, port);
         clients.insert(clients.end(), {chuck, antoine, saver});
+
+        for (auto& client : clients)
+            client.connect(address, port);
 
         std::map<std::string, int> triggers = {
             {"stop", 0}, {"ping", 1}, {"save", 2}, {"antoine", 8}, {"chuck", 7}};
@@ -108,39 +132,36 @@ int main()
         {
             std::string input;
             std::cin >> input;
-            std::cin.clear();
 
             for (auto& letter : input)
                 letter = tolower(letter);
 
             Message sender(7);
-            sender.setType(triggers.contains(input) ? triggers[input] : 7);
+
+            auto it = triggers.find(input);
+            if (it != triggers.end())
+                sender.setType(it->second);
 
             if (sender.type() == 0)
-                break;
+            {
+                std::cout << "Stopping server..." << std::endl;
+                clean_exit(clients, server, thread);
+                return 0;
+            }
 
+            sender << input;
             server.sendToAll(sender);
-
-            // Une premier idee de logger dans un client
-            Message loggerMessage(2);
-            loggerMessage << "Message type " + std::to_string(sender.type()) + " sent to clients";
-            server.sendToAll(loggerMessage);
-
-            // Mon logger code dans la librairy
-            logger.log(LogLevel::INFO,
-                       "Message type " + std::to_string(sender.type()) + " sent to clients");
 
             for (auto& client : clients)
                 client.update();
-        }
 
-        for (auto& client : clients)
-            client.disconnect();
-
-        server.stop();
-        if (thread.joinable())
-        {
-            thread.join(); // Permet au thread de continuer en arrière-plan
+            update_client_logger(server, sender);
+            // Une premier idee de logger dans un client
+            for (auto& client : clients)
+                client.update();
+            // // Mon logger code dans la librairy
+            logger.log(LogLevel::INFO,
+                       "Message type " + std::to_string(sender.type()) + " sent to clients");
         }
     }
     catch (std::exception& e)

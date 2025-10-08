@@ -11,7 +11,20 @@ MATHEMATICS_DIR = $(SRCS_DIR)mathematics/
 THREAD_DIR = $(SRCS_DIR)thread/
 BONUS_DIR = $(SRCS_DIR)bonus/
 
-SRCS = $(shell find $(SRCS_DIR) -name "*.cpp")
+SRCS = $(SRCS_DIR)data_structures/data_buffer/data_buffer.cpp \
+			 $(SRCS_DIR)design_patterns/memento/memento.cpp \
+			 $(SRCS_DIR)network/message/message.cpp \
+			 $(SRCS_DIR)network/server/server.cpp \
+			 $(SRCS_DIR)network/client/client.cpp \
+			 $(SRCS_DIR)mathematics/perlin_noise/perlin_noise.cpp \
+			 $(SRCS_DIR)mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cpp \
+			 $(SRCS_DIR)thread/thread_safe_iostream/thread_safe_iostream.cpp \
+			 $(SRCS_DIR)thread/persistent_worker/persistent_worker.cpp \
+			 $(SRCS_DIR)thread/thread/thread.cpp \
+			 $(SRCS_DIR)thread/worker_pool/worker_pool.cpp \
+			 $(SRCS_DIR)bonus/logger/logger.cpp \
+			 $(SRCS_DIR)bonus/chronometre/chronometre.cpp \
+			 $(SRCS_DIR)bonus/ring_buffer/ring_buffer.cpp
 
 INCLUDE_DIRS = -I$(SRCS_DIR) \
                -I$(DATA_STRUCTURES_DIR) \
@@ -23,7 +36,7 @@ INCLUDE_DIRS = -I$(SRCS_DIR) \
 
 OBJ_DIR = objs/
 
-OBJS = $(patsubst $(SRCS_DIR)%.cpp, $(OBJ_DIR)%.o, $(SRCS))
+OBJS = $(SRCS:$(SRCS_DIR)%.cpp=$(OBJ_DIR)%.o)
 
 all: $(NAME)
 
@@ -47,7 +60,10 @@ test: $(SRCS_TEST) $(NAME)
 	if [ ! -d "build/Makefile" ]; then mkdir -p build; fi
 	mkdir -p build
 	cd build && cmake .. && make
-	@echo "\033[0;32m[✔] Tests compiled.\
+	@echo "\033[0;32m[✔] Tests compiled.\033[0m"
+
+run-test: test
+	./build/tests
 
 clean: fclean all
 

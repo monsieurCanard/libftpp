@@ -1,5 +1,9 @@
 #include "server.hpp"
 
+Server::Server() : _address(""), _port(0) {}
+
+Server::Server(const std::string& address, size_t port) : _address(address), _port(port) {}
+
 void Server::start(const size_t& port)
 {
 
@@ -13,9 +17,21 @@ void Server::start(const size_t& port)
         perror("setsockopt SO_REUSEADDR failed");
     }
     sockaddr_in sockaddr;
-    sockaddr.sin_family      = AF_INET;
-    sockaddr.sin_addr.s_addr = INADDR_ANY;
-    sockaddr.sin_port        = htons(port);
+    sockaddr.sin_family = AF_INET;
+    if (!_address.empty())
+    {
+        if (inet_pton(AF_INET, _address.c_str(), &sockaddr.sin_addr) <= 0)
+        {
+            stop();
+            throw std::runtime_error("Invalid address: " + _address);
+        }
+    }
+    else
+    {
+        sockaddr.sin_addr.s_addr = INADDR_ANY;
+    }
+
+    sockaddr.sin_port = htons(port != 0 ? port : _port);
 
     if (bind(_socket, (struct sockaddr*)&sockaddr, sizeof(sockaddr)) < 0)
     {
@@ -74,7 +90,8 @@ void Server::start(const size_t& port)
         }
         update();
     }
-    stop();
+    // stop();
+    _clearAll();
 }
 
 void Server::_acceptNewConnection()
@@ -251,6 +268,4 @@ void Server::stop()
         close(fd);
         FD_CLR(fd, &_active);
     }
-
-    _clearAll();
 }

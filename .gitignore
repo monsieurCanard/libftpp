@@ -42,3 +42,7 @@ build/*
 *.dwo
 
 *.vscode
+
+save.txt
+
+*logs

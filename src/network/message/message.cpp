@@ -50,7 +50,6 @@ std::string Message::messageToString() const
         size_t dataSize;
         memcpy(&dataSize, data.data() + offset, sizeof(size_t));
         offset += sizeof(size_t);
-        std::cout << "Data size: " << dataSize << std::endl;
 
         if (data.size() < offset + dataSize)
             return "";

@@ -10,6 +10,7 @@ int main()
     client.defineAction(3,
                         [](const Message& msg)
                         {
+                            // (void)msg;
                             int doubledValue;
                             msg >> doubledValue;
                             threadSafeCout << "Received a doubled value: " << doubledValue
@@ -24,15 +25,21 @@ int main()
     message1 << 42;
     client.send(message1);
 
-    // Send a message of type 2 (size_t followed by characters)
     Message     message2(2);
     std::string str = "Hello";
     message2 << str.size();
+    threadSafeCout << " str.size() = " << str.size() << std::endl;
     for (char c : str)
     {
         message2 << c;
     }
     client.send(message2);
+
+    Message message3(3);
+    message3 << 3.14;
+    client.send(message3);
+
+    // Send a message of type 2 (size_t followed by characters)
 
     bool quit = false;
 

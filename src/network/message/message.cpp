@@ -2,39 +2,62 @@
 
 Message::Message(Message::Type type) : _type(type) {}
 
-Message& Message::operator<<(const std::string& value)
-{
-    try
-    {
-        size_t size = value.length();
-        _buffer.pushInto(&size, sizeof(size_t));
-        _buffer.pushInto(value.c_str(), size);
-    }
-    catch (const std::out_of_range& e)
-    {
-        throw;
-    }
-    return *this;
-}
+// Message& Message::operator<<(const std::string& value)
+// {
+//     size_t size = value.length();
+//     _buffer.pushInto(&size, sizeof(size_t));
+//     _buffer.pushInto(value.data(), size);
+//     return *this;
+// }
 
-Message& Message::operator>>(std::string& value)
-{
-    try
-    {
-        size_t size;
-        _buffer.popInto(&size, sizeof(size_t));
+// Message& Message::operator>>(std::string& value)
+// {
+//     try
+//     {
+//         size_t size;
+//         _buffer.popInto(&size, sizeof(size_t));
 
-        std::vector<char> temp(size + 1, '\0');
-        _buffer.popInto(temp.data(), size);
+//         std::vector<char> temp(size + 1, '\0');
+//         _buffer.popInto(temp.data(), size);
 
-        value = std::string(temp.data());
-    }
-    catch (const std::out_of_range& e)
-    {
-        throw;
-    }
-    return *this;
-}
+//         value = std::string(temp.data());
+//     }
+//     catch (const std::out_of_range& e)
+//     {
+//         throw;
+//     }
+//     return *this;
+// }
+
+// const Message& Message::operator>>(std::string& value) const
+// {
+//     size_t size     = 0;
+//     auto   sizeData = _buffer.peek(sizeof(size_t));
+//     memcpy(&size, sizeData.data(), sizeof(size_t));
+
+//     std::cout << " Const peek string of size " << size << std::endl;
+
+//     // 2. Vérifier que la taille est cohérente
+//     if (_buffer.size() < sizeof(size_t) + size)
+//     {
+//         throw std::runtime_error("Buffer too small for string of size " + std::to_string(size));
+//     }
+
+//     // 3. Lire la string
+//     auto        valueData = _buffer.peek(sizeof(size_t) + size);
+//     const char* strData   = reinterpret_cast<const char*>(valueData.data() + sizeof(size_t));
+//     value.assign(strData, size);
+
+//     std::cout << "Debug - String content: [";
+//     for (size_t i = 0; i < size; ++i)
+//     {
+//         char c = *(valueData.data() + sizeof(size_t) + i);
+//         std::cout << (int)c << " ";
+//     }
+//     std::cout << "]" << std::endl;
+
+//     return *this;
+// }
 
 std::string Message::messageToString() const
 {

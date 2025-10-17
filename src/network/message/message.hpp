@@ -40,16 +40,18 @@ public:
     template <typename T>
     Message& operator>>(T& value)
     {
+        std::cout << " Const pop value of size " << sizeof(T) << std::endl;
         size_t size;
         _buffer.popInto(&size, sizeof(size_t));
         _buffer.popInto(&value, size);
+        // std::cout << " Popped value " << value << " of size " << size << std::endl;
         return *this;
     }
 
     template <typename T>
     Message& operator<<(const T& value)
     {
-        size_t size = sizeof(T);
+        size_t size = sizeof(T); // Initialiser size d'abord
         _buffer.pushInto(&size, sizeof(size_t));
         _buffer.pushInto(&value, size);
         return *this;
@@ -58,15 +60,20 @@ public:
     template <typename T>
     const Message& operator>>(T& value) const
     {
-        // size_t size;
-        _buffer.peek(sizeof(size_t)).data();
-        // _buffer.peek(sizeof(size_t) + size).data();
-        value = *reinterpret_cast<const T*>(_buffer.peek(sizeof(size_t) + sizeof(T)).data());
+        size_t size     = 0;
+        auto   sizeData = _buffer.peek(sizeof(size_t));
+        memcpy(&size, sizeData.data(), sizeof(size_t));
+
+        std::cout << " Const peek value of size " << size << std::endl;
+        auto valueData = _buffer.peek(sizeof(size_t) + size);
+        memcpy(&value, valueData.data() + sizeof(size_t), size);
+
         return *this;
     }
 
-    Message& operator<<(const std::string& value);
-    Message& operator>>(std::string& value);
+    Message&       operator<<(const std::string& value);
+    Message&       operator>>(std::string& value);
+    const Message& operator>>(std::string& value) const;
 
     std::vector<unsigned char> popData();
     int                        popType();

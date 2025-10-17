@@ -58,6 +58,7 @@ void Client::defineAction(const Message::Type&                           message
 
 void Client::send(const Message& message)
 {
+    std::cout << "Sending message of type " << message.type() << std::endl;
     auto data = message.getSerializedData();
     ::send(_fd, data.data(), data.size(), 0);
 }

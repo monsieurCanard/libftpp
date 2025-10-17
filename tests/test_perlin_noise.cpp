@@ -10,7 +10,7 @@
 class PerlinNoiseTest : public ::testing::Test
 {
 protected:
-    PerlinNoise perlin;
+    PerlinNoise2D perlin;
 };
 
 // --- Tests linearInterpolation ---

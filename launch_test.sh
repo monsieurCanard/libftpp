@@ -16,6 +16,9 @@ TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
 
+SKIP_TESTS=("main_client" "main_server")
+
+
 echo "================================================"
 echo "Running all tests..."
 echo "================================================"
@@ -45,6 +48,13 @@ for test_file in school_test/main_*.cpp; do
             # -I./src/network/message \
             # -I./src/thread/thread_safe_iostream \
             # -I./src/bonus/ring_buffer \
+       
+       if [[ " ${SKIP_TESTS[@]} " =~ " ${test_name} " ]]; then
+            echo ""
+            echo "⏭️  SKIPPING: $test_name (requires special setup)"
+            echo "----------------------------------------"
+            continue
+        fi
         
         if [ $? -ne 0 ]; then
             echo "❌ COMPILATION FAILED: $test_name"

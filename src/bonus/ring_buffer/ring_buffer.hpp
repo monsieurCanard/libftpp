@@ -32,6 +32,7 @@ public:
     void push(const unsigned char& byte);
     void push(const std::string& line);
     void push(const std::vector<unsigned char>& bytes);
+    
     void pushInto(const void* data, const size_t& size);
 
     unsigned char              pop();

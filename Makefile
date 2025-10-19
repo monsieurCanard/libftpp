@@ -52,8 +52,6 @@ $(OBJ_DIR):
 $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
 	@mkdir -p $(dir $@)
 	g++ $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
-	@echo "\033[0;34m[✔] Compiled $<\
-	\033[0m"
 
 PROGRAM_SERVER_SRCS = programs_test/programServer/main.cpp
 PROGRAM_STRESS_SRCS = programs_test/programStressTesteur/main.cpp
@@ -68,7 +66,6 @@ build/Makefile: $(CMAKE_FILES)
 
 $(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME) $(PROGRAM_SERVER_SRCS) $(PROGRAM_STRESS_SRCS)
 	cd build && make
-	@echo "\033[0;32m[✔] Tests compiled.\033[0m"
 
 test: $(TEST_BINARY)
 
@@ -84,8 +81,6 @@ fclean:
 	rm -rf build
 	rm -f save.txt
 	rm -rf logs
-	@echo "\033[0;31m[✘] Removed objects and $(NAME).\
-	\033[0m"
 
 re: fclean all
 

@@ -11,20 +11,20 @@ MATHEMATICS_DIR = $(SRCS_DIR)mathematics/
 THREAD_DIR = $(SRCS_DIR)thread/
 BONUS_DIR = $(SRCS_DIR)bonus/
 
-SRCS = $(SRCS_DIR)data_structures/data_buffer/data_buffer.cpp \
-			 $(SRCS_DIR)design_patterns/memento/memento.cpp \
-			 $(SRCS_DIR)network/message/message.cpp \
-			 $(SRCS_DIR)network/server/server.cpp \
-			 $(SRCS_DIR)network/client/client.cpp \
-			 $(SRCS_DIR)mathematics/perlin_noise_2D/perlin_noise_2D.cpp \
-			 $(SRCS_DIR)mathematics/random_2D_coordinate_generator/random_2D_coordinate_generator.cpp \
-			 $(SRCS_DIR)thread/thread_safe_iostream/thread_safe_iostream.cpp \
-			 $(SRCS_DIR)thread/persistent_worker/persistent_worker.cpp \
-			 $(SRCS_DIR)thread/thread/thread.cpp \
-			 $(SRCS_DIR)thread/worker_pool/worker_pool.cpp \
-			 $(SRCS_DIR)bonus/logger/logger.cpp \
-			 $(SRCS_DIR)bonus/chronometre/chronometre.cpp \
-			 $(SRCS_DIR)bonus/ring_buffer/ring_buffer.cpp
+SRCS = $(DATA_STRUCTURES_DIR)/data_buffer/data_buffer.cpp \
+			 $(DESIGN_PATTERNS_DIR)memento/memento.cpp \
+			 $(NETWORK_DIR)message/message.cpp \
+			 $(NETWORK_DIR)server/server.cpp \
+			 $(NETWORK_DIR)client/client.cpp \
+			 $(MATHEMATICS_DIR)perlin_noise_2D/perlin_noise_2D.cpp \
+			 $(MATHEMATICS_DIR)random_2D_coordinate_generator/random_2D_coordinate_generator.cpp \
+			 $(THREAD_DIR)thread_safe_iostream/thread_safe_iostream.cpp \
+			 $(THREAD_DIR)persistent_worker/persistent_worker.cpp \
+			 $(THREAD_DIR)thread/thread.cpp \
+			 $(THREAD_DIR)worker_pool/worker_pool.cpp \
+			 $(BONUS_DIR)logger/logger.cpp \
+			 $(BONUS_DIR)chronometre/chronometre.cpp \
+			 $(BONUS_DIR)ring_buffer/ring_buffer.cpp
 
 INCLUDE_DIRS = -I$(SRCS_DIR) \
                -I$(DATA_STRUCTURES_DIR) \
@@ -53,9 +53,6 @@ $(OBJ_DIR)%.o: $(SRCS_DIR)%.cpp | $(OBJ_DIR)
 	@mkdir -p $(dir $@)
 	g++ $(CFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 
-PROGRAM_SERVER_SRCS = programs_test/programServer/main.cpp
-PROGRAM_STRESS_SRCS = programs_test/programStressTesteur/main.cpp
-
 CMAKE_FILES = CMakeLists.txt
 
 TEST_BINARY = build/tests
@@ -64,19 +61,21 @@ build/Makefile: $(CMAKE_FILES)
 	mkdir -p build
 	cd build && cmake .. 
 
-$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME) $(PROGRAM_SERVER_SRCS) $(PROGRAM_STRESS_SRCS)
+$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME)
 	cd build && make
 
-test: $(TEST_BINARY)
+gtest: $(TEST_BINARY)
 
-run-test: test
-	./build/tests
+run-42-test:
+	./tests/launch_test.sh
 
 clean:
 	rm -rf $(OBJ_DIR)
 
 fclean:
 	rm -rf $(OBJ_DIR)
+	rm -rf tests/main_client_test
+	rm -rf tests/main_server_test
 	rm -f $(NAME)
 	rm -rf build
 	rm -f save.txt

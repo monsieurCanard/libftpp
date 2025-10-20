@@ -56,12 +56,12 @@ int main()
                         });
 
     // Start the server on port 8080
-    server.start(8080);
 
     bool quit = false;
     std::cout << "Server started on port 8080" << std::endl;
     while (!quit)
     {
+        server.start(8080);
         // client.update();
 
         threadSafeCout << "Server updated." << std::endl;

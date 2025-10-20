@@ -19,7 +19,7 @@ TEST(MessageTest, WriteAndReadInt)
     msg << valueIn;
     msg.reset();
 
-    EXPECT_THROW(msg >> valueOut, std::out_of_range);
+    EXPECT_NO_THROW(msg >> valueOut);
 }
 
 TEST(MessageTest, WriteAndReadFloat)
@@ -75,7 +75,7 @@ TEST(MessageTest, ResetWorks)
     valOut = 0;
     msg << valOut;
     msg >> valOut;
-    EXPECT_EQ(valOut, 0); // relu encore une fois
+    EXPECT_EQ(valOut, valIn); // relu encore une fois
 }
 
 class MessageComplexTest : public ::testing::Test
@@ -95,13 +95,30 @@ TEST_F(MessageComplexTest, MessageWithMultipleDataTypes)
     double      testDouble = 3.14159;
     std::string testString = "Test String";
 
-    *message << testInt << testDouble << testString;
+    *message << testInt << testDouble;
+    *message << testString.length();
+    for (char c : testString)
+    {
+        *message << c;
+    }
 
     int         retrievedInt;
     double      retrievedDouble;
     std::string retrievedString;
 
-    *message >> retrievedInt >> retrievedDouble >> retrievedString;
+    *message >> retrievedInt >> retrievedDouble;
+    size_t strLength;
+    *message >> strLength;
+
+    std::string text;
+    text.reserve(strLength);
+    for (size_t i = 0; i < strLength; ++i)
+    {
+        char c;
+        *message >> c;
+        text.push_back(c);
+    }
+    retrievedString = text;
 
     EXPECT_EQ(retrievedInt, testInt);
     EXPECT_DOUBLE_EQ(retrievedDouble, testDouble);
@@ -111,10 +128,24 @@ TEST_F(MessageComplexTest, MessageWithMultipleDataTypes)
 TEST_F(MessageComplexTest, MessageLargeString)
 {
     std::string largeString(1000, 'A');
-    *message << largeString;
+    size_t      length = largeString.length();
+    *message << length;
+    for (char c : largeString)
+    {
+        *message << c;
+    }
 
     std::string retrievedString;
-    *message >> retrievedString;
+    size_t      strLength;
+    *message >> strLength;
+    retrievedString.reserve(strLength);
+
+    for (size_t i = 0; i < strLength; ++i)
+    {
+        char c;
+        *message >> c;
+        retrievedString.push_back(c);
+    }
 
     EXPECT_EQ(retrievedString, largeString);
 }

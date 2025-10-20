@@ -2,170 +2,52 @@
 
 Message::Message(Message::Type type) : _type(type) {}
 
-// Message& Message::operator<<(const std::string& value)
-// {
-//     size_t size = value.length();
-//     _buffer.pushInto(&size, sizeof(size_t));
-//     _buffer.pushInto(value.data(), size);
-//     return *this;
-// }
-
-// Message& Message::operator>>(std::string& value)
-// {
-//     try
-//     {
-//         size_t size;
-//         _buffer.popInto(&size, sizeof(size_t));
-
-//         std::vector<char> temp(size + 1, '\0');
-//         _buffer.popInto(temp.data(), size);
-
-//         value = std::string(temp.data());
-//     }
-//     catch (const std::out_of_range& e)
-//     {
-//         throw;
-//     }
-//     return *this;
-// }
-
-// const Message& Message::operator>>(std::string& value) const
-// {
-//     size_t size     = 0;
-//     auto   sizeData = _buffer.peek(sizeof(size_t));
-//     memcpy(&size, sizeData.data(), sizeof(size_t));
-
-//     std::cout << " Const peek string of size " << size << std::endl;
-
-//     // 2. Vérifier que la taille est cohérente
-//     if (_buffer.size() < sizeof(size_t) + size)
-//     {
-//         throw std::runtime_error("Buffer too small for string of size " + std::to_string(size));
-//     }
-
-//     // 3. Lire la string
-//     auto        valueData = _buffer.peek(sizeof(size_t) + size);
-//     const char* strData   = reinterpret_cast<const char*>(valueData.data() + sizeof(size_t));
-//     value.assign(strData, size);
-
-//     std::cout << "Debug - String content: [";
-//     for (size_t i = 0; i < size; ++i)
-//     {
-//         char c = *(valueData.data() + sizeof(size_t) + i);
-//         std::cout << (int)c << " ";
-//     }
-//     std::cout << "]" << std::endl;
-
-//     return *this;
-// }
-
-std::string Message::messageToString() const
+void Message::appendBytes(const unsigned char* data, size_t len)
 {
-    try
-    {
-        auto data = getSerializedData();
-
-        if (data.size() < sizeof(Message::Type) + sizeof(size_t))
-            return "";
-
-        size_t offset = sizeof(Message::Type);
-
-        size_t dataSize;
-        memcpy(&dataSize, data.data() + offset, sizeof(size_t));
-        offset += sizeof(size_t);
-
-        if (data.size() < offset + dataSize)
-            return "";
-
-        std::string result(reinterpret_cast<const char*>(data.data() + offset), dataSize);
-        return result;
-    }
-    catch (std::out_of_range& e)
-    {
-        std::cerr << e.what() << std::endl;
-        return "";
-    }
+    _buffer.append(data, len);
 }
 
-bool Message::isComplet() const
+bool Message::isComplet()
 {
     if (_buffer.size() < sizeof(Message::Type) + sizeof(size_t))
         return false;
-    try
-    {
-        auto   header = _buffer.peek(sizeof(Message::Type) + sizeof(size_t));
-        size_t messageSize;
-        memcpy(&messageSize, header.data() + sizeof(Message::Type), sizeof(size_t));
 
-        return (_buffer.size() >= sizeof(Message::Type) + sizeof(size_t) + messageSize);
-    }
-    catch (const std::out_of_range& e)
-    {
-        throw;
-    }
+    Message::Type type;
+    _buffer >> type;
+
+    size_t messageSize;
+    _buffer >> messageSize;
+
+    _buffer.reset();
+
+    return (_buffer.size() >= sizeof(Message::Type) + sizeof(size_t) + messageSize);
 }
 
 std::vector<unsigned char> Message::getSerializedData() const
 {
     std::vector<unsigned char> result;
+    size_t                     totalSize = sizeof(Message::Type) + sizeof(size_t) + _buffer.size();
+    result.reserve(totalSize);
 
-    try
-    {
-        result.resize(sizeof(Message::Type));
-        memcpy(result.data(), &_type, sizeof(Message::Type));
+    result.insert(result.end(),
+                  reinterpret_cast<const unsigned char*>(&_type),
+                  reinterpret_cast<const unsigned char*>(&_type) + sizeof(Message::Type));
 
-        auto   header = _buffer.peek(sizeof(size_t));
-        size_t messageSize;
-        memcpy(&messageSize, header.data(), sizeof(size_t));
-        auto bufferData = _buffer.peek(sizeof(size_t) + messageSize);
-        result.insert(result.end(), bufferData.begin(), bufferData.end());
+    size_t bufferSize = _buffer.size();
+    result.insert(result.end(),
+                  reinterpret_cast<const unsigned char*>(&bufferSize),
+                  reinterpret_cast<const unsigned char*>(&bufferSize) + sizeof(size_t));
 
-        return result;
-    }
-    catch (std::out_of_range& e)
-    {
-        throw;
-    }
-}
+    // Mettre les données
+    auto bufData = _buffer.data(); // récupérer une seule fois le vector tempora
+    result.insert(result.end(), bufData.begin(), bufData.end());
 
-std::vector<unsigned char> Message::popData()
-{
-    std::vector<unsigned char> data;
-    size_t                     messageSize;
-
-    try
-    {
-        auto header = _buffer.peek(sizeof(size_t));
-
-        memcpy(&messageSize, header.data(), sizeof(size_t));
-        return _buffer.pop(sizeof(size_t) + messageSize);
-    }
-    catch (std::out_of_range& e)
-    {
-        throw;
-    }
-}
-
-int Message::popType()
-{
-    std::vector<unsigned char> data;
-    int                        type;
-
-    try
-    {
-        auto header = _buffer.pop(sizeof(int));
-        memcpy(&type, header.data(), sizeof(int));
-        return type;
-    }
-    catch (std::out_of_range& e)
-    {
-        throw;
-    }
+    return result;
 }
 
 void Message::reset()
 {
-    _buffer.clear();
+    _buffer.reset();
 }
 
 Message::Type Message::type() const
@@ -177,9 +59,4 @@ void Message::setType(Message::Type type)
 {
     _type = type;
     return;
-}
-
-RingBuffer& Message::data()
-{
-    return _buffer;
 }

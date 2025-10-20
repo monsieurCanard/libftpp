@@ -2,7 +2,7 @@
 
 DataBuffer::DataBuffer() : _cursor(0) {}
 
-void DataBuffer::reset()
+void DataBuffer::reset() const
 {
     _cursor = 0;
 }
@@ -11,6 +11,13 @@ void DataBuffer::clear()
 {
     _buffer.clear();
     _cursor = 0;
+}
+
+void DataBuffer::append(const unsigned char* data, size_t len)
+{
+    if (len == 0 || data == nullptr)
+        return;
+    _buffer.insert(_buffer.end(), data, data + len);
 }
 
 DataBuffer& DataBuffer::operator<<(const std::string& value)

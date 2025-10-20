@@ -21,20 +21,8 @@ file(GLOB_RECURSE LIB_SOURCES "src/**/*.cpp")
 add_library(test_lib ${LIB_SOURCES})
 
 # Ajouter l'exécutable de tests
-file(GLOB_RECURSE TEST_SOURCES "tests/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "tests/my_google_tests/*.cpp")
 add_executable(tests ${TEST_SOURCES})
-
-# Ajouter l'exécutable de votre programme serveur
-add_executable(program_server programs_test/programServer/main.cpp programs_test/programServer/chuck.hpp)
-target_link_libraries(program_server test_lib)
-target_include_directories(program_server PRIVATE . src)
-
-
-# Ajouter l'exécutable de votre programme serveur
-add_executable(program_stress programs_test/programStressTesteur/main.cpp)
-target_link_libraries(program_stress test_lib)
-target_include_directories(program_stress PRIVATE . src)
-
 
 # Lier GoogleTest et ta librairie
 target_link_libraries(tests gtest_main test_lib)

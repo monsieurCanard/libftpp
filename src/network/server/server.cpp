@@ -99,7 +99,6 @@ void Server::_acceptNewConnection()
     int connfd = accept(_socket, 0, 0);
     if (connfd < 0)
         return;
-
     if (_clients.size() >= NB_CONNECTION)
     {
         std::cerr << "Max connections reached, closing new connection" << std::endl;
@@ -134,49 +133,45 @@ bool Server::_receiveClientMsg(const int& fd)
         return (errno == EAGAIN || errno == EWOULDBLOCK);
     }
 
-    _partialMsgs[fd].data().pushInto(buffRead, bytes);
-
+    _partialMsgs[fd].appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
     while (_partialMsgs[fd].isComplet())
     {
-        Message newMsg;
-        newMsg.setType(_partialMsgs[fd].popType());
 
-        auto data = _partialMsgs[fd].popData();
-        newMsg.data().pushInto(data.data(), data.size());
-        newMsg.setMessageFd(fd);
+        Message::Type msgType;
+        _partialMsgs[fd] >> msgType;
+
+        Message newMsg(fd, msgType);
+
+        size_t dataSize;
+        _partialMsgs[fd] >> dataSize;
+
+        newMsg.appendBytes(_partialMsgs[fd].getBuffer()->data().data(), dataSize);
 
         _msgs.push_back(newMsg);
-        _partialMsgs[fd].reset();
+        _partialMsgs[fd].getBuffer()->clear();
     }
     return true;
 }
 
 void Server::sendTo(const Message& message, long long clientID)
 {
-    try
+    auto fdIt = _clientsToFd.find(clientID);
+    if (fdIt == _clientsToFd.end())
+        return;
+
+    if (!FD_ISSET(fdIt->second, &_active))
+        return;
+
+    const auto& data = message.getSerializedData();
+    if (data.empty())
+        return;
+
+    ssize_t bytes_sent = send(fdIt->second, data.data(), data.size(), 0);
+    if (bytes_sent == -1)
     {
-        auto fdIt = _clientsToFd.find(clientID);
-        if (fdIt == _clientsToFd.end())
-            return;
+        _clearClient(fdIt->second);
 
-        if (!FD_ISSET(fdIt->second, &_active))
-            return;
-
-        const auto& data = message.getSerializedData();
-        if (data.empty())
-            return;
-
-        ssize_t bytes_sent = send(fdIt->second, data.data(), data.size(), 0);
-        if (bytes_sent == -1)
-        {
-            _clearClient(fdIt->second);
-
-            std::cerr << "Failed to send message to client " << clientID << std::endl;
-        }
-    }
-    catch (std::runtime_error& e)
-    {
-        throw;
+        std::cerr << "Failed to send message to client " << clientID << std::endl;
     }
 }
 
@@ -213,7 +208,7 @@ void Server::update()
         if (it == _tasks.end())
             continue;
 
-        auto it2 = _clients.find(_msgs[i].getMessageFd());
+        auto it2 = _clients.find(_msgs[i].getFd());
         if (it2 == _clients.end())
             continue;
         long long clientId = it2->second;

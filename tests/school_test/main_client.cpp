@@ -10,7 +10,6 @@ int main()
     client.defineAction(3,
                         [](const Message& msg)
                         {
-                            // (void)msg;
                             int doubledValue;
                             msg >> doubledValue;
                             threadSafeCout << "Received a doubled value: " << doubledValue
@@ -20,26 +19,51 @@ int main()
     // Connect to the server
     client.connect("localhost", 8080);
 
-    // Send a message of type 1 (int)
-    Message message1(1);
-    message1 << 42;
-    client.send(message1);
+    Client client2;
 
-    Message     message2(2);
-    std::string str = "Hello";
-    message2 << str.size();
+    client2.defineAction(3,
+                         [](const Message& msg)
+                         {
+                             int doubledValue;
+                             msg >> doubledValue;
+                             threadSafeCout << "Received a doubled value: " << doubledValue
+                                            << std::endl;
+                         });
+
+    // Connect to the server
+    client2.connect("localhost", 8080);
+
+    Message     message1(2);
+    std::string str = "Good night";
+    message1 << str.size();
     threadSafeCout << " str.size() = " << str.size() << std::endl;
     for (char c : str)
     {
-        message2 << c;
+        message1 << c;
     }
-    client.send(message2);
+    client2.send(message1);
 
-    Message message3(3);
-    message3 << 3.14;
+    Message message2(3);
+    message2 << 5.2;
+    client2.send(message2);
+
+    Message message3(1);
+    message3 << 42;
     client.send(message3);
 
-    // Send a message of type 2 (size_t followed by characters)
+    Message     message4(2);
+    std::string str2 = "Hello";
+    message4 << str2.size();
+    threadSafeCout << " str2.size() = " << str2.size() << std::endl;
+    for (char c : str2)
+    {
+        message4 << c;
+    }
+    client.send(message4);
+
+    Message message5(3);
+    message5 << 3.14;
+    client.send(message5);
 
     bool quit = false;
 

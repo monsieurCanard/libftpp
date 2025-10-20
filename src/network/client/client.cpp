@@ -58,7 +58,6 @@ void Client::defineAction(const Message::Type&                           message
 
 void Client::send(const Message& message)
 {
-    std::cout << "Sending message of type " << message.type() << std::endl;
     auto data = message.getSerializedData();
     ::send(_fd, data.data(), data.size(), 0);
 }
@@ -104,17 +103,23 @@ void Client::_receiveMessage()
         _networkError("Cannot receive message: ");
     }
 
-    _tmpMsg.data().pushInto(buffRead, bytes);
+    _tmpMsg.appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
+
     while (_tmpMsg.isComplet())
     {
-        Message newMsg;
-        newMsg.setType(_tmpMsg.popType());
+        Message::Type msgType;
+        _tmpMsg >> msgType;
 
-        auto data = _tmpMsg.popData();
-        newMsg.data().pushInto(data.data(), data.size());
+        Message newMsg(msgType);
+
+        size_t dataSize;
+        _tmpMsg >> dataSize;
+
+        newMsg.appendBytes(_tmpMsg.getBuffer()->data().data(), dataSize);
 
         _msgs.push_back(newMsg);
-        _tmpMsg.reset();
+
+        _tmpMsg.getBuffer()->clear();
     }
 }
 

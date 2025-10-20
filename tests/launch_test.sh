@@ -16,7 +16,7 @@ TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
 
-SKIP_TESTS=("main_client" "main_server")
+OUTCAST_TESTS=("main_client" "main_server")
 
 
 echo "================================================"
@@ -24,12 +24,14 @@ echo "Running all tests..."
 echo "================================================"
 
 # Loop through all main_*.cpp files in school_test directory
-for test_file in school_test/main_*.cpp; do
+for test_file in tests/school_test/main_*.cpp; do
     if [ -f "$test_file" ]; then
-        # Extract test name (remove path and extension)
+       
         test_name=$(basename "$test_file" .cpp)
         executable_name="${test_name}_test"
         
+   
+
         echo ""
         echo ">>> Testing: $test_name"
         echo "----------------------------------------"
@@ -41,30 +43,19 @@ for test_file in school_test/main_*.cpp; do
             "$test_file" \
             -L. -lftpp \
             -pthread \
-            -o "$executable_name"
-            # -I./src/data_structures/pool \
-            # -I./src/network/client \
-            # -I./src/network/server \
-            # -I./src/network/message \
-            # -I./src/thread/thread_safe_iostream \
-            # -I./src/bonus/ring_buffer \
-       
-       if [[ " ${SKIP_TESTS[@]} " =~ " ${test_name} " ]]; then
-            echo ""
-            echo "⏭️  SKIPPING: $test_name (requires special setup)"
-            echo "----------------------------------------"
-            continue
-        fi
-        
+            -o tests/"$executable_name"
+
         if [ $? -ne 0 ]; then
             echo "❌ COMPILATION FAILED: $test_name"
             FAILED_TESTS=$((FAILED_TESTS + 1))
         else
             echo "✅ Compilation successful for $test_name"
-            
+            if [[ " ${OUTCAST_TESTS[@]} " =~ " ${test_name} " ]]; then
+                continue;
+            fi
             # Run the test
             echo "Running $executable_name..."
-            ./"$executable_name"
+            ./tests/"$executable_name"
             
             if [ $? -eq 0 ]; then
                 echo "✅ PASSED: $test_name"
@@ -75,7 +66,7 @@ for test_file in school_test/main_*.cpp; do
             fi
             
             # Clean up executable
-            rm -f "$executable_name"
+            rm -f tests/"$executable_name"
         fi
         
         TOTAL_TESTS=$((TOTAL_TESTS + 1))

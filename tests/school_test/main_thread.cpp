@@ -1,26 +1,20 @@
-#include <chrono>
 #include <iostream>
+#include <chrono>
+#include "../../libftpp.hpp"
 
-#include "../libftpp.hpp"
-
-void myFunction1()
-{
-    for (int i = 0; i < 5; ++i)
-    {
+void myFunction1() {
+    for (int i = 0; i < 5; ++i) {
         threadSafeCout << "Hello from Function1, iteration " << i << std::endl;
     }
 }
 
-void myFunction2()
-{
-    for (int i = 0; i < 5; ++i)
-    {
+void myFunction2() {
+    for (int i = 0; i < 5; ++i) {
         threadSafeCout << "Hello from Function2, iteration " << i << std::endl;
     }
 }
 
-int main()
-{
+int main() {
     Thread thread1("Thread1", myFunction1);
     Thread thread2("Thread2", myFunction2);
 

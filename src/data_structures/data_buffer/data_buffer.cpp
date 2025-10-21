@@ -41,3 +41,29 @@ DataBuffer& DataBuffer::operator>>(std::string& value)
     _cursor += size;
     return *this;
 }
+
+size_t DataBuffer::size() const
+{
+    return _buffer.size() - _cursor;
+}
+
+const std::vector<unsigned char> DataBuffer::data() const
+{
+    return std::vector<unsigned char>(_buffer.begin() + _cursor, _buffer.end());
+}
+
+void DataBuffer::increaseCursor(size_t amount) const
+{
+    if (_cursor + amount > _buffer.size())
+        throw std::out_of_range("Buffer overflow on increaseCursor");
+
+    _cursor += amount;
+}
+
+void DataBuffer::decreaseCursor(size_t amount) const
+{
+    if (amount > _cursor)
+        throw std::out_of_range("Buffer underflow on decreaseCursor");
+
+    _cursor -= amount;
+}

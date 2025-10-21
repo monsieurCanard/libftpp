@@ -57,14 +57,19 @@ CMAKE_FILES = CMakeLists.txt
 
 TEST_BINARY = build/tests
 
+TEST_SRCS = $(wildcard tests/my_google_test/*.cpp)
+
 build/Makefile: $(CMAKE_FILES) 
 	mkdir -p build
-	cd build && cmake .. 
+	cd build && cmake ..
 
-$(TEST_BINARY): build/Makefile $(SRCS_TEST) $(NAME)
+$(TEST_BINARY): $(NAME) build/Makefile $(TEST_SRCS)
 	cd build && make
 
 gtest: $(TEST_BINARY)
+
+run-gtest:
+	./build/tests
 
 run-42-test:
 	./tests/launch_test.sh

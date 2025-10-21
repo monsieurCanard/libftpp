@@ -54,6 +54,7 @@ public:
                       const std::function<void(const Message& msg)>& action);
 
     void send(const Message& message);
+
     void update();
 };
 

@@ -1,19 +1,15 @@
 #include <iostream>
 #include <thread>
+#include "../../libftpp.hpp"
 
-#include "../libftpp.hpp"
-
-void printNumbers(const std::string& p_prefix)
-{
+void printNumbers(const std::string& p_prefix) {
     threadSafeCout.setPrefix(p_prefix);
-    for (int i = 1; i <= 5; ++i)
-    {
+    for (int i = 1; i <= 5; ++i) {
         threadSafeCout << "Number: " << i << std::endl;
     }
 }
 
-int main()
-{
+int main() {
     std::string prefix1 = "[Thread 1] ";
     std::string prefix2 = "[Thread 2] ";
 

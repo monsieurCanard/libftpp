@@ -78,18 +78,21 @@ void Client::_receiveMessage()
 {
 
     char buffRead[MAX_READ_BUFFER];
-    int  bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
+    int  bytes;
+    while ((bytes = recv(_fd, buffRead, sizeof(buffRead), MSG_DONTWAIT)) > 0)
+    {
+        _tmpMsg.appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
+    }
+
     if (bytes == 0)
     {
+        // Connexion fermée par le serveur
         disconnect();
         return;
     }
-    if (bytes == -1)
-    {
-        // Pas de données à lire (ne pas lever d'exception)
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            return;
 
+    if (bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK)
+    {
         // Déconnexions réseau (ne pas lever d'exception)
         if (errno == ENOTCONN ||   // Transport endpoint is not connected
             errno == ECONNRESET || // Connection reset by peer
@@ -103,8 +106,6 @@ void Client::_receiveMessage()
         _networkError("Cannot receive message: ");
     }
 
-    _tmpMsg.appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
-
     while (_tmpMsg.isComplet())
     {
         Message::Type msgType;
@@ -117,9 +118,9 @@ void Client::_receiveMessage()
 
         newMsg.appendBytes(_tmpMsg.getBuffer()->data().data(), dataSize);
 
-        _msgs.push_back(newMsg);
+        _tmpMsg.incr_cursor(dataSize);
 
-        _tmpMsg.getBuffer()->clear();
+        _msgs.push_back(newMsg);
     }
 }
 

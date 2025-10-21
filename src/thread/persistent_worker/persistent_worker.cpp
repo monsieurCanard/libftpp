@@ -29,6 +29,7 @@ void PersistentWorker::removeTask(const std::string& name)
     _tasks.erase(name);
 }
 
+#include <iostream>
 void PersistentWorker::loop()
 {
     std::unordered_map<std::string, std::function<void()>> copy;
@@ -41,7 +42,7 @@ void PersistentWorker::loop()
 
         if (!_running)
             return;
-            
+
         copy = _tasks;
         lock.unlock();
 

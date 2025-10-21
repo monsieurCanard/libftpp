@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../libftpp.hpp"
+#include "../../libftpp.hpp"
 
 int main()
 {

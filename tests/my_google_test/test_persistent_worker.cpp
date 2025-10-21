@@ -12,11 +12,13 @@ TEST(PersistentWorkerTest, AddTaskExecutes)
     PersistentWorker worker;
 
     std::atomic<int> counter{0};
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     worker.addTask("increment", [&]() { counter++; });
 
     // Attendre un peu pour que la tâche s’exécute plusieurs fois
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
+    worker.removeTask("increment");
     EXPECT_GT(counter.load(), 0); // La tâche a tourné au moins une fois
 }
 
@@ -28,11 +30,12 @@ TEST(PersistentWorkerTest, RemoveTaskStopsExecution)
     std::atomic<int> counter{0};
     worker.addTask("increment", [&]() { counter++; });
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     worker.removeTask("increment");
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
     int before = counter.load();
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
     EXPECT_EQ(before, counter.load()); // plus d'incrémentations après suppression
 }

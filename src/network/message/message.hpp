@@ -56,17 +56,16 @@ public:
     void          setType(Message::Type type);
     Message::Type type() const;
 
-    DataBuffer* getBuffer()
-    {
-        return &_buffer;
-    }
+    DataBuffer* getBuffer();
+
+    void setMessageFd(int fd);
+
+    void incr_cursor(size_t len) const;
+    void decr_cursor(size_t len) const;
 
     bool isComplet();
     void reset();
 
-    const int& getFd()
-    {
-        return _fd;
-    }
+    const int& getFd() const;
 };
 #endif

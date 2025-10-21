@@ -13,7 +13,8 @@
 #include <unordered_map>
 
 #define NB_CONNECTION    1000
-#define READ_BUFFER_SIZE 4096
+#define READ_BUFFER_SIZE 100000
+// 4096
 
 #include "../message/message.hpp"
 

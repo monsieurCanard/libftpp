@@ -1,7 +1,8 @@
+
 #include <algorithm>
 #include <string>
 
-#include "../libftpp.hpp"
+#include "../../libftpp.hpp"
 
 int main()
 {
@@ -26,8 +27,9 @@ int main()
     server.defineAction(2,
                         [](long long& clientID, const Message& msg)
                         {
-                            std::string text;
+                            (void)clientID;
                             size_t      length;
+                            std::string text;
                             msg >> length;
                             text.reserve(length);
                             for (size_t i = 0; i < length; ++i)
@@ -36,33 +38,18 @@ int main()
                                 msg >> c;
                                 text.push_back(c);
                             }
-                            threadSafeCout << "Received a string '" << text << "' of length "
-                                           << length << " from client " << clientID << std::endl;
-                        });
 
-    // Define an action for messages of type 3 (double)
-    server.defineAction(3,
-                        [&server](long long& clientID, const Message& msg)
-                        {
-                            double value;
-                            msg >> value;
-                            threadSafeCout << "Received a double " << value << " from client "
-                                           << clientID << std::endl;
-
-                            // Send back a message of type 1 with the same value
-                            Message replyMsg;
-                            replyMsg << value;
-                            server.sendTo(replyMsg, clientID);
+                            threadSafeCout << "Received a string: " << text << std::endl;
                         });
 
     // Start the server on port 8080
+    server.start(8080);
+    // server.start(8080);
 
     bool quit = false;
-    std::cout << "Server started on port 8080" << std::endl;
+
     while (!quit)
     {
-        server.start(8080);
-        // client.update();
 
         threadSafeCout << "Server updated." << std::endl;
         threadSafeCout << "Available operations :" << std::endl;
@@ -81,6 +68,7 @@ int main()
         {
             quit = true;
         }
+        server.update();
     }
 
     return 0;

@@ -21,7 +21,7 @@ file(GLOB_RECURSE LIB_SOURCES "src/**/*.cpp")
 add_library(test_lib ${LIB_SOURCES})
 
 # Ajouter l'exécutable de tests
-file(GLOB_RECURSE TEST_SOURCES "tests/my_google_tests/*.cpp")
+file(GLOB_RECURSE TEST_SOURCES "tests/my_google_test/*.cpp")
 add_executable(tests ${TEST_SOURCES})
 
 # Lier GoogleTest et ta librairie

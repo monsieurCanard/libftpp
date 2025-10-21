@@ -16,6 +16,7 @@ void Server::start(const size_t& port)
     {
         perror("setsockopt SO_REUSEADDR failed");
     }
+
     sockaddr_in sockaddr;
     sockaddr.sin_family = AF_INET;
     if (!_address.empty())
@@ -48,50 +49,6 @@ void Server::start(const size_t& port)
         stop();
         throw std::runtime_error("Failed to listen on socket. errno: " + std::to_string(errno));
     }
-
-    while (_running)
-    {
-
-        _readyRead = _readyWrite = _active;
-        timeval timeout          = {0, 10000}; // Pour que le select soit non bloquant
-        int     select_result    = select(_max_fd + 1, &_readyRead, &_readyWrite, NULL, &timeout);
-
-        if (select_result < 0)
-        {
-            if (errno == EBADF || errno == EINTR)
-            {
-                std::cout << "Select interrupted, stopping server..." << std::endl;
-                break;
-            }
-            continue;
-        }
-
-        if (select_result == 0)
-            continue;
-
-        for (int fd = 0; fd <= _max_fd; fd++)
-        {
-            if (!FD_ISSET(fd, &_readyRead))
-                continue;
-            if (fd == _socket)
-            {
-                _acceptNewConnection();
-                continue;
-            }
-            if (!_receiveClientMsg(fd))
-            {
-                auto clientIt = _clients.find(fd);
-                if (clientIt != _clients.end())
-                {
-                    _clearClient(fd);
-                }
-                _partialMsgs.erase(fd);
-            }
-        }
-        update();
-    }
-    // stop();
-    _clearAll();
 }
 
 void Server::_acceptNewConnection()
@@ -110,6 +67,7 @@ void Server::_acceptNewConnection()
         _max_fd = connfd;
 
     FD_SET(connfd, &_active);
+
     _clients[connfd]       = _next_id;
     _clientsToFd[_next_id] = connfd;
     _next_id++;
@@ -117,38 +75,40 @@ void Server::_acceptNewConnection()
 
 bool Server::_receiveClientMsg(const int& fd)
 {
-
     if (!FD_ISSET(fd, &_readyRead))
         return false;
 
     char buffRead[READ_BUFFER_SIZE];
-    int  bytes = recv(fd, buffRead, sizeof(buffRead), MSG_DONTWAIT);
+    int  bytes = 0;
 
-    if (bytes == 0)
-        return false;
-
-    if (bytes == -1)
+    while ((bytes = recv(fd, buffRead, sizeof(buffRead), MSG_DONTWAIT)) > 0)
     {
-        // Gérer le cas où il n'y a pas assez de données
-        return (errno == EAGAIN || errno == EWOULDBLOCK);
+        _partialMsgs[fd].appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
+        while (_partialMsgs[fd].isComplet())
+        {
+
+            Message::Type msgType;
+            _partialMsgs[fd] >> msgType;
+
+            Message newMsg(fd, msgType);
+
+            size_t dataSize;
+            _partialMsgs[fd] >> dataSize;
+
+            newMsg.appendBytes(_partialMsgs[fd].getBuffer()->data().data(), dataSize);
+
+            _partialMsgs[fd].incr_cursor(dataSize);
+
+            newMsg.setMessageFd(fd);
+
+            _msgs.push_back(newMsg);
+        }
+        _partialMsgs[fd].getBuffer()->clear();
     }
 
-    _partialMsgs[fd].appendBytes(reinterpret_cast<unsigned char*>(buffRead), bytes);
-    while (_partialMsgs[fd].isComplet())
+    if (bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK)
     {
-
-        Message::Type msgType;
-        _partialMsgs[fd] >> msgType;
-
-        Message newMsg(fd, msgType);
-
-        size_t dataSize;
-        _partialMsgs[fd] >> dataSize;
-
-        newMsg.appendBytes(_partialMsgs[fd].getBuffer()->data().data(), dataSize);
-
-        _msgs.push_back(newMsg);
-        _partialMsgs[fd].getBuffer()->clear();
+        return false;
     }
     return true;
 }
@@ -159,7 +119,7 @@ void Server::sendTo(const Message& message, long long clientID)
     if (fdIt == _clientsToFd.end())
         return;
 
-    if (!FD_ISSET(fdIt->second, &_active))
+    if (!FD_ISSET(fdIt->second, &_active) || !FD_ISSET(fdIt->second, &_readyWrite))
         return;
 
     const auto& data = message.getSerializedData();
@@ -170,7 +130,6 @@ void Server::sendTo(const Message& message, long long clientID)
     if (bytes_sent == -1)
     {
         _clearClient(fdIt->second);
-
         std::cerr << "Failed to send message to client " << clientID << std::endl;
     }
 }
@@ -201,6 +160,46 @@ void Server::defineAction(
 
 void Server::update()
 {
+    while (_running)
+    {
+
+        _readyRead            = _active;
+        timeval timeout       = {0, 10000}; // Pour que le select soit non bloquant
+        int     select_result = select(_max_fd + 1, &_readyRead, NULL, NULL, &timeout);
+
+        if (select_result <= 0)
+        {
+            if (errno == EBADF || errno == EINTR)
+            {
+                std::cout << "Select interrupted, stopping server..." << std::endl;
+                return;
+            }
+            _running = false;
+            continue;
+        }
+
+        for (int fd = 0; fd <= _max_fd; fd++)
+        {
+            if (!FD_ISSET(fd, &_readyRead))
+                continue;
+
+            if (fd == _socket)
+            {
+                _acceptNewConnection();
+                continue;
+            }
+            if (!_receiveClientMsg(fd))
+            {
+                auto clientIt = _clients.find(fd);
+                if (clientIt != _clients.end())
+                {
+                    _clearClient(fd);
+                }
+                _partialMsgs.erase(fd);
+            }
+        }
+    }
+
     for (size_t i = 0; i < _msgs.size(); i++)
     {
         auto it = _tasks.find(_msgs[i].type());
@@ -211,7 +210,9 @@ void Server::update()
         auto it2 = _clients.find(_msgs[i].getFd());
         if (it2 == _clients.end())
             continue;
+
         long long clientId = it2->second;
+
         it->second(clientId, _msgs[i]);
     }
     _msgs.clear();

@@ -18,7 +18,7 @@ bool Message::isComplet()
     size_t messageSize;
     _buffer >> messageSize;
 
-    _buffer.reset();
+    _buffer.decreaseCursor(sizeof(Message::Type) + sizeof(size_t));
 
     return (_buffer.size() >= sizeof(Message::Type) + sizeof(size_t) + messageSize);
 }
@@ -59,4 +59,29 @@ void Message::setType(Message::Type type)
 {
     _type = type;
     return;
+}
+
+void Message::setMessageFd(int fd)
+{
+    _fd = fd;
+}
+
+void Message::incr_cursor(size_t len) const
+{
+    _buffer.increaseCursor(len);
+}
+
+void Message::decr_cursor(size_t len) const
+{
+    _buffer.decreaseCursor(len);
+}
+
+const int& Message::getFd() const
+{
+    return _fd;
+}
+
+DataBuffer* Message::getBuffer()
+{
+    return &_buffer;
 }

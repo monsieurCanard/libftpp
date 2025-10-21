@@ -23,17 +23,13 @@ public:
     DataBuffer();
     ~DataBuffer() = default;
 
-    const std::vector<unsigned char> data() const
-    {
-        return std::vector<unsigned char>(_buffer.begin() + _cursor, _buffer.end());
-    }
+    const std::vector<unsigned char> data() const;
+    void                             increaseCursor(size_t amount) const;
+    void                             decreaseCursor(size_t amount) const;
 
     void   reset() const;
     void   clear();
-    size_t size() const
-    {
-        return _buffer.size();
-    }
+    size_t size() const;
 
     void append(const unsigned char* data, size_t len);
 
@@ -45,7 +41,6 @@ public:
     DataBuffer& operator<<(const T& value)
     {
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
-        std::cout << " Push value of size " << sizeof(T) << std::endl;
         _buffer.insert(_buffer.end(), ptr, ptr + sizeof(T));
         return *this;
     }

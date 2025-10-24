@@ -32,24 +32,24 @@ public:
         std::aligned_storage_t<sizeof(TType), alignof(TType)> _myself;
 
         template <typename... TArgs>
-        Object(Pool<TType>* pool, int& index, TArgs&&... p_args);
+        Object(Pool<TType>* pool, int index, TArgs&&... p_args);
 
     public:
-        virtual ~Object();
         Object();
+        virtual ~Object();
+
         TType* operator->();
         TType* get();
     };
 
-    Pool(const size_t&& size);
-    Pool()  = default;
-    ~Pool() = default;
+    Pool(size_t size = 0);
+    ~Pool();
 
     /**
      * @brief Pre-allocates memory for a given number of objects.
      * @param numberOfObjectStored Number of objects to pre-allocate.
      */
-    void resize(const size_t& numberOfObjectStored);
+    void resize(size_t numberOfObjectStored);
 
     /**
 
@@ -65,7 +65,7 @@ public:
      * @throw std::out_of_range if no objects are available in the pool.
      * */
     template <typename... TArgs>
-    Object acquire(TArgs&&... p_args);
+    Object& acquire(TArgs&&... p_args);
 
     /**
      * @brief Releases an object back into the pool.
@@ -74,8 +74,8 @@ public:
     void release(Object& obj);
 
 private:
-    std::vector<Object> _objects;
     std::stack<int>     _available;
+    std::vector<Object> _objects;
 };
 
 #include "pool.tpp"

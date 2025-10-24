@@ -66,7 +66,7 @@ for test_file in tests/school_test/main_*.cpp; do
             fi
             
             # Clean up executable
-            rm -f tests/"$executable_name"
+            # rm -f tests/"$executable_name"
         fi
         
         TOTAL_TESTS=$((TOTAL_TESTS + 1))

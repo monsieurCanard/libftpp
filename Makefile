@@ -79,8 +79,7 @@ clean:
 
 fclean:
 	rm -rf $(OBJ_DIR)
-	rm -rf tests/main_client_test
-	rm -rf tests/main_server_test
+	rm -rf tests/main*
 	rm -f $(NAME)
 	rm -rf build
 	rm -f save.txt

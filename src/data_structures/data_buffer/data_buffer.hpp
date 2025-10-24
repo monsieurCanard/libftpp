@@ -5,6 +5,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <type_traits>
 #include <vector>
 
 /**
@@ -33,8 +34,8 @@ public:
 
     void append(const unsigned char* data, size_t len);
 
-    DataBuffer& operator<<(std::string& value);
-    DataBuffer& operator>>(std::string& value);
+    DataBuffer&       operator<<(const std::string& value);
+    const DataBuffer& operator>>(std::string& value) const;
 
     // Serialization
     template <typename T>
@@ -42,9 +43,6 @@ public:
     {
         const unsigned char* ptr = reinterpret_cast<const unsigned char*>(&value);
         _buffer.insert(_buffer.end(), ptr, ptr + sizeof(T));
-
-        std::cout << "Wrote value: " << value << " at cursor: " << _buffer.size() - sizeof(T)
-                  << std::endl;
         return *this;
     }
 
@@ -54,12 +52,10 @@ public:
     {
         if (sizeof(T) + _cursor > _buffer.size())
             throw std::out_of_range("Buffer overflow on read");
+
         std::memcpy(&value, _buffer.data() + _cursor, sizeof(T));
 
-        std::cout << "Read value: " << value << " at cursor: " << _cursor << std::endl;
         _cursor += sizeof(T);
-
-        std::cout << *reinterpret_cast<const T*>(_buffer.data() + _cursor) << std::endl;
         return *this;
     }
 };

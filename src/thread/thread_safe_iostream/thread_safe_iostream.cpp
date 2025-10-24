@@ -11,16 +11,15 @@ void ThreadSafeIOStream::setPrefix(const std::string& prefix)
 
 ThreadSafeIOStream& ThreadSafeIOStream::operator<<(std::ostream& (*funct)(std::ostream&))
 {
-    flushBuffer();
     std::lock_guard<std::mutex> lock(_mutex);
+    flushBuffer();
     funct(std::cout);
     return *this;
 }
 
 void ThreadSafeIOStream::flushBuffer()
 {
-    std::lock_guard<std::mutex> lock(_mutex);
-    std::string                 content = _buffer.str();
+    std::string content = _buffer.str();
     if (!content.empty())
     {
         std::cout << _prefix << content;

@@ -1,22 +1,29 @@
 #include <iostream>
 #include <thread>
+
 #include "../../libftpp.hpp"
 
-void testPush(ThreadSafeQueue<int>& p_queue, int p_value) {
+void testPush(ThreadSafeQueue<int>& p_queue, int p_value)
+{
     p_queue.push_back(p_value);
-    std::cout << "Pushed value: " << p_value << std::endl;
+    threadSafeCout << "Pushed value: " << p_value << std::endl;
 }
 
-void testPop(ThreadSafeQueue<int>& p_queue) {
-    try {
+void testPop(ThreadSafeQueue<int>& p_queue)
+{
+    try
+    {
         int value = p_queue.pop_front();
-        std::cout << "Popped value: " << value << std::endl;
-    } catch (const std::runtime_error& e) {
-        std::cout << e.what() << std::endl;
+        threadSafeCout << "Popped value: " << value << std::endl;
+    }
+    catch (const std::runtime_error& e)
+    {
+        threadSafeCout << e.what() << std::endl;
     }
 }
 
-int main() {
+int main()
+{
     ThreadSafeQueue<int> myQueue;
 
     std::thread thread1(testPush, std::ref(myQueue), 10);
@@ -33,4 +40,3 @@ int main() {
 
     return 0;
 }
-

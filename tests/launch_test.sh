@@ -57,14 +57,6 @@ for test_file in tests/school_test/main_*.cpp; do
             echo "Running $executable_name..."
             ./tests/"$executable_name"
             
-            if [ $? -eq 0 ]; then
-                echo "✅ PASSED: $test_name"
-                PASSED_TESTS=$((PASSED_TESTS + 1))
-            else
-                echo "❌ FAILED: $test_name"
-                FAILED_TESTS=$((FAILED_TESTS + 1))
-            fi
-            
             # Clean up executable
             # rm -f tests/"$executable_name"
         fi

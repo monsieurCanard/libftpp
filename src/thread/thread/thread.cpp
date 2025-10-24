@@ -17,7 +17,6 @@ void Thread::start()
         _stream << "[ERROR] Thread already running [ERROR]";
         stop();
     }
-    _stream << "Start" << std::endl;
     _t = std::thread(_funct);
 }
 
@@ -26,5 +25,4 @@ void Thread::stop()
     if (!_t.joinable())
         return;
     _t.join();
-    _stream << "Stop" << std::endl;
 }

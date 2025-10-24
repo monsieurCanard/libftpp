@@ -7,8 +7,8 @@ float PerlinNoise2D::linearInterpolation(float a, float b, float t)
 
 IVector2<float> PerlinNoise2D::gradient(const int& i, const int& j)
 {
-    long long                   hashSeed = i ^ j ^ _seedGlobal;
-    Random2DCoordinateGenerator generator(hashSeed);
+    // long long                   hashSeed = i ^ j ^ _seedGlobal;
+    Random2DCoordinateGenerator generator;
 
     long long randVal = generator(i, j);
     float     angle   = static_cast<float>(randVal % 360) * 3.14159f / 180.f;

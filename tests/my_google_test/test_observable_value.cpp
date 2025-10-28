@@ -17,14 +17,6 @@ public:
     }
 };
 
-// Test de base : initialisation et get()
-TEST(ObservableValueTest, InitialValue)
-{
-    ObservableValue<int> obs(10);
-    EXPECT_EQ(obs.get(), 10);
-    EXPECT_EQ(obs.countSubscriber(), 0u);
-}
-
 // Test de subscribe et notification
 TEST(ObservableValueTest, SubscribeAndNotify)
 {

@@ -44,7 +44,7 @@ void Client::disconnect()
 {
     if (_fd > 0)
     {
-        shutdown(_fd, SHUT_RDWR);
+        // shutdown(_fd, SHUT_RDWR);
         close(_fd);
     }
     _fd = -1;

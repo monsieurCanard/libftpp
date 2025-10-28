@@ -2,6 +2,11 @@
 
 Server::Server() : _address(""), _port(0) {}
 
+Server::~Server()
+{
+    stop();
+}
+
 Server::Server(const std::string& address, size_t port) : _address(address), _port(port) {}
 
 void Server::start(const size_t& port)
@@ -56,6 +61,7 @@ void Server::_acceptNewConnection()
     int connfd = accept(_socket, 0, 0);
     if (connfd < 0)
         return;
+
     if (_clients.size() >= NB_CONNECTION)
     {
         std::cerr << "Max connections reached, closing new connection" << std::endl;
@@ -67,6 +73,7 @@ void Server::_acceptNewConnection()
         _max_fd = connfd;
 
     FD_SET(connfd, &_active);
+    FD_SET(connfd, &_readyRead);
 
     _clients[connfd]       = _next_id;
     _clientsToFd[_next_id] = connfd;
@@ -75,6 +82,7 @@ void Server::_acceptNewConnection()
 
 bool Server::_receiveClientMsg(const int& fd)
 {
+
     if (!FD_ISSET(fd, &_readyRead))
         return false;
 
@@ -106,10 +114,11 @@ bool Server::_receiveClientMsg(const int& fd)
         _partialMsgs[fd].getBuffer()->clear();
     }
 
-    if (bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK)
+    if (bytes == 0 || (bytes == -1 && errno != EAGAIN && errno != EWOULDBLOCK))
     {
         return false;
     }
+
     return true;
 }
 
@@ -160,9 +169,9 @@ void Server::defineAction(
 
 void Server::update()
 {
+    _running = true;
     while (_running)
     {
-
         _readyRead            = _active;
         timeval timeout       = {0, 10000}; // Pour que le select soit non bloquant
         int     select_result = select(_max_fd + 1, &_readyRead, NULL, NULL, &timeout);
@@ -252,6 +261,7 @@ void Server::stop()
     _running = false;
     if (_socket >= 0)
     {
+        std::cout << "Closing server socket." << std::endl;
         close(_socket);
         _socket = -1;
     }
@@ -266,4 +276,6 @@ void Server::stop()
         close(fd);
         FD_CLR(fd, &_active);
     }
+
+    _clearAll();
 }

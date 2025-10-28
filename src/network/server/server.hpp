@@ -59,6 +59,7 @@ private:
 
 public:
     Server();
+    ~Server();
     Server(const std::string& address, size_t port);
     void start(const size_t& port = 0);
 

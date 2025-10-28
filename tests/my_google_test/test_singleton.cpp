@@ -37,7 +37,7 @@ TEST(SingletonTest, DoubleInstantiateThrows)
     Singleton<MyClass> s;
     EXPECT_THROW(s.instantiate(), std::runtime_error);
     s.reset();
-    EXPECT_EQ(s.instance(), nullptr);
+    EXPECT_THROW(s.instance(), std::runtime_error);
 }
 
 TEST(SingletonTest, AccessInstance)

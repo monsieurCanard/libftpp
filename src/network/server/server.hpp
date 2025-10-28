@@ -42,7 +42,6 @@ private:
 
     fd_set _active;
     fd_set _readyRead;
-    fd_set _readyWrite;
 
     std::unordered_map<int, long long> _clients;
     std::unordered_map<long long, int> _clientsToFd;

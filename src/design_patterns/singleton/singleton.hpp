@@ -18,7 +18,7 @@ public:
     static TType* instance()
     {
         if (!_instance)
-            return nullptr;
+            throw std::runtime_error("Instance not yet created.");
 
         return _instance.get();
     }

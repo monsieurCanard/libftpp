@@ -8,7 +8,7 @@
 class PerlinNoise2D
 {
 private:
-    int _seedGlobal = 29874789; // Chiffre choisie aleatoirement
+    Random2DCoordinateGenerator generator;
 
 public:
     float           linearInterpolation(float a, float b, float t);

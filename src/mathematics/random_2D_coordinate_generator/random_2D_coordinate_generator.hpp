@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <chrono>
+#include <cstdlib>
 #include <functional>
 
 class Random2DCoordinateGenerator

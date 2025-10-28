@@ -119,7 +119,7 @@ void Server::sendTo(const Message& message, long long clientID)
     if (fdIt == _clientsToFd.end())
         return;
 
-    if (!FD_ISSET(fdIt->second, &_active) || !FD_ISSET(fdIt->second, &_readyWrite))
+    if (!FD_ISSET(fdIt->second, &_active))
         return;
 
     const auto& data = message.getSerializedData();

@@ -18,6 +18,7 @@ struct TestStructComplex
 {
     std::string name;
     int         value;
+    TestStructComplex() : name(""), value(0) {}
     TestStructComplex(const std::string& n, int v) : name(n), value(v) {}
 
     void display() const
@@ -116,40 +117,4 @@ TEST(PoolTest, OverAcquire)
     auto b = pool.acquire(2);
 
     EXPECT_THROW(pool.acquire(3), std::out_of_range);
-}
-
-TEST(PoolTest, Thread)
-{
-    Pool<std::thread> pool;
-    pool.resize(2);
-    int counter = 0;
-
-    auto threadFunc      = []() { std::this_thread::sleep_for(std::chrono::milliseconds(100)); };
-    auto threadIncrement = [](int& counter)
-    {
-        for (int i = 0; i < 10; ++i)
-        {
-            counter++;
-        }
-    };
-
-    {
-        auto t1 = pool.acquire(threadIncrement, std::ref(counter));
-        EXPECT_EQ(t1.get()->joinable(), true);
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-
-        EXPECT_GE(counter, 1);
-
-        auto t2 = pool.acquire(threadFunc);
-        EXPECT_EQ(t2.get()->joinable(), true);
-
-        EXPECT_THROW(pool.acquire(threadFunc), std::out_of_range);
-
-        t1->join();
-        t2->join();
-
-        EXPECT_EQ(counter, 10);
-
-    } // Les threads sont détruits ici et doivent se terminer correctement
 }

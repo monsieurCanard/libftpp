@@ -1,25 +1,29 @@
-#include "../../libftpp.hpp"
 #include <iostream>
 
-class TestClass : public Memento {
+#include "../../libftpp.hpp"
+
+class TestClass : public Memento
+{
     friend class Memento;
 
 public:
-    int x;
+    int         x;
     std::string y;
 
 private:
-    void _saveToSnapshot(Snapshot& snapshotToFill) const override {
+    void _saveToSnapshot(Snapshot& snapshotToFill) const override
+    {
         snapshotToFill << x << y;
     }
 
-    void _loadFromSnapshot(Snapshot& snapshot) override {
+    void _loadFromSnapshot(Snapshot& snapshot) override
+    {
         snapshot >> x >> y;
     }
-
 };
 
-int main() {
+int main()
+{
     TestClass myObject;
     myObject.x = 42;
     myObject.y = "Hello";
@@ -37,9 +41,9 @@ int main() {
 
     // Restore the object to its saved state
     myObject.load(savedState);
-    
+
     // Output the restored object
-	// Expected Output: "Restored state: x = 42, y = Hello"
+    // Expected Output: "Restored state: x = 42, y = Hello"
     std::cout << "Restored state: x = " << myObject.x << ", y = " << myObject.y << std::endl;
 
     return 0;

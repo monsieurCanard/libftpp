@@ -11,6 +11,8 @@ Random2DCoordinateGenerator::Random2DCoordinateGenerator()
     // Mix with PID to give to each process a different seed
     _seed ^= getpid();
 
+    _seed ^= rand();
+
     int x;
     // Generated unique hash based on int x address in memory
     _seed ^= std::hash<int*>{}(&x);

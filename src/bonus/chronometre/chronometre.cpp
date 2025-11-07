@@ -1,4 +1,5 @@
 #include "chronometre.hpp"
+
 void Chronometre::error()
 {
     throw std::runtime_error("Chronometre::getTime(): start() and end() must be called in pairs");

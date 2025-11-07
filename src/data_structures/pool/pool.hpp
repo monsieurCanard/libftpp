@@ -15,6 +15,8 @@
  * and reuses them to avoid frequent allocations
  * and deallocations.
  *
+ * @warning If you resize the pool, all existing objects are destroyed.
+ *
  * @tparam TType Type of objects managed by the pool.
 
  */

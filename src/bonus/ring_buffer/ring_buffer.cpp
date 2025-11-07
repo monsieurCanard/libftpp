@@ -28,7 +28,7 @@ void RingBuffer::push(const unsigned char& byte)
 void RingBuffer::push(const std::vector<unsigned char>& bytes)
 {
     if (isFull())
-        throw std::out_of_range("trying to write on full buffer");
+        throw std::out_of_range("trying to write on full buffer, try to increase size");
 
     if (bytes.size() > _buffer.size() - _size)
         throw std::out_of_range("trying to read more than available in buffer");

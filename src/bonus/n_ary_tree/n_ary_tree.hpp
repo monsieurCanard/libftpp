@@ -1,12 +1,12 @@
-#ifndef BINARY_TREE_HPP
-#define BINARY_TREE_HPP
+#ifndef N_ARY_TREE_HPP
+#define N_ARY_TREE_HPP
 
 #include <functional>
 
 /**
- * @brief Node structure for a binary tree.
+ * @brief Node structure for an n-ary tree.
  *
- * Each node contains data and pointers to its left and right children.
+ * Each node contains data and pointers to its children.
  * @note You can change Node struct like you want for your implementation. (like add token, parent
  * pointer, etc.)
  *
@@ -17,7 +17,7 @@ class Node
 public:
     TType                                     data;
     std::vector<std::unique_ptr<Node<TType>>> _children;
-    std::function<TType(std::vector<TType>)>  parentFunct; // used for postorderCompute
+    std::function<TType(std::vector<TType>)>  parentFunct;
     Node(TType value) : data(value) {}
 
     void addChild(const TType& child)
@@ -160,9 +160,6 @@ public:
         {
             for (const auto& child : node->_children)
                 childResults.push_back(postorderCompute<TResult>(child.get()));
-
-            // On exécute la fonction du parent avec les résultats des enfants
-
         }
         return node->parentFunct ? node->parentFunct(childResults) : TResult(node->data);
     }

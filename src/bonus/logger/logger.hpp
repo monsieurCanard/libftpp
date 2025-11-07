@@ -22,6 +22,7 @@ enum class LogLevel
     WARNING = 2,
     ERROR   = 3
 };
+
 /**
  * @brief Logger class for logging messages to console and file with different log levels.
  * This class is implemented as a singleton to ensure a single instance throughout the application.

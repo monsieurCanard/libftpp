@@ -11,8 +11,7 @@
  *        It allows observers to subscribe and be notified when the value changes.
  *
  * @tparam TType The type of the value being observed.
- * @note If ObservableValue is destroyed without unsubscribing its observers,
- *       it may lead to dangling pointers and undefined behavior.
+ * @note If ObservableValue is destroyed, every observer is unsubscribed automatically.
  */
 template <typename TType>
 class ObservableValue
@@ -31,6 +30,15 @@ private:
     }
 
 public:
+    ObservableValue() = default;
+    ~ObservableValue()
+    {
+        for (auto* observer : _subscriber)
+        {
+            unsubscribe(observer);
+        }
+    }
+
     ObservableValue(TType value)
     {
         _value = std::move(value);

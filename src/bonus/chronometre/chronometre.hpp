@@ -6,6 +6,11 @@
 #include <string>
 #include <vector>
 
+/**
+ * @brief Chronometre class for measuring elapsed time between start and end timestamps.
+ * It provides methods to retrieve the elapsed time in various units (nanoseconds, microseconds,
+ * milliseconds, seconds) and as a formatted string.
+ */
 class Chronometre
 {
 private:

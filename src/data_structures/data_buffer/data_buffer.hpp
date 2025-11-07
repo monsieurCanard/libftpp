@@ -37,7 +37,6 @@ public:
     DataBuffer&       operator<<(const std::string& value);
     const DataBuffer& operator>>(std::string& value) const;
 
-    // Serialization
     template <typename T>
     DataBuffer& operator<<(const T& value)
     {
@@ -46,7 +45,6 @@ public:
         return *this;
     }
 
-    // Deserialization -- LECTURE
     template <typename T>
     const DataBuffer& operator>>(T& value) const
     {

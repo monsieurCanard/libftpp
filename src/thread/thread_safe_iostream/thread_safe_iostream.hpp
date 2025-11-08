@@ -7,6 +7,26 @@
 #include <sstream>
 #include <string>
 
+/**
+ * @brief Thread-Safe I/O Stream
+ *
+ * This class provides a thread-safe wrapper around standard input and output streams.
+ * It ensures that multiple threads can safely read from and write to the console
+ * without interleaving their output. It also supports setting a prefix for each
+ * output line to identify the source thread.
+ *
+ * @note Uses a static mutex to synchronize access to std::cout and std::cin
+ * @note Supports stream operators (<<, >>) for easy usage
+ * @note Allows setting a prefix for output lines
+ *
+ * @code
+ * include "thread_safe_iostream.hpp"
+ *
+ * threadSafeCout.setPrefix("[Thread 1] ");
+ * threadSafeCout << "Hello from Thread 1!" << std::endl;
+ *
+ * @endcode
+ */
 class ThreadSafeIOStream
 {
 private:

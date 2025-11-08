@@ -1,0 +1,3 @@
+[submodule "libftpp-doc"]
+	path = libftpp-doc
+	url = git@github.com:monsieurCanard/libftpp-doc.git

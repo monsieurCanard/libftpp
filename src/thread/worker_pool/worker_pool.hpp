@@ -7,7 +7,39 @@
 #include <queue>
 #include <thread>
 #include <vector>
-
+/**
+ * @brief Worker Pool for Concurrent Job Execution
+ *
+ * This class provides a pool of worker threads that can execute jobs concurrently.
+ * Jobs can be added to the pool, and worker threads will pick them up and execute them.
+ * The pool manages thread synchronization and job distribution automatically.
+ *
+ * @note Uses condition variables for efficient thread synchronization
+ * @note Supports adding jobs as std::function<void()> or via IJobs interface
+ *
+ * @code
+ * // Create a worker pool with 4 threads
+ * WorkerPool pool(4);
+ *
+ * // Add a simple job
+ * pool.addJob([]() {
+ *     std::cout << "Hello from a worker thread!" << std::endl;
+ * });
+ *
+ * // Define a job via IJobs interface
+ * class MyJob : public WorkerPool::IJobs {
+ * public:
+ *     void start() override {
+ *         std::cout << "MyJob is running!" << std::endl;
+ *     }
+ * };
+ *
+ * MyJob job;
+ * pool.addJob(job);
+ *
+ * // The worker pool will automatically execute the jobs
+ * @endcode
+ */
 class WorkerPool
 {
 
@@ -20,6 +52,13 @@ private:
     bool                              _stop = false;
 
 public:
+    /**
+     * @brief Interface for defining jobs to be executed by the worker pool.
+     * Classes implementing this interface must define the start() method.
+     *
+     * @note Not very useful in C++11 and later due to std::function support,
+     *      but the subject asked for it.
+     */
     class IJobs
     {
     private:

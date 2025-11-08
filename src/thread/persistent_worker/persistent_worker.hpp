@@ -21,10 +21,9 @@
  *
  * @note Allows dynamic addition/removal of tasks during runtime
  * @note Supports configurable pause between each task execution (PAUSE_BT_TASK in milliseconds)
- * @note Thread-safe task management using mutex and condition variables
- * @note Automatically starts worker thread on construction and stops on destruction
- * @note Tasks are executed continuously in the order they appear in the internal map
- * @note Worker thread sleeps when no tasks are available, reducing CPU usage
+ * @details Thread-safe task management using mutex and condition variables
+ * @details Automatically starts worker thread on construction and stops on destruction
+ * @details Worker thread sleeps when no tasks are available, reducing CPU usage
  *
  * @code
  * // Create worker (automatically starts background thread)

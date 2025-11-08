@@ -3,7 +3,22 @@
 
 #include <mutex>
 #include <queue>
-
+/**
+ * @brief Thread-Safe Queue
+ *
+ * This class provides a thread-safe wrapper around std::deque for
+ * managing a queue of elements. It ensures that multiple threads can
+ * safely push and pop elements from the queue without data races.
+ *
+ * @note Uses a mutex to synchronize access to the underlying deque
+ * @note Supports both push and pop operations from both ends of the queue
+ *
+ * @code
+ * ThreadSafeQueue<int> queue;
+ * queue.push_back(1);
+ * int value = queue.pop_front();
+ * @endcode
+ */
 template <typename TType>
 class ThreadSafeQueue
 {
@@ -17,7 +32,7 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _queue.push_back(newElement);
     }
-    
+
     void push_front(const TType& newElement)
     {
         std::lock_guard<std::mutex> lock(_mutex);

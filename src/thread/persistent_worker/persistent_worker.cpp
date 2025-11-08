@@ -11,7 +11,7 @@ PersistentWorker::~PersistentWorker()
         std::lock_guard<std::mutex> lock(_mtx);
         _running = false;
     }
-    _cv.notify_all();
+    _cv.notify_one();
     if (_thread.joinable())
         _thread.join();
 }
@@ -48,7 +48,22 @@ void PersistentWorker::loop()
 
         for (std::pair<std::string, std::function<void()>> element : copy)
         {
-            element.second();
+            try
+            {
+                element.second();
+            }
+            catch (const std::exception& e)
+            {
+                // Log explicite et non bloquant
+                std::cerr << "[PersistentWorker] Task '" << element.first
+                          << "' threw an exception: " << e.what() << std::endl;
+            }
+            catch (...)
+            {
+                // Pour attraper les exceptions non-std
+                std::cerr << "[PersistentWorker] Task '" << element.first
+                          << "' threw an unknown exception." << std::endl;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(PAUSE_BT_TASK));
         }
 

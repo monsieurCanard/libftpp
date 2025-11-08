@@ -4,6 +4,35 @@
 #include <memory>
 #include <stdexcept>
 
+/**
+ * @brief Singleton Design Pattern
+ *
+ * @tparam TType Type of the singleton class
+ *
+ * @code
+ * class MyClass
+ * {
+ * public:
+ *    int         value;
+ *    std::string name; *
+ *    MyClass() : value(0), name("default") {}
+ *    MyClass(int v, const std::string& n) : value(v), name(n) {} *
+ *    void someMethod()
+ *    {
+ *        value += 1;
+ *    }
+ * };
+ *
+ * // Usage
+ *
+ * Singleton<MyClass>::instantiate(42, "hello");
+ *
+ * MyClass* instance = Singleton<MyClass>::instance();
+ * instance->someMethod();
+ *
+ * // Now instance->value == 43
+ * @endcode
+ */
 template <typename TType>
 class Singleton
 {

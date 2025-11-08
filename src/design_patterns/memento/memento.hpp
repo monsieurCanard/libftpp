@@ -11,6 +11,39 @@
  * @brief Memento Design Pattern
  * @warning You must implement _saveToSnapshot and _loadFromSnapshot
  *
+ * @code
+ * class MyClass : public Memento
+ * {
+ * private:
+ *   int         _value;
+ *   std::string _name;
+ *   void _saveToSnapshot(Memento::Snapshot& snapshot) const override
+ *   {
+ *       snapshot << _value << _name;
+ *   }
+ *   void _loadFromSnapshot(Memento::Snapshot& snapshot) override
+ *   {
+ *       snapshot >> _value >> _name;
+ *   }
+ * public:
+ *  MyClass(int value, const std::string& name) : _value(value),
+ *                                               _name(name) {}
+ * };
+ * @endcode
+ * @note Basic Usage
+ * @code
+ * MyClass obj(42, "Initial");
+ * Memento::Snapshot snapshot = obj.save();
+ *
+ * // Modify object state
+ * obj = MyClass(100, "Modified");
+ *
+ * // Restore previous state
+ * obj.load(snapshot);
+ *
+ * // Now obj has _value = 42 and _name = "Initial"
+ * @endcode
+ *
  */
 class Memento
 {
@@ -20,7 +53,7 @@ public:
     {
     private:
         std::vector<unsigned char> _buffer;
-        size_t _cursor = 0;
+        size_t                     _cursor = 0;
 
     public:
         template <typename T>

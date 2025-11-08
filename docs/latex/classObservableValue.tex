@@ -1,0 +1,80 @@
+\hypertarget{classObservableValue}{}\doxysection{Observable\+Value$<$ TType $>$ Class Template Reference}
+\label{classObservableValue}\index{ObservableValue$<$ TType $>$@{ObservableValue$<$ TType $>$}}
+
+
+\mbox{\hyperlink{classObservableValue}{Observable\+Value}} class template that implements the \mbox{\hyperlink{classObserver}{Observer}} design pattern. It allows observers to subscribe and be notified when the value changes.  
+
+
+
+
+{\ttfamily \#include $<$observable\+\_\+value.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classObservableValue_a1e75fde7e03e8cc4a76309a039b3f849}\label{classObservableValue_a1e75fde7e03e8cc4a76309a039b3f849}} 
+{\bfseries Observable\+Value} (TType value)
+\item 
+\mbox{\Hypertarget{classObservableValue_a01b4530e3786d94e5c8a592836dde54b}\label{classObservableValue_a01b4530e3786d94e5c8a592836dde54b}} 
+\mbox{\hyperlink{classObservableValue}{Observable\+Value}} \& {\bfseries operator=} (const TType \&new\+Value)
+\item 
+\mbox{\Hypertarget{classObservableValue_a98a760b9592e9b2ef6b0aa13f897e05c}\label{classObservableValue_a98a760b9592e9b2ef6b0aa13f897e05c}} 
+void {\bfseries subscribe} (\mbox{\hyperlink{classIObserver}{IObserver}}$<$ TType $>$ $\ast$observer)
+\item 
+\mbox{\Hypertarget{classObservableValue_a6f4ad98253d24db2972f419b5f236d8d}\label{classObservableValue_a6f4ad98253d24db2972f419b5f236d8d}} 
+void {\bfseries unsubscribe} (\mbox{\hyperlink{classIObserver}{IObserver}}$<$ TType $>$ $\ast$observer)
+\item 
+\mbox{\Hypertarget{classObservableValue_a52b5394e5019b09856eafccb1189ff88}\label{classObservableValue_a52b5394e5019b09856eafccb1189ff88}} 
+void {\bfseries set} (TType new\+Value)
+\item 
+\mbox{\Hypertarget{classObservableValue_a5b12f25e5046de75daed370dbb025dca}\label{classObservableValue_a5b12f25e5046de75daed370dbb025dca}} 
+int {\bfseries count\+Subscriber} () const
+\item 
+\mbox{\Hypertarget{classObservableValue_af8dabfc1ff806d2218f251b1e4e73a23}\label{classObservableValue_af8dabfc1ff806d2218f251b1e4e73a23}} 
+const TType \& {\bfseries get} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename TType$>$\newline
+class Observable\+Value$<$ TType $>$}
+
+\mbox{\hyperlink{classObservableValue}{Observable\+Value}} class template that implements the \mbox{\hyperlink{classObserver}{Observer}} design pattern. It allows observers to subscribe and be notified when the value changes. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em TType} & The type of the value being observed. \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyNote}{Note}
+If \mbox{\hyperlink{classObservableValue}{Observable\+Value}} is destroyed, every observer is unsubscribed automatically.
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classObservableValue}{ObservableValue<int>}} value(0);}
+\DoxyCodeLine{MyObserver          observer;}
+\DoxyCodeLine{}
+\DoxyCodeLine{value.subscribe(\&observer);}
+\DoxyCodeLine{value = 42; \textcolor{comment}{// This will notify the observer with the new value 42}}
+
+\end{DoxyCode}
+ \begin{DoxyWarning}{Warning}
+need to implement IObserver$<$\+TType$>$ interface for observers. 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }MyObserver : \textcolor{keyword}{public} \mbox{\hyperlink{classIObserver}{IObserver}}<int>}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{   \textcolor{keywordtype}{void} update(\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& newValue)\textcolor{keyword}{ override}}
+\DoxyCodeLine{\textcolor{keyword}{   }\{}
+\DoxyCodeLine{       \textcolor{comment}{// Handle the updated value}}
+\DoxyCodeLine{   \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+ 
+\end{DoxyWarning}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/bonus/observable\+\_\+value/observable\+\_\+value.\+hpp\end{DoxyCompactItemize}

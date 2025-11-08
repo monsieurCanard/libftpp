@@ -12,6 +12,27 @@
  *
  * @tparam TType The type of the value being observed.
  * @note If ObservableValue is destroyed, every observer is unsubscribed automatically.
+ *
+ * @code
+ * ObservableValue<int> value(0);
+ * MyObserver          observer;
+ *
+ * value.subscribe(&observer);
+ * value = 42; // This will notify the observer with the new value 42
+ *
+ * @endcode
+ * @warning need to implement IObserver<TType> interface for observers.
+ * @code
+ *
+ * class MyObserver : public IObserver<int>
+ * {
+ * public:
+ *    void update(const int& newValue) override
+ *    {
+ *        // Handle the updated value
+ *    }
+ * };
+ * @endcode
  */
 template <typename TType>
 class ObservableValue
@@ -34,9 +55,7 @@ public:
     ~ObservableValue()
     {
         for (auto* observer : _subscriber)
-        {
             unsubscribe(observer);
-        }
     }
 
     ObservableValue(TType value)

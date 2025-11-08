@@ -10,6 +10,7 @@
 
  * @class Pool
  * @brief Pool of reusable memory.
+ * @details RAII is used to manage the lifetime of objects.
  *
  * The Pool pre-allocates objects of type @p TType
  * and reuses them to avoid frequent allocations
@@ -18,12 +19,28 @@
  * @warning If you resize the pool, all existing objects are destroyed.
  *
  * @tparam TType Type of objects managed by the pool.
-
+ *
+ *
+ * @code
+ * Pool<MyClass> pool(10); // Create a pool with 10 pre-allocated MyClass objects
+ *
+ * auto& obj1 = pool.acquire(arg1, arg2); // Acquire an object from the pool
+ *
+ * obj1->doSomething();
+ *
+ * pool.release(obj1); // Release the object back to the pool
+ *
+ * @endcode
  */
 template <typename TType>
 class Pool
 {
 public:
+    /**
+     * @class Object
+     * @brief Wrapper around a TType object managed by the Pool.
+     * Provides access to the underlying TType object.
+     */
     class Object
     {
         friend class Pool<TType>;

@@ -1,0 +1,53 @@
+\hypertarget{_2home_2anthony_2Documents_2libftpp_2src_2bonus_2chronometre_2chronometre_8hpp-example}{}\doxysection{/home/anthony/\+Documents/libftpp/src/bonus/chronometre/chronometre.\+hpp}
+\mbox{\hyperlink{classChronometre}{Chronometre}} class for measuring elapsed time between start and end timestamps. It provides methods to retrieve the elapsed time in various units (nanoseconds, microseconds, milliseconds, seconds) and as a formatted string.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classChronometre}{Chronometre}} chrono;}
+\DoxyCodeLine{chrono.start();}
+\DoxyCodeLine{chrono.end();}
+\DoxyCodeLine{\textcolor{keywordtype}{double} elapsed = chrono.getTimeMilliseconds();}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Elapsed time: "{}} << elapsed << \textcolor{stringliteral}{"{} ms"{}} << std::endl;}
+\DoxyCodeLine{chrono.popLastChrono(); \textcolor{comment}{// Remove the last recorded time interval}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef CHRONOMETRE\_HPP}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define CHRONOMETRE\_HPP}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <chrono>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <stdexcept>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <string>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <vector>}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class }\mbox{\hyperlink{classChronometre}{Chronometre}}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\textcolor{keyword}{private}:}
+\DoxyCodeLine{    std::vector<double>                        \_timestamps;}
+\DoxyCodeLine{    std::chrono::\_V2::system\_clock::time\_point \_now;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} createTimestamp();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    \mbox{\hyperlink{classChronometre}{Chronometre}}() = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{    \string~\mbox{\hyperlink{classChronometre}{Chronometre}}();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} start();}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} end();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} popLastChrono();}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keywordtype}{double}      getTimeNanoseconds() \textcolor{keyword}{const};}
+\DoxyCodeLine{    \textcolor{keywordtype}{double}      getTimeMicroseconds() \textcolor{keyword}{const};}
+\DoxyCodeLine{    \textcolor{keywordtype}{double}      getTimeMilliseconds() \textcolor{keyword}{const};}
+\DoxyCodeLine{    \textcolor{keywordtype}{double}      getTimeSeconds() \textcolor{keyword}{const};}
+\DoxyCodeLine{    std::string \mbox{\hyperlink{classChronometre_a7b2f18656f666cf52c2611029fee2374}{getTimeString}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCodeInclude}
+ 

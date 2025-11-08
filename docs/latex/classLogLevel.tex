@@ -1,0 +1,39 @@
+\hypertarget{classLogLevel}{}\doxysection{Log\+Level Class Reference}
+\label{classLogLevel}\index{LogLevel@{LogLevel}}
+
+
+\mbox{\hyperlink{classLogger}{Logger}} class for logging messages to console and file with different log levels. This class is implemented as a singleton to ensure a single instance throughout the application.  
+
+
+
+
+{\ttfamily \#include $<$logger.\+hpp$>$}
+
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classLogger}{Logger}} class for logging messages to console and file with different log levels. This class is implemented as a singleton to ensure a single instance throughout the application. 
+
+\begin{DoxyNote}{Note}
+\mbox{\hyperlink{classThread}{Thread}} safety is ensured for console output and file output 
+
+You must call set\+Output\+File before logging to file, if you didn\textquotesingle{}t provide a filename a timestamped one will be generated
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{If you want to log into a specific file :}
+\DoxyCodeLine{Logger::instance().setOutputFile(\textcolor{stringliteral}{"{}my\_log\_file"{}});}
+\DoxyCodeLine{Logger::instance().setLogLevel(LogLevel::INFO);}
+\DoxyCodeLine{Logger::instance().\mbox{\hyperlink{classLogger_a3d3f0801eeaf39b33a906ea8569c19b2}{log}}(LogLevel::DEBUG, \textcolor{stringliteral}{"{}This is a debug message"{}});}
+\DoxyCodeLine{Logger::instance().\mbox{\hyperlink{classLogger_a3d3f0801eeaf39b33a906ea8569c19b2}{log}}(LogLevel::ERROR, \textcolor{stringliteral}{"{}This is an error message"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{Logger::instance().\mbox{\hyperlink{classLogger_a326e5c24211bd3bfcc220554cf790d8c}{logConsole}}(LogLevel::WARNING, \textcolor{stringliteral}{"{}This is a warning message to console only"{}});}
+
+\end{DoxyCode}
+
+
+Enumeration for log levels. DEBUG\+: Detailed debug information. INFO\+: General informational messages. WARNING\+: Indications of potential issues. ERROR\+: Error messages indicating failures. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/bonus/logger/logger.\+hpp\end{DoxyCompactItemize}

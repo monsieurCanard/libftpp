@@ -1,0 +1,81 @@
+\hypertarget{classPersistentWorker}{}\doxysection{Persistent\+Worker Class Reference}
+\label{classPersistentWorker}\index{PersistentWorker@{PersistentWorker}}
+
+
+Persistent worker thread that executes tasks in a continuous loop.  
+
+
+
+
+{\ttfamily \#include $<$persistent\+\_\+worker.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classPersistentWorker_ab51d771e8ef73eab485bb3091f60d772}\label{classPersistentWorker_ab51d771e8ef73eab485bb3091f60d772}} 
+void {\bfseries add\+Task} (const std\+::string \&name, const std\+::function$<$ void()$>$ \&job\+To\+Execute)
+\item 
+\mbox{\Hypertarget{classPersistentWorker_a0556647fac86cf9549291dfa4b317900}\label{classPersistentWorker_a0556647fac86cf9549291dfa4b317900}} 
+void {\bfseries remove\+Task} (const std\+::string \&name)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Persistent worker thread that executes tasks in a continuous loop. 
+
+This class provides a background worker thread that continuously executes registered tasks in a loop. Tasks can be dynamically added and removed during runtime, making it ideal for background processing, periodic operations, or event-\/driven task execution. The worker uses condition variables for efficient thread synchronization and CPU usage.
+
+\begin{DoxyNote}{Note}
+Allows dynamic addition/removal of tasks during runtime 
+
+Supports configurable pause between each task execution (PAUSE\+\_\+\+BT\+\_\+\+TASK in milliseconds) 
+
+Thread-\/safe task management using mutex and condition variables 
+
+Automatically starts worker thread on construction and stops on destruction 
+
+Tasks are executed continuously in the order they appear in the internal map 
+
+Worker thread sleeps when no tasks are available, reducing CPU usage
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create worker (automatically starts background thread)}}
+\DoxyCodeLine{\mbox{\hyperlink{classPersistentWorker}{PersistentWorker}} worker;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Add tasks that will run continuously}}
+\DoxyCodeLine{worker.addTask(\textcolor{stringliteral}{"{}logger"{}}, []() \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Log entry at "{}} << getCurrentTime() << std::endl;}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{worker.addTask(\textcolor{stringliteral}{"{}cleanup"{}}, []() \{}
+\DoxyCodeLine{    cleanupTempFiles();}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{worker.addTask(\textcolor{stringliteral}{"{}heartbeat"{}}, []() \{}
+\DoxyCodeLine{    sendHeartbeat();}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Tasks now run continuously in background...}}
+\DoxyCodeLine{\textcolor{comment}{// Do other work...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Remove specific task}}
+\DoxyCodeLine{worker.removeTask(\textcolor{stringliteral}{"{}cleanup"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Worker stops automatically when destroyed}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+Tasks should be lightweight to avoid blocking other tasks in the loop 
+\end{DoxyWarning}
+\begin{DoxyNote}{Note}
+Task execution order is not guaranteed due to unordered\+\_\+map usage 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/thread/persistent\+\_\+worker/persistent\+\_\+worker.\+hpp\item 
+src/thread/persistent\+\_\+worker/persistent\+\_\+worker.\+cpp\end{DoxyCompactItemize}

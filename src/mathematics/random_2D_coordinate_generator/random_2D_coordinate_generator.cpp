@@ -1,7 +1,16 @@
 #include "random_2D_coordinate_generator.hpp"
 
+/**
+ * @brief Constructor that initializes the generator with a user-defined seed.
+ *
+ * @param seed User-defined seed for the random number generator.
+ */
 Random2DCoordinateGenerator::Random2DCoordinateGenerator(long long seed) : _seed(seed) {}
 
+/**
+ * @brief Default constructor that initializes the seed based on the current time,
+ *        process ID, and a random value.
+ */
 Random2DCoordinateGenerator::Random2DCoordinateGenerator()
 {
     // Seed based on time in microseconds since epoch

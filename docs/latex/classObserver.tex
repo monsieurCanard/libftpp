@@ -1,0 +1,49 @@
+\hypertarget{classObserver}{}\doxysection{Observer$<$ TEvent $>$ Class Template Reference}
+\label{classObserver}\index{Observer$<$ TEvent $>$@{Observer$<$ TEvent $>$}}
+
+
+\mbox{\hyperlink{classObserver}{Observer}} Design Pattern.  
+
+
+
+
+{\ttfamily \#include $<$observer.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classObserver_a68e3f8bd3188c940893d6aeb0b415f0c}\label{classObserver_a68e3f8bd3188c940893d6aeb0b415f0c}} 
+void {\bfseries subscribe} (const TEvent \&event, const std\+::function$<$ void()$>$ \&lambda)
+\item 
+\mbox{\Hypertarget{classObserver_afd0eb01458d6afdcdc7bdaf2e9337e69}\label{classObserver_afd0eb01458d6afdcdc7bdaf2e9337e69}} 
+void {\bfseries notify} (const TEvent \&event)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename TEvent$>$\newline
+class Observer$<$ TEvent $>$}
+
+\mbox{\hyperlink{classObserver}{Observer}} Design Pattern. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em TEvent} & Type of the event identifier (e.\+g., enum, string, int)\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ \mbox{\hyperlink{classObserver}{Observer<std::string>}} obs;}
+\DoxyCodeLine{std::string           result;}
+\DoxyCodeLine{}
+\DoxyCodeLine{obs.subscribe(\textcolor{stringliteral}{"{}click"{}}, [\&]() \{ result = \textcolor{stringliteral}{"{}clicked"{}}; \});}
+\DoxyCodeLine{obs.notify(\textcolor{stringliteral}{"{}click"{}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now result == "{}clicked"{}}}
+
+\end{DoxyCode}
+ 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/design\+\_\+patterns/observer/observer.\+hpp\end{DoxyCompactItemize}

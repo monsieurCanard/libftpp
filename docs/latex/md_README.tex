@@ -1,0 +1,751 @@
+\hypertarget{md_README_autotoc_md0}{}\doxysection{Libftpp 📚}\label{md_README_autotoc_md0}
+\hypertarget{md_README_autotoc_md1}{}\doxysubsection{📖 Description}\label{md_README_autotoc_md1}
+{\bfseries{libftpp}} est une librairie C++ moderne explorant les structures de données avancées et les design patterns. Ce projet met l\textquotesingle{}accent sur les bonnes pratiques du C++ moderne, la gestion efficace de la mémoire et l\textquotesingle{}implémentation rigoureuse des patterns classiques du génie logiciel.\hypertarget{md_README_autotoc_md2}{}\doxysubsection{🚀 Installation et compilation}\label{md_README_autotoc_md2}
+\hypertarget{md_README_autotoc_md3}{}\doxysubsubsection{Prérequis}\label{md_README_autotoc_md3}
+
+\begin{DoxyItemize}
+\item Compilateur C++11 ou supérieur
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md4}{}\doxysubsubsection{Installation}\label{md_README_autotoc_md4}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git clone git@github.com:monsieurCanard/libftpp.git}
+\DoxyCodeLine{cd libftpp}
+
+\end{DoxyCode}
+ \hypertarget{md_README_autotoc_md5}{}\doxysubsubsection{Compilation lib}\label{md_README_autotoc_md5}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md6}{}\doxysubsubsection{Compilation for Test}\label{md_README_autotoc_md6}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make test}
+
+\end{DoxyCode}
+ \hypertarget{md_README_autotoc_md7}{}\doxysubsubsection{Lancement des tests}\label{md_README_autotoc_md7}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{make run-\/test}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md8}{}\doxysubsection{📁 Structure du projet}\label{md_README_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{libftpp/}
+\DoxyCodeLine{├── src/}
+\DoxyCodeLine{│   ├── data\_structures/}
+\DoxyCodeLine{│   │   ├── data\_buffer/         \# Sérialisation/désérialisation de données}
+\DoxyCodeLine{│   │   └── pool/                \# Pool de mémoire avec allocation optimisée}
+\DoxyCodeLine{│   ├── design\_patterns/}
+\DoxyCodeLine{│   │   ├── memento/             \# Sauvegarde et restauration d'état}
+\DoxyCodeLine{│   │   ├── observer/            \# Notification d'événements}
+\DoxyCodeLine{│   │   ├── singleton/           \# Instance unique globale}
+\DoxyCodeLine{│   │   └── state\_machine/       \# Machine à états finis}
+\DoxyCodeLine{│   ├── mathematics/}
+\DoxyCodeLine{│   │   ├── IVector2/            \# Interface vecteur 2D}
+\DoxyCodeLine{│   │   ├── IVector3/            \# Interface vecteur 3D}
+\DoxyCodeLine{│   │   ├── perlin\_noise/        \# Génération de bruit de Perlin}
+\DoxyCodeLine{│   │   └── random\_2D\_coordinate\_generator/  \# Générateur de coordonnées aléatoires}
+\DoxyCodeLine{│   ├── network/}
+\DoxyCodeLine{│   │   ├── client/              \# Client TCP pour communication réseau}
+\DoxyCodeLine{│   │   ├── message/             \# Système de messages structurés}
+\DoxyCodeLine{│   │   └── server/              \# Serveur TCP multi-\/clients avec select()}
+\DoxyCodeLine{│   ├── thread/}
+\DoxyCodeLine{│   │   ├── persistent\_worker/   \# Worker thread persistant}
+\DoxyCodeLine{│   │   ├── thread/              \# Wrapper thread avec fonctionnalités étendues}
+\DoxyCodeLine{│   │   ├── thread\_safe\_iostream/ \# IO thread-\/safe}
+\DoxyCodeLine{│   │   ├── thread\_safe\_queue/   \# Queue thread-\/safe}
+\DoxyCodeLine{│   │   └── worker\_pool/         \# Pool de threads workers}
+\DoxyCodeLine{│   └── bonus/}
+\DoxyCodeLine{│       ├── chronometre/         \# Mesure de temps et performance}
+\DoxyCodeLine{│       ├── logger/              \# Système de logging avancé}
+\DoxyCodeLine{│       ├── n\_ary\_tree/          \# Arbre n-\/aire générique}
+\DoxyCodeLine{│       ├── observable\_value/    \# Valeur observable avec pattern Observer}
+\DoxyCodeLine{│       │   └── IObserver/       \# Interface observateur}
+\DoxyCodeLine{│       └── ring\_buffer/         \# Buffer circulaire optimisé}
+\DoxyCodeLine{├── tests/                       \# Tests unitaires avec GoogleTest}
+\DoxyCodeLine{│   ├── test\_*.cpp              \# Tests pour chaque composant}
+\DoxyCodeLine{│   └── main.cpp                \# Point d'entrée des tests}
+\DoxyCodeLine{├── programs\_test/               \# Programmes d'exemple et de test}
+\DoxyCodeLine{│   ├── programServer/          \# Exemple serveur de test}
+\DoxyCodeLine{│   └── programStressTesteur/   \# Programme de test de charge}
+\DoxyCodeLine{├── CMakeLists.txt              \# Configuration CMake}
+\DoxyCodeLine{├── Makefile                    \# Build système Make}
+\DoxyCodeLine{└── libftpp.hpp                 \# Header unifié pour toute la librairie}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md9}{}\doxysubsection{🎯 Règles de codage}\label{md_README_autotoc_md9}
+
+\begin{DoxyItemize}
+\item {\bfseries{Classes}} \+: Pascal\+Case ({\ttfamily My\+Class})
+\item {\bfseries{Méthodes}} \+: camel\+Case ({\ttfamily my\+Method()})
+\item {\bfseries{Fichiers}} \+: snake\+\_\+case ({\ttfamily my\+\_\+class.\+hpp})
+\item {\bfseries{Standard}} \+: C++11 minimum avec flags {\ttfamily -\/Wall -\/Wextra -\/Werror}
+\item {\bfseries{Interdictions}} \+: Boost, {\ttfamily $\ast$printf()}, {\ttfamily $\ast$alloc()}, {\ttfamily free()}
+\item {\bfseries{Headers}} \+: Indépendants avec include guards
+\item {\bfseries{Mémoire}} \+: Éviter les fuites, gestion RAII (Resource Acquisition Is Initialization)
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md10}{}\doxysection{📚 Gang of Four – Résumé simple}\label{md_README_autotoc_md10}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Catégorie   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Idée en une phrase   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Exemple en C++    }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Catégorie   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Pattern   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Idée en une phrase   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Exemple en C++    }\\\cline{1-4}
+\endhead
+{\bfseries{Création}}   &Singleton   &Toujours la même instance unique   &Un seul {\ttfamily Logger} ou {\ttfamily Config\+Manager}    \\\cline{1-4}
+&Factory Method   &Choisit quel objet créer sans dire son type exact   &{\ttfamily Shape\+Factory} → retourne {\ttfamily Circle} ou {\ttfamily Square}    \\\cline{1-4}
+&Abstract Factory   &Crée des familles d’objets compatibles   &{\ttfamily UIFactory} → boutons Windows/\+Linux    \\\cline{1-4}
+&Builder   &Construit un objet étape par étape   &{\ttfamily Http\+Request\+Builder} pour configurer une requête    \\\cline{1-4}
+&Prototype   &Clone un objet existant   &{\ttfamily Document$\ast$ copy = doc.\+clone();}    \\\cline{1-4}
+{\bfseries{Structure}}   &Adapter   &Rend deux interfaces compatibles   &{\ttfamily Legacy\+Printer\+Adapter} pour utiliser une vieille lib    \\\cline{1-4}
+&Bridge   &Sépare abstraction et implémentation   &{\ttfamily Renderer} (Open\+GL/\+DirectX) séparé de {\ttfamily Shape}    \\\cline{1-4}
+&Composite   &Objets simples et composés traités pareil   &{\ttfamily File} et {\ttfamily Directory} dans un système de fichiers    \\\cline{1-4}
+&Decorator   &Ajoute des fonctions sans toucher au code   &{\ttfamily Stream} décoré avec {\ttfamily Buffered\+Stream}    \\\cline{1-4}
+&Facade   &Simplifie un système complexe   &{\ttfamily Compiler\+Facade} qui appelle lexer+parser+codegen    \\\cline{1-4}
+&Flyweight   &Partage objets identiques pour économiser mémoire   &{\ttfamily Character} dans un éditeur de texte    \\\cline{1-4}
+&Proxy   &Contrôle l’accès à un objet réel   &{\ttfamily Image\+Proxy} qui charge l’image à la demande    \\\cline{1-4}
+{\bfseries{Comportement}}   &Observer   &Un objet prévient les autres automatiquement   &{\ttfamily Button} → notifie ses listeners    \\\cline{1-4}
+&Memento   &Sauvegarde/restaure un état   &{\ttfamily Game.\+save()} et {\ttfamily Game.\+load()}    \\\cline{1-4}
+&State   &Change le comportement selon l’état   &{\ttfamily TCPConnection} en état {\ttfamily Connected}/{\ttfamily Closed}    \\\cline{1-4}
+&Chain of Responsibility   &Passe une requête dans une chaîne de handlers   &Middleware HTTP qui traite ou passe au suivant    \\\cline{1-4}
+&Command   &Action emballée dans un objet   &{\ttfamily Undo\+Command} ou {\ttfamily Move\+Command} dans un éditeur    \\\cline{1-4}
+&Interpreter   &Exécute une mini-\/grammaire/langage   &Calculatrice qui lit {\ttfamily 1+2$\ast$3}    \\\cline{1-4}
+&Iterator   &Parcourt une collection sans connaître sa structure   &{\ttfamily for(auto it = list.\+begin(); it != list.\+end(); ++it)}    \\\cline{1-4}
+&Mediator   &Un objet central gère la communication   &{\ttfamily Chat\+Room} qui relaie les messages    \\\cline{1-4}
+&Strategy   &Choisir un algo interchangeable facilement   &{\ttfamily sort(data, Quick\+Sort\+Strategy\{\})}    \\\cline{1-4}
+&Template Method   &Squelette d’un algo, détails dans les sous-\/classes   &{\ttfamily Game\+::play()} appelle {\ttfamily init()}, {\ttfamily loop()}, {\ttfamily end()}    \\\cline{1-4}
+&Visitor   &Ajoute une opération sans changer les classes   &{\ttfamily ASTVisitor} pour analyser un arbre syntaxique   \\\cline{1-4}
+\end{longtabu}
+\hypertarget{md_README_autotoc_md11}{}\doxysubsection{📚 Structures de données implementées}\label{md_README_autotoc_md11}
+\hypertarget{md_README_autotoc_md12}{}\doxysubsubsection{📦 Pool de mémoire}\label{md_README_autotoc_md12}
+Un {\bfseries{Pool}} est un réservoir de mémoire qui pré-\/alloue des objets pour éviter les allocations/désallocations fréquentes. Améliore significativement les performances pour la création d\textquotesingle{}objets coûteux.
+
+{\bfseries{Caractéristiques \+:}}
+\begin{DoxyItemize}
+\item Utilise {\ttfamily std\+::aligned\+\_\+storage} pour l\textquotesingle{}alignement mémoire
+\item Templates variadiques pour les constructeurs
+\item Placement new pour la construction in-\/place
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Pool<MyClass> pool(100);  \textcolor{comment}{// Pré-\/alloue 100 objets}}
+\DoxyCodeLine{\textcolor{keyword}{auto}* obj = pool.acquire(arg1, arg2);  \textcolor{comment}{// Construction avec arguments}}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md13}{}\doxysubsubsection{💾 Data\+Buffer}\label{md_README_autotoc_md13}
+Système de {\bfseries{sérialisation/désérialisation}} utilisant les streams C++ pour la persistance de données.
+
+{\bfseries{Fonctionnalités \+:}}
+\begin{DoxyItemize}
+\item Sérialisation via {\ttfamily reinterpret\+\_\+cast$<$unsigned int$\ast$$>$} pour copier les octets
+\item Désérialisation via {\ttfamily memcpy} pour restaurer les données
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md14}{}\doxysubsection{🧵 Programmation concurrente}\label{md_README_autotoc_md14}
+\hypertarget{md_README_autotoc_md15}{}\doxysubsubsection{🔄 Condition Variables}\label{md_README_autotoc_md15}
+Les {\bfseries{condition variables}} ({\ttfamily std\+::condition\+\_\+variable}) permettent la synchronisation entre threads en bloquant un thread jusqu\textquotesingle{}à ce qu\textquotesingle{}une condition soit remplie.
+
+{\bfseries{Principe \+:}} Une condition variable est toujours associée à un mutex et permet à un thread d\textquotesingle{}attendre qu\textquotesingle{}un autre thread signale un changement d\textquotesingle{}état.
+
+{\bfseries{Utilisation typique \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{std::mutex mtx;}
+\DoxyCodeLine{std::condition\_variable cv;}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ready = \textcolor{keyword}{false};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Thread producteur}}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    std::lock\_guard<std::mutex> lock(mtx);}
+\DoxyCodeLine{    ready = \textcolor{keyword}{true};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{cv.notify\_one(); \textcolor{comment}{// Réveille un thread en attente}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Thread consommateur  }}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    std::unique\_lock<std::mutex> lock(mtx);}
+\DoxyCodeLine{    cv.wait(lock, [] \{ \textcolor{keywordflow}{return} ready; \}); \textcolor{comment}{// Attend que ready soit true}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+{\bfseries{Méthodes principales \+:}}
+\begin{DoxyItemize}
+\item {\ttfamily wait(lock, predicate)} \+: Bloque jusqu\textquotesingle{}à ce que le prédicat soit vrai
+\item {\ttfamily notify\+\_\+one()} \+: Réveille un thread en attente
+\item {\ttfamily notify\+\_\+all()} \+: Réveille tous les threads en attente
+\end{DoxyItemize}
+
+{\bfseries{Pattern Worker Pool \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Condition pour réveiller les workers}}
+\DoxyCodeLine{cv.wait(lock, [\textcolor{keyword}{this}] \{ \textcolor{keywordflow}{return} stop || !jobs.empty(); \});}
+\DoxyCodeLine{\textcolor{comment}{// Se réveille quand il y a du travail OU qu'on demande l'arrêt}}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md16}{}\doxysubsubsection{🏭 Worker\+Pool}\label{md_README_autotoc_md16}
+Un {\bfseries{Worker\+Pool}} est un pattern de concurrence qui maintient un groupe de threads workers qui exécutent des tâches à partir d\textquotesingle{}une queue partagée.
+
+{\bfseries{Architecture \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Queue de jobs}} \+: {\ttfamily std\+::queue$<$std\+::function$<$void()$>$$>$}
+\item {\bfseries{Workers}} \+: {\ttfamily std\+::vector$<$std\+::thread$>$} qui exécutent la boucle principale
+\item {\bfseries{Synchronisation}} \+: {\ttfamily std\+::mutex} + {\ttfamily std\+::condition\+\_\+variable}
+\end{DoxyItemize}
+
+{\bfseries{Fonctionnement \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{WorkerPool pool(4); \textcolor{comment}{// 4 threads workers}}
+\DoxyCodeLine{pool.addJob([]() \{ }
+\DoxyCodeLine{    \textcolor{comment}{// Votre tâche ici}}
+\DoxyCodeLine{    processData(); }
+\DoxyCodeLine{\});}
+\DoxyCodeLine{\textcolor{comment}{// Le destructeur attend que tous les jobs se terminent}}
+
+\end{DoxyCode}
+
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Évite la création/destruction répétée de threads
+\item Contrôle du niveau de parallélisme
+\item Distribution automatique des tâches
+\item Gestion propre de l\textquotesingle{}arrêt
+\end{DoxyItemize}
+
+{\bfseries{Pattern de boucle worker \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} WorkerPool::loop() \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{while} (!\_stop) \{}
+\DoxyCodeLine{        std::function<void()> job;}
+\DoxyCodeLine{        \{}
+\DoxyCodeLine{            std::unique\_lock<std::mutex> lock(\_mtx);}
+\DoxyCodeLine{            \_cv.wait(lock, [\textcolor{keyword}{this}] \{ \textcolor{keywordflow}{return} \_stop || !\_jobs.empty(); \});}
+\DoxyCodeLine{            }
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (\_stop || \_jobs.empty()) \textcolor{keywordflow}{break};}
+\DoxyCodeLine{            }
+\DoxyCodeLine{            job = \_jobs.front();}
+\DoxyCodeLine{            \_jobs.pop();}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{        job(); \textcolor{comment}{// Exécution hors du lock}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md17}{}\doxysubsection{🌐 Architecture réseau}\label{md_README_autotoc_md17}
+\hypertarget{md_README_autotoc_md18}{}\doxysubsubsection{📨 Message}\label{md_README_autotoc_md18}
+Classe pour la communication réseau structurée utilisant un protocole de messaging personnalisé.
+
+{\bfseries{Format de transfert \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{[Type (int)][Taille (size\_t)][Données (variable)]}
+
+\end{DoxyCode}
+
+
+{\bfseries{Caractéristiques \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Sérialisation automatique}} \+: Operators {\ttfamily $<$$<$} et {\ttfamily $>$$>$} pour tous types
+\item {\bfseries{Ring\+Buffer interne}} \+: Stockage efficace des données ~\newline
+
+\item {\bfseries{Type safety}} \+: Chaque message a un type pour le dispatch
+\item {\bfseries{Gestion des strings}} \+: Spécialisations pour {\ttfamily std\+::string}
+\end{DoxyItemize}
+
+{\bfseries{Utilisation \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Message msg(MESSAGE\_LOGIN);}
+\DoxyCodeLine{msg << userId << username << password;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Côté réception}}
+\DoxyCodeLine{\textcolor{keywordtype}{int} userId;}
+\DoxyCodeLine{\textcolor{keywordtype}{string} username, password;  }
+\DoxyCodeLine{msg >> userId >> username >> password;}
+
+\end{DoxyCode}
+
+
+{\bfseries{API principale \+:}}
+\begin{DoxyItemize}
+\item {\ttfamily operator$<$$<$(const T\&)} \+: Ajout de données typées
+\item {\ttfamily operator$>$$>$(T\&)} \+: Extraction de données typées ~\newline
+
+\item {\ttfamily get\+Serialized\+Data()} \+: Données complètes pour transmission
+\item {\ttfamily is\+Complet()} \+: Vérification de l\textquotesingle{}intégrité du message
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md19}{}\doxysubsubsection{🖥️ Server}\label{md_README_autotoc_md19}
+Serveur TCP multi-\/clients utilisant {\ttfamily select()} pour la gestion asynchrone des connexions.
+
+{\bfseries{Architecture \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Sockets POSIX}} \+: API système pour les communications TCP
+\item {\bfseries{select()}} \+: Multiplexage I/O pour gérer plusieurs clients
+\item {\bfseries{Callbacks}} \+: Actions définissables par type de message
+\item {\bfseries{Gestion d\textquotesingle{}état}} \+: Tracking des connexions et messages partiels
+\end{DoxyItemize}
+
+{\bfseries{Fonctionnalités \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Server server;}
+\DoxyCodeLine{server.start(8080);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Définir une action pour un type de message}}
+\DoxyCodeLine{server.defineAction(MSG\_CHAT, [](\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} clientId, \textcolor{keyword}{const} Message\& msg) \{}
+\DoxyCodeLine{    std::string content;}
+\DoxyCodeLine{    msg >> content;}
+\DoxyCodeLine{    \textcolor{comment}{// Broadcast à tous les clients}}
+\DoxyCodeLine{    server.sendToAll(createChatMessage(content));}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{server.update(); \textcolor{comment}{// Traite les événements réseau}}
+
+\end{DoxyCode}
+
+
+{\bfseries{Limitations \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Non thread-\/safe}} \+: Utilisation mono-\/thread uniquement
+\item {\bfseries{Connexions limitées}} \+: Maximum {\ttfamily NB\+\_\+\+CONNECTION} (256) clients
+\item {\bfseries{Buffer fixe}} \+: {\ttfamily READ\+\_\+\+BUFFER\+\_\+\+SIZE} (4096) octets par lecture
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md20}{}\doxysubsubsection{💻 Client}\label{md_README_autotoc_md20}
+Client TCP utilisant les mêmes primitives que le serveur pour la communication.
+
+{\bfseries{Fonctionnalités \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Connexion simple}} \+: {\ttfamily connect(address, port)}
+\item {\bfseries{Messaging}} \+: Envoi/réception de messages structurés
+\item {\bfseries{Callbacks}} \+: Actions sur réception de messages
+\item {\bfseries{Gestion d\textquotesingle{}état}} \+: Reconstruction des messages fragmentés
+\end{DoxyItemize}
+
+{\bfseries{Utilisation \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Client client(\textcolor{stringliteral}{"{}127.0.0.1"{}}, 8080);}
+\DoxyCodeLine{}
+\DoxyCodeLine{client.defineAction(MSG\_WELCOME, [](\textcolor{keyword}{const} Message\& msg) \{}
+\DoxyCodeLine{    std::string welcome;}
+\DoxyCodeLine{    msg >> welcome;}
+\DoxyCodeLine{    std::cout << welcome << std::endl;}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{Message loginMsg(MSG\_LOGIN);}
+\DoxyCodeLine{loginMsg << \textcolor{stringliteral}{"{}username"{}} << \textcolor{stringliteral}{"{}password"{}};}
+\DoxyCodeLine{client.send(loginMsg);}
+\DoxyCodeLine{}
+\DoxyCodeLine{client.update(); \textcolor{comment}{// Traite les messages entrants}}
+
+\end{DoxyCode}
+
+
+{\bfseries{Pattern d\textquotesingle{}utilisation typique \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (running) \{}
+\DoxyCodeLine{    client.update();           \textcolor{comment}{// Traite les messages entrants}}
+\DoxyCodeLine{    handleInputEvents();       \textcolor{comment}{// Interface utilisateur}}
+\DoxyCodeLine{    std::this\_thread::sleep\_for(16ms); \textcolor{comment}{// \string~60 FPS}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md21}{}\doxysubsection{🎨 Details -\/ Design Patterns (✅ = implémentés)}\label{md_README_autotoc_md21}
+\hypertarget{md_README_autotoc_md22}{}\doxysubsubsection{🔹 Création (\+Creational Patterns)}\label{md_README_autotoc_md22}
+\hypertarget{md_README_autotoc_md23}{}\doxyparagraph{✅ Singleton}\label{md_README_autotoc_md23}
+{\bfseries{But \+:}} Garantit qu\textquotesingle{}une classe n\textquotesingle{}a qu\textquotesingle{}une seule instance et fournit un point d\textquotesingle{}accès global.
+
+{\bfseries{Utilisation \+:}} Configuration globale, gestionnaire de ressources, logging.
+
+{\bfseries{Implémentation \+:}} Utilise {\ttfamily static} pour partager l\textquotesingle{}instance entre threads.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Singleton<DatabaseManager> db;}
+\DoxyCodeLine{db.instantiate(\textcolor{stringliteral}{"{}localhost"{}}, 5432);}
+\DoxyCodeLine{\textcolor{keyword}{auto}* manager = db.instance();}
+
+\end{DoxyCode}
+
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Contrôle strict de l\textquotesingle{}instanciation
+\item Accès global uniforme
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md24}{}\doxyparagraph{Factory Method}\label{md_README_autotoc_md24}
+{\bfseries{But \+:}} Définit une interface pour créer un objet, mais laisse les sous-\/classes décider de la classe instanciée.
+
+{\bfseries{Utilisation \+:}} Création d\textquotesingle{}objets sans spécifier leur classe exacte, frameworks extensibles.
+
+{\bfseries{Exemple d\textquotesingle{}usage \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }ShapeFactory \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} Shape* createShape() = 0;}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{class }CircleFactory : \textcolor{keyword}{public} ShapeFactory \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    Shape* createShape()\textcolor{keyword}{ override }\{ \textcolor{keywordflow}{return} \textcolor{keyword}{new} Circle(); \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md25}{}\doxyparagraph{Abstract Factory}\label{md_README_autotoc_md25}
+{\bfseries{But \+:}} Fournit une interface pour créer des familles d\textquotesingle{}objets liés sans spécifier leurs classes concrètes. {\bfseries{Utilisation \+:}} Systèmes multi-\/plateformes, thèmes d\textquotesingle{}interface, familles de produits.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Isole les classes concrètes
+\item Facilite l\textquotesingle{}échange de familles de produits
+\item Garantit la cohérence entre produits
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md26}{}\doxyparagraph{Builder}\label{md_README_autotoc_md26}
+{\bfseries{But \+:}} Sépare la construction complexe d\textquotesingle{}un objet de sa représentation finale.
+
+{\bfseries{Utilisation \+:}} Objets avec de nombreux paramètres optionnels, configurations complexes.
+
+{\bfseries{Exemple \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }HttpRequestBuilder \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    HttpRequestBuilder\& setUrl(\textcolor{keyword}{const} std::string\& url);}
+\DoxyCodeLine{    HttpRequestBuilder\& setMethod(\textcolor{keyword}{const} std::string\& method);}
+\DoxyCodeLine{    HttpRequestBuilder\& addHeader(\textcolor{keyword}{const} std::string\& key, \textcolor{keyword}{const} std::string\& value);}
+\DoxyCodeLine{    HttpRequest build();}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md27}{}\doxyparagraph{Prototype}\label{md_README_autotoc_md27}
+{\bfseries{But \+:}} Crée de nouveaux objets en copiant un prototype existant.
+
+{\bfseries{Utilisation \+:}} Clonage d\textquotesingle{}objets complexes, éviter la re-\/initialisation coûteuse.\hypertarget{md_README_autotoc_md28}{}\doxysubsubsection{🔹 Structure (\+Structural Patterns)}\label{md_README_autotoc_md28}
+\hypertarget{md_README_autotoc_md29}{}\doxyparagraph{Adapter}\label{md_README_autotoc_md29}
+{\bfseries{But \+:}} Convertit l\textquotesingle{}interface d\textquotesingle{}une classe en une autre attendue par le client.
+
+{\bfseries{Utilisation \+:}} Intégration de librairies tierces, legacy code, APIs incompatibles.
+
+{\bfseries{Types \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Object Adapter}} \+: utilise la composition
+\item {\bfseries{Class Adapter}} \+: utilise l\textquotesingle{}héritage multiple
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md30}{}\doxyparagraph{Bridge}\label{md_README_autotoc_md30}
+{\bfseries{But \+:}} Sépare l\textquotesingle{}abstraction de son implémentation pour les faire évoluer indépendamment.
+
+{\bfseries{Utilisation \+:}} Éviter l\textquotesingle{}explosion combinatoire d\textquotesingle{}héritages, architectures multi-\/plateformes.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Découplage abstraction/implémentation
+\item Extensibilité facilitée
+\item Masquage des détails d\textquotesingle{}implémentation
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md31}{}\doxyparagraph{Composite}\label{md_README_autotoc_md31}
+{\bfseries{But \+:}} Permet de traiter un groupe d\textquotesingle{}objets comme un objet unique (structure d\textquotesingle{}arbre).
+
+{\bfseries{Utilisation \+:}} Systèmes de fichiers, interfaces graphiques, menus hiérarchiques.
+
+{\bfseries{Caractéristiques \+:}}
+\begin{DoxyItemize}
+\item Structure récursive
+\item Traitement uniforme des objets simples et composites
+\item Facilite l\textquotesingle{}ajout de nouveaux types de composants
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md32}{}\doxyparagraph{Decorator}\label{md_README_autotoc_md32}
+{\bfseries{But \+:}} Ajoute dynamiquement des responsabilités à un objet sans modifier sa classe.
+
+{\bfseries{Utilisation \+:}} Extensions de fonctionnalités, middleware, streams, GUI.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Alternative flexible à l\textquotesingle{}héritage
+\item Combinaison dynamique de comportements
+\item Respect du principe Open/\+Closed
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md33}{}\doxyparagraph{Facade}\label{md_README_autotoc_md33}
+{\bfseries{But \+:}} Fournit une interface simplifiée à un ensemble complexe de classes/sous-\/systèmes.
+
+{\bfseries{Utilisation \+:}} APIs simplifiées, masquer la complexité interne, point d\textquotesingle{}entrée unifié.
+
+{\bfseries{Bénéfices \+:}}
+\begin{DoxyItemize}
+\item Réduction du couplage
+\item Interface plus simple
+\item Centralisation des interactions
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md34}{}\doxyparagraph{Flyweight}\label{md_README_autotoc_md34}
+{\bfseries{But \+:}} Partage les objets pour économiser mémoire/performances.
+
+{\bfseries{Utilisation \+:}} Nombreuses instances d\textquotesingle{}objets similaires (caractères, particules, tuiles).
+
+{\bfseries{Concepts clés \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{État intrinsèque}} \+: partagé entre instances
+\item {\bfseries{État extrinsèque}} \+: unique à chaque contexte
+\item Factory pour gérer les instances partagées
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md35}{}\doxyparagraph{Proxy}\label{md_README_autotoc_md35}
+{\bfseries{But \+:}} Fournit un substitut qui contrôle l\textquotesingle{}accès à un objet réel.
+
+{\bfseries{Utilisation \+:}} Lazy loading, contrôle d\textquotesingle{}accès, cache, logging, réseaux.
+
+{\bfseries{Types de proxy \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Virtual Proxy}} \+: création à la demande
+\item {\bfseries{Protection Proxy}} \+: contrôle d\textquotesingle{}accès
+\item {\bfseries{Remote Proxy}} \+: représentant local d\textquotesingle{}un objet distant
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md36}{}\doxysubsubsection{🔹 Comportement (\+Behavioral Patterns)}\label{md_README_autotoc_md36}
+\hypertarget{md_README_autotoc_md37}{}\doxyparagraph{✅ Observer}\label{md_README_autotoc_md37}
+{\bfseries{But \+:}} Notifie automatiquement une liste d\textquotesingle{}observateurs lors d\textquotesingle{}un changement d\textquotesingle{}état.
+
+{\bfseries{Utilisation \+:}} Interfaces utilisateur, événements système, MVC, reactive programming.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Découplage entre sujet et observateurs
+\item Communication broadcast
+\item Support dynamique d\textquotesingle{}observateurs
+\end{DoxyItemize}
+
+{\bfseries{Implémentation typique \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }Subject \{}
+\DoxyCodeLine{    std::vector<Observer*> observers;}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} attach(Observer* obs) \{ observers.push\_back(obs); \}}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} notify() \{ \textcolor{keywordflow}{for}(\textcolor{keyword}{auto}* obs : observers) obs-\/>update(); \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md38}{}\doxyparagraph{✅ Memento}\label{md_README_autotoc_md38}
+{\bfseries{But \+:}} Sauvegarde/restaure l\textquotesingle{}état interne d\textquotesingle{}un objet sans violer l\textquotesingle{}encapsulation.
+
+{\bfseries{Utilisation \+:}} Undo/\+Redo, snapshots, sauvegarde d\textquotesingle{}état, checkpoints.
+
+{\bfseries{Principe \+:}} Externalise l\textquotesingle{}état sans exposer la structure interne.
+
+{\bfseries{Structure \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Originator}} \+: crée et utilise les mementos
+\item {\bfseries{Memento}} \+: stocke l\textquotesingle{}état interne
+\item {\bfseries{Caretaker}} \+: gère les mementos sans les examiner
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md39}{}\doxyparagraph{✅ State Machine}\label{md_README_autotoc_md39}
+{\bfseries{But \+:}} Change le comportement d\textquotesingle{}un objet selon son état interne.
+
+{\bfseries{Utilisation \+:}} Parsers, protocoles réseau, jeux (IA), workflows, automates.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Code plus maintenable pour les logiques d\textquotesingle{}état complexes
+\item Élimination des conditions if/switch complexes
+\item États explicites et transitions claires
+\end{DoxyItemize}
+
+{\bfseries{Implémentation \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }StateMachine \{}
+\DoxyCodeLine{    State* currentState;}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} transition(State* newState) \{}
+\DoxyCodeLine{        currentState-\/>exit();}
+\DoxyCodeLine{        currentState = newState;}
+\DoxyCodeLine{        currentState-\/>enter();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md40}{}\doxyparagraph{Chain of Responsibility}\label{md_README_autotoc_md40}
+{\bfseries{But \+:}} Passe une requête à travers une chaîne d\textquotesingle{}objets susceptibles de la traiter.
+
+{\bfseries{Utilisation \+:}} Validation, middleware, gestionnaires d\textquotesingle{}événements, parsers.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Découplage émetteur/récepteur
+\item Chaîne configurable dynamiquement
+\item Responsabilité distribuée
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md41}{}\doxyparagraph{Command}\label{md_README_autotoc_md41}
+{\bfseries{But \+:}} Encapsule une requête dans un objet (permet annulation, historique).
+
+{\bfseries{Utilisation \+:}} Undo/\+Redo, macros, queues de commandes, transactions.
+
+{\bfseries{Composants \+:}}
+\begin{DoxyItemize}
+\item {\bfseries{Command}} \+: interface commune
+\item {\bfseries{Concrete\+Command}} \+: implémentation spécifique
+\item {\bfseries{Invoker}} \+: lance les commandes
+\item {\bfseries{Receiver}} \+: exécute l\textquotesingle{}action
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md42}{}\doxyparagraph{Interpreter}\label{md_README_autotoc_md42}
+{\bfseries{But \+:}} Définit une grammaire et un interprète pour exécuter des expressions.
+
+{\bfseries{Utilisation \+:}} Langages de script, expressions régulières, calculatrices, DSL.
+
+{\bfseries{Structure \+:}}
+\begin{DoxyItemize}
+\item Grammaire en forme d\textquotesingle{}arbre syntaxique
+\item Chaque règle = une classe
+\item Méthode {\ttfamily interpret()} pour l\textquotesingle{}évaluation
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md43}{}\doxyparagraph{Iterator}\label{md_README_autotoc_md43}
+{\bfseries{But \+:}} Accès séquentiel aux éléments d\textquotesingle{}une collection sans exposer sa structure.
+
+{\bfseries{Utilisation \+:}} Parcours de conteneurs, algorithmes génériques, abstraction des structures.
+
+{\bfseries{Bénéfices \+:}}
+\begin{DoxyItemize}
+\item Interface uniforme pour différentes collections
+\item Plusieurs itérateurs simultanés
+\item Découplage algorithme/structure
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md44}{}\doxyparagraph{Mediator}\label{md_README_autotoc_md44}
+{\bfseries{But \+:}} Centralise la communication entre plusieurs objets.
+
+{\bfseries{Utilisation \+:}} Interfaces complexes, réduction du couplage, coordination.
+
+{\bfseries{Exemple \+:}} Contrôleur aérien coordonnant les avions sans qu\textquotesingle{}ils communiquent directement.\hypertarget{md_README_autotoc_md45}{}\doxyparagraph{Strategy}\label{md_README_autotoc_md45}
+{\bfseries{But \+:}} Définit une famille d\textquotesingle{}algorithmes interchangeables dynamiquement.
+
+{\bfseries{Utilisation \+:}} Algorithmes de tri, compression, tarification, rendering.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Élimination des conditionnelles
+\item Algorithmes configurables à l\textquotesingle{}exécution
+\item Facilite l\textquotesingle{}ajout de nouveaux algorithmes
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md46}{}\doxyparagraph{Template Method}\label{md_README_autotoc_md46}
+{\bfseries{But \+:}} Définit l\textquotesingle{}ossature d\textquotesingle{}un algorithme, laisse certaines étapes aux sous-\/classes.
+
+{\bfseries{Utilisation \+:}} Frameworks, algorithmes avec variantes, hooks personnalisables.
+
+{\bfseries{Structure \+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }AbstractAlgorithm \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    \textcolor{keywordtype}{void} templateMethod() \{}
+\DoxyCodeLine{        step1();}
+\DoxyCodeLine{        step2();  \textcolor{comment}{// implémentée par les sous-\/classes}}
+\DoxyCodeLine{        step3();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\textcolor{keyword}{protected}:}
+\DoxyCodeLine{    \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} step2() = 0;}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md47}{}\doxyparagraph{Visitor}\label{md_README_autotoc_md47}
+{\bfseries{But \+:}} Sépare un algorithme de la structure sur laquelle il opère.
+
+{\bfseries{Utilisation \+:}} AST, sérialiseurs, processeurs de données, compilateurs.
+
+{\bfseries{Avantages \+:}}
+\begin{DoxyItemize}
+\item Ajouter de nouvelles opérations sans modifier les classes
+\item Regroupement d\textquotesingle{}opérations liées
+\item Utilisation du double dispatch
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md48}{}\doxysubsection{🔧 Concepts C++ avancés}\label{md_README_autotoc_md48}
+\hypertarget{md_README_autotoc_md49}{}\doxysubsubsection{Templates variadiques}\label{md_README_autotoc_md49}
+Permettent de passer un nombre variable d\textquotesingle{}arguments typés \+: Ellipsis\+: {\ttfamily ...} Si tu mets {\ttfamily ...} dans une fonction comme ceci\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template} <\textcolor{keyword}{typename}... TArgs>}
+\DoxyCodeLine{\textcolor{keywordtype}{void} func(TArgs... args) \{}
+\DoxyCodeLine{    (std::cout << ... << args) << std::endl; \textcolor{comment}{// C++17 fold expression}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Usage}}
+\DoxyCodeLine{func(1, \textcolor{stringliteral}{"{}hello"{}}, 3.14);}
+
+\end{DoxyCode}
+ Cela signifie que tu peux passer n\textquotesingle{}importe quel nombre d\textquotesingle{}arguments de n\textquotesingle{}importe quel type.\hypertarget{md_README_autotoc_md50}{}\doxysubsubsection{Gestion des références et std\+::forward}\label{md_README_autotoc_md50}
+
+\begin{DoxyItemize}
+\item {\ttfamily T\&} \+: référence lvalue uniquement
+\item {\ttfamily const T\&} \+: référence constante (lvalues + rvalues)
+\item {\ttfamily T\&\&} \+: rvalue reference ou forwarding reference (en template)
+\item {\ttfamily std\+::forward$<$T$>$(arg)} \+: préserve la nature de l\textquotesingle{}argument
+\end{DoxyItemize}
+
+{\bfseries{Pourquoi std\+::forward ?}}
+\begin{DoxyItemize}
+\item Évite les copies inutiles
+\item Préserve les optimisations de déplacement (move semantics)
+\item Permet le perfect forwarding
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{template} <\textcolor{keyword}{typename}... TArgs>}
+\DoxyCodeLine{TType* acquire(TArgs\&\&... args) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* memory = pool.allocate();}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} \textcolor{keyword}{new} (memory) TType(std::forward<TArgs>(args)...);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md_README_autotoc_md51}{}\doxysubsubsection{std\+::aligned\+\_\+storage}\label{md_README_autotoc_md51}
+Template C++11 pour pré-\/allouer de la mémoire correctement alignée mais deprecated en c++23\+:
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{std::aligned\_storage<\textcolor{keyword}{sizeof}(T), \textcolor{keyword}{alignof}(T)>::type storage;}
+\DoxyCodeLine{T* ptr = \textcolor{keyword}{reinterpret\_cast<}T*\textcolor{keyword}{>}(\&storage);}
+\DoxyCodeLine{\textcolor{keyword}{new} (ptr) T(args...);  \textcolor{comment}{// Placement new}}
+
+\end{DoxyCode}
+
+
+{\bfseries{Utilité \+:}}
+\begin{DoxyItemize}
+\item Object pools
+\item Containers personnalisés
+\item Éviter les allocations dynamiques
+\end{DoxyItemize}\hypertarget{md_README_autotoc_md52}{}\doxysubsubsection{Default Noexcept Delete}\label{md_README_autotoc_md52}
+Indique qu\textquotesingle{}une fonction ne lance pas d\textquotesingle{}exception, permettant des optimisations.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} func() noexcept; \textcolor{comment}{// Garantie de ne pas lancer d'exception}}
+
+\end{DoxyCode}
+
+
+Pour les constructeurs/destructeurs qui ne font rien dedans on peut les indiquer {\ttfamily = default}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }MyClass \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    MyClass() = \textcolor{keywordflow}{default}; \textcolor{comment}{// Constructeur par défaut sans exception}}
+\DoxyCodeLine{    \string~MyClass() = \textcolor{keywordflow}{default}; \textcolor{comment}{// Destructeur par défaut sans exception}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+ Pour les constructeurs/destructeurs, {\ttfamily noexcept} est souvent implicite.
+
+Si une methode ne doit jamais etre possible on peut aussi place r {\ttfamily = delete}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }NonCopyable \{}
+\DoxyCodeLine{\textcolor{keyword}{public}:}
+\DoxyCodeLine{    NonCopyable(\textcolor{keyword}{const} NonCopyable\&) = \textcolor{keyword}{delete}; \textcolor{comment}{// Interdit la copie}}
+\DoxyCodeLine{    NonCopyable\& operator=(\textcolor{keyword}{const} NonCopyable\&) = \textcolor{keyword}{delete}; \textcolor{comment}{// Interdit la copie}}
+\DoxyCodeLine{\};}
+
+\end{DoxyCode}
+ \hypertarget{md_README_autotoc_md53}{}\doxysubsubsection{Liste des exceptions des plus courantes}\label{md_README_autotoc_md53}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{std::exception}
+\DoxyCodeLine{├── std::logic\_error}
+\DoxyCodeLine{│   ├── std::invalid\_argument}
+\DoxyCodeLine{│   ├── std::domain\_error}
+\DoxyCodeLine{│   ├── std::length\_error}
+\DoxyCodeLine{│   └── std::out\_of\_range}
+\DoxyCodeLine{└── std::runtime\_error}
+\DoxyCodeLine{    ├── std::range\_error}
+\DoxyCodeLine{    ├── std::overflow\_error}
+\DoxyCodeLine{    └── std::underflow\_error}
+\DoxyCodeLine{````}
+\DoxyCodeLine{}
+\DoxyCodeLine{\#\# 🧪 Tests}
+\DoxyCodeLine{}
+\DoxyCodeLine{Les tests utilisent **GoogleTest** et couvrent :}
+\DoxyCodeLine{-\/ ✅ Fonctionnalités des structures de données}
+\DoxyCodeLine{-\/ ✅ Comportement des design patterns}
+\DoxyCodeLine{-\/ ✅ Cas limites et gestion d'erreurs}
+\DoxyCodeLine{-\/ ✅ Performance et fuites mémoire}
+\DoxyCodeLine{}
+\DoxyCodeLine{**Structure des tests :**}
+
+\end{DoxyCode}
+ tests/ ├── test\+\_\+data\+\_\+buffer.\+cpp ├── test\+\_\+pool.\+cpp ├── test\+\_\+memento.\+cpp ├── test\+\_\+observer.\+cpp ├── test\+\_\+singleton.\+cpp └── test\+\_\+state\+\_\+machine.\+cpp \`{}\`{}\`{} 

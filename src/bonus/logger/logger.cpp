@@ -105,6 +105,11 @@ std::string Logger::logLevelToString(LogLevel level) const
     }
 }
 
+/**
+ * @brief Log a message to the log file if the log level is sufficient.
+ * @param level The log level of the message.
+ * @param message The message to log.
+ */
 void Logger::log(LogLevel level, const std::string& message)
 {
     if (level < _currentLevel)
@@ -114,6 +119,11 @@ void Logger::log(LogLevel level, const std::string& message)
              << std::endl;
 }
 
+/**
+ * @brief Log a message to the console if the log level is sufficient.
+ * @param level The log level of the message.
+ * @param message The message to log.
+ */
 void Logger::logConsole(LogLevel level, const std::string& message)
 {
     if (level < _currentLevel)

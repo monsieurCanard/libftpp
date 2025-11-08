@@ -11,7 +11,26 @@
 /**
  * @brief A simple LIFO data buffer for serialization and deserialization for simple data types and
  * std::string.
+ * @code
+ * DataBuffer buffer;
  *
+ * int       intValue = 42;
+ * float     floatValue = 3.14f;
+ * std::string strValue = "Hello, DataBuffer!";
+ *
+ * buffer << intValue;
+ * buffer << floatValue;
+ * buffer << strValue;
+ *
+ * int      readInt;
+ * float    readFloat;
+ * std::string readStr;
+ *
+ * buffer >> readStr;
+ * buffer >> readFloat;
+ * buffer >> readInt;
+ *
+ * @endcode
  * @throw std::out_of_range Thrown when trying to read more data than available in the buffer.
  */
 class DataBuffer

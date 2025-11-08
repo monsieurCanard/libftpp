@@ -10,12 +10,50 @@
 #include <unordered_map>
 
 #define PAUSE_BT_TASK 0 // ms
+
 /**
- * @brief thread persistant qui exécute des tâches en boucle
- * @note Permet d'ajouter/supprimer des tâches dynamiquement
- * @note Possibilite de mettre en pause entre chaque tâche (PAUSE_BT_TASK)
+ * @brief Persistent worker thread that executes tasks in a continuous loop.
  *
- * @exception Aucune exception n'est gérée à l'intérieur des tâches
+ * This class provides a background worker thread that continuously executes registered
+ * tasks in a loop. Tasks can be dynamically added and removed during runtime, making
+ * it ideal for background processing, periodic operations, or event-driven task execution.
+ * The worker uses condition variables for efficient thread synchronization and CPU usage.
+ *
+ * @note Allows dynamic addition/removal of tasks during runtime
+ * @note Supports configurable pause between each task execution (PAUSE_BT_TASK in milliseconds)
+ * @note Thread-safe task management using mutex and condition variables
+ * @note Automatically starts worker thread on construction and stops on destruction
+ * @note Tasks are executed continuously in the order they appear in the internal map
+ * @note Worker thread sleeps when no tasks are available, reducing CPU usage
+ *
+ * @code
+ * // Create worker (automatically starts background thread)
+ * PersistentWorker worker;
+ *
+ * // Add tasks that will run continuously
+ * worker.addTask("logger", []() {
+ *     std::cout << "Log entry at " << getCurrentTime() << std::endl;
+ * });
+ *
+ * worker.addTask("cleanup", []() {
+ *     cleanupTempFiles();
+ * });
+ *
+ * worker.addTask("heartbeat", []() {
+ *     sendHeartbeat();
+ * });
+ *
+ * // Tasks now run continuously in background...
+ * // Do other work...
+ *
+ * // Remove specific task
+ * worker.removeTask("cleanup");
+ *
+ * // Worker stops automatically when destroyed
+ * @endcode
+ *
+ * @warning Tasks should be lightweight to avoid blocking other tasks in the loop
+ * @note Task execution order is not guaranteed due to unordered_map usage
  */
 class PersistentWorker
 {

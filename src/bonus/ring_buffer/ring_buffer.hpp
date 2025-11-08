@@ -13,8 +13,29 @@
  * @brief RingBuffer class for managing a circular buffer of bytes.
  * It provides methods to push and pop bytes, check buffer status,
  * and retrieve buffer capacity and size.
- * @note The buffer operates in a circular manner, allowing efficient use of space.
- * @note The maximum buffer size is defined by MAX_BUFFER_SIZE constant.
+ * RingBuffer is a FIFO data structure
+ * The buffer operates in a circular manner, allowing efficient use of space.
+ *
+ * @code
+ * RingBuffer ringBuffer(1024); // Create a ring buffer with a capacity of 1024 bytes
+ *
+ * ringBuffer.push('A'); // Push a single byte
+ *
+ * ringBuffer.push("Hello"); // Push a string
+ *
+ * std::vector<unsigned char> data = {'W', 'o', 'r', 'l', 'd'};
+ * ringBuffer.push(data); // Push a vector of bytes
+ *
+ * unsigned char byte = ringBuffer.pop(); // Pop a single byte
+ *
+ * std::vector<unsigned char> bytes = ringBuffer.pop(5); // Pop 5
+ *
+ * std::vector<unsigned char> buffer(10);
+ * ringBuffer.popInto(buffer.data(), buffer.size()); // Pop into a buffer
+ * @endcode
+ *
+ * @note By default the buffer size is MAX_BUFFER_SIZE
+ *
  * @throw std::out_of_range when trying to push to a full buffer or pop from an empty buffer.
  *
  */

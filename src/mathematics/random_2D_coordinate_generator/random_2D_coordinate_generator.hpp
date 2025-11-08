@@ -6,7 +6,18 @@
 #include <chrono>
 #include <cstdlib>
 #include <functional>
-
+/**
+ * @brief 2D Coordinate-Based Random Number Generator
+ * @note Generates consistent pseudo-random numbers based on 2D coordinates and a seed.
+ *
+ * @code
+ * Random2DCoordinateGenerator rng1; // Seed based on current time
+ * Random2DCoordinateGenerator rng2(42); // Seed based on user-defined value
+ *
+ * long long randomValue1 = rng1(10, 20); // Get random value for coordinates (10, 20)
+ * long long randomValue2 = rng2(10, 20); // Get random value for coordinates (10, 20)
+ * @endcode
+ */
 class Random2DCoordinateGenerator
 {
 private:

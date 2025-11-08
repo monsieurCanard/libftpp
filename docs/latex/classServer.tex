@@ -1,0 +1,98 @@
+\hypertarget{classServer}{}\doxysection{Server Class Reference}
+\label{classServer}\index{Server@{Server}}
+
+
+Basic TCP server class using POSIX sockets and select() for multi-\/client communication.  
+
+
+
+
+{\ttfamily \#include $<$server.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classServer_a6cbe0a2c7ac3aa3913031f79ffc2fdd2}\label{classServer_a6cbe0a2c7ac3aa3913031f79ffc2fdd2}} 
+{\bfseries Server} (const std\+::string \&address, size\+\_\+t port)
+\item 
+\mbox{\Hypertarget{classServer_af3bfe874721b69df9c9dc7a145eee7a3}\label{classServer_af3bfe874721b69df9c9dc7a145eee7a3}} 
+void {\bfseries start} (const size\+\_\+t \&port=0)
+\item 
+\mbox{\Hypertarget{classServer_ad6116d601582d09ca20cc4a31c8b2ed9}\label{classServer_ad6116d601582d09ca20cc4a31c8b2ed9}} 
+void {\bfseries define\+Action} (const Message\+::\+Type \&message\+Type, const std\+::function$<$ void(long long \&client\+ID, const \mbox{\hyperlink{classMessage}{Message}} \&msg)$>$ \&action)
+\item 
+\mbox{\Hypertarget{classServer_aa26ac76c4469f6fb6403904215d3762c}\label{classServer_aa26ac76c4469f6fb6403904215d3762c}} 
+void {\bfseries send\+To} (const \mbox{\hyperlink{classMessage}{Message}} \&message, long long client\+ID)
+\item 
+\mbox{\Hypertarget{classServer_acb32c2c923998d5c5f972085e868b926}\label{classServer_acb32c2c923998d5c5f972085e868b926}} 
+void {\bfseries send\+To\+Array} (const \mbox{\hyperlink{classMessage}{Message}} \&message, std\+::vector$<$ long long $>$ client\+IDs)
+\item 
+\mbox{\Hypertarget{classServer_ae30c39d40341cb59a50408c3345676f0}\label{classServer_ae30c39d40341cb59a50408c3345676f0}} 
+void {\bfseries send\+To\+All} (const \mbox{\hyperlink{classMessage}{Message}} \&message)
+\item 
+\mbox{\Hypertarget{classServer_af7b0a4370ac2c1e573f292870adfa81c}\label{classServer_af7b0a4370ac2c1e573f292870adfa81c}} 
+void {\bfseries update} ()
+\item 
+\mbox{\Hypertarget{classServer_a07c45a7e101a3926d8f9685c3c5d14e4}\label{classServer_a07c45a7e101a3926d8f9685c3c5d14e4}} 
+void {\bfseries stop} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Basic TCP server class using POSIX sockets and select() for multi-\/client communication. 
+
+This class provides a robust TCP server implementation that can handle multiple simultaneous client connections using select() for non-\/blocking I/O operations. It supports message-\/based communication with callback functions for different message types.
+
+\begin{DoxyNote}{Note}
+Handles connections, disconnections, sending and receiving messages automatically 
+
+Uses \mbox{\hyperlink{classMessage}{Message}} class for structured message format and parsing 
+
+Limited by maximum simultaneous connections (NB\+\_\+\+CONNECTION = 1000) 
+
+Limited by maximum bytes that can be read at once (READ\+\_\+\+BUFFER\+\_\+\+SIZE = 100000)
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create and start server}}
+\DoxyCodeLine{\mbox{\hyperlink{classServer}{Server}} server(\textcolor{stringliteral}{"{}127.0.0.1"{}}, 8080);}
+\DoxyCodeLine{server.start();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Define message handler for specific message type}}
+\DoxyCodeLine{server.defineAction(1001, [](\textcolor{keywordtype}{long} \textcolor{keywordtype}{long}\& clientID, \textcolor{keyword}{const} \mbox{\hyperlink{classMessage}{Message}}\& msg) \{}
+\DoxyCodeLine{    std::string request;}
+\DoxyCodeLine{    msg >> request;}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Client "{}} << clientID << \textcolor{stringliteral}{"{} says: "{}} << request << std::endl;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// Send response back to client}}
+\DoxyCodeLine{    \mbox{\hyperlink{classMessage}{Message}} response(1002);}
+\DoxyCodeLine{    response << std::string(\textcolor{stringliteral}{"{}Hello Client "{}} + std::to\_string(clientID));}
+\DoxyCodeLine{    server.sendTo(response, clientID);}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Main server loop}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (running) \{}
+\DoxyCodeLine{    server.update(); \textcolor{comment}{// Process incoming connections and messages}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{server.stop();}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & on network errors (bind, listen, accept failures) \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classMessage}{Message}} for message format and usage 
+
+\mbox{\hyperlink{classClient}{Client}} for corresponding client implementation 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/network/server/server.\+hpp\item 
+src/network/server/server.\+cpp\end{DoxyCompactItemize}

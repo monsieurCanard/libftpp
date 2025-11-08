@@ -29,6 +29,19 @@ enum class LogLevel
  * @note Thread safety is ensured for console output and file output
  * @note You must call setOutputFile before logging to file, if you didn't provide a filename a
  * timestamped one will be generated
+ *
+ * @code
+ * If you want to log into a specific file :
+ * Logger::instance().setOutputFile("my_log_file");
+ * Logger::instance().setLogLevel(LogLevel::INFO);
+ *
+ * Logger::instance().log(LogLevel::DEBUG, "This is a debug message");
+ * Logger::instance().log(LogLevel::INFO, "This is an info message");
+ * Logger::instance().log(LogLevel::WARNING, "This is a warning message");
+ * Logger::instance().log(LogLevel::ERROR, "This is an error message");
+ *
+ * Logger::instance().logConsole(LogLevel::WARNING, "This is a warning message to console only");
+ * @endcode
  */
 class Logger
 {

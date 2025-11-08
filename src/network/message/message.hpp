@@ -11,15 +11,37 @@
 #include "../../data_structures/data_buffer/data_buffer.hpp"
 
 /**
- * @brief Classe représentant un message structuré pour la communication réseau
- * @note Utilise un RingBuffer pour stocker les données du message
- * @note Le format de transfert du message est le suivant : [type (int)][taille (size_t)][données
- * (variable)]
- * @note A l'utilisation le buffer contient uniquement les données (sans le type) et le
- * Message::Type est defini dans _type
+ * @brief Class representing a structured message for network communication.
  *
- * @exception Lance des runtime_error en cas d'erreur
+ * This class provides a convenient way to handle structured messages in network protocols.
+ * It uses a DataBuffer internally to store message data and supports serialization for
+ * network transmission.
  *
+ * @note Uses a DataBuffer to store message data efficiently
+ * @note The transfer format is: [type (int)][size (size_t)][data (variable)]
+ * @note During usage, the buffer contains only the data (without type), and the
+ *       Message::Type is stored separately in _type
+ * @note Supports stream operators (<<, >>) for easy data insertion and extraction
+ *
+ * @code
+ * // Create a message with a specific type
+ * Message msg(1001);
+ *
+ * // Add data using stream operators
+ * msg << std::string("Hello") << 42 << 3.14f;
+ *
+ * // Serialize for network transmission
+ * auto serialized = msg.getSerializedData();
+ *
+ * // Extract data (order matters!)
+ * std::string text;
+ * int number;
+ * float value;
+ * msg >> text >> number >> value;
+ * @endcode
+ *
+ * @throws std::runtime_error on serialization/deserialization errors
+ * @see DataBuffer for underlying data storage mechanism
  */
 class Message
 {

@@ -34,8 +34,57 @@ public:
 
 /**
  * @brief N ary Tree class.
- * @note Can execute preorder(for display of debug) and postorder traversals to execute all children
+ * @note Can execute preorder and postorder traversals to execute all children
  * of the tree.
+ * @code
+ *
+ * Simple Usage:
+ *
+ * NAryTree<int> tree;
+ * auto          root   = tree.setRoot(1);
+ * auto          child1 = tree.addChild(root, 2);
+ * auto          child2 = tree.addChild(root, 3);
+ * tree.addChild(child1, 4);
+ * tree.addChild(child1, 5);
+ * tree.addChild(child2, 6);
+ *
+ * Preorder Traversal:
+ *
+ * std::vector<int> values;
+ * tree.preorder(root, values);
+ * std::vector<int> expected = {1, 2, 4, 5, 3, 6};
+ *
+ * Postorder Traversal:
+ *
+ * std::vector<int> postorderValues = tree.postorderValues();
+ * std::vector<int> postorderExpected = {4, 5, 2, 6, 3, 1};
+ *
+ * Postorder Compute with custom function:
+ *
+ * NAryTree<int> tree;
+ *  auto          root = tree.setRoot(1);
+ *  auto c1 = tree.addChild(root, 2);
+ *  auto c2 = tree.addChild(root, 3);
+ *  tree.addChild(c1, 4);
+ *  tree.addChild(c1, 5);
+ *  tree.addChild(c2, 6);
+ *
+ * // Définir une fonction qui additionne les résultats des enfants + la valeur du noeud
+ *  auto sumFunc = [](const std::vector<int>& children)
+ *  { return std::accumulate(children.begin(), children.end(), 0); };
+ *
+ * // On définit sumFunc pour chaque noeud interne
+ *  root->setParentFunct(sumFunc);
+ *  c1->setParentFunct(sumFunc);
+ *  c2->setParentFunct(sumFunc);
+ *  int result = tree.postorderCompute<int>(root);
+ *
+ * // Calcul attendu :
+ *  // c1: 4+5=9
+ *  // c2: 6
+ *  // root: 9+6=15
+ *  EXPECT_EQ(result, 15);
+ * @endcode
  */
 template <typename TType>
 class NAryTree

@@ -13,22 +13,50 @@
 #include <unordered_map>
 
 #define NB_CONNECTION    1000
-#define READ_BUFFER_SIZE 100000
-// 4096
+#define READ_BUFFER_SIZE 4096
 
 #include "../message/message.hpp"
 
 /**
- * @brief Classe serveur TCP basique utilisant des sockets POSIX et select()
- * @note Gère les connexions, déconnexions, envois et réceptions de messages
- * @note Utilise la classe Message pour le format des messages
- * @note Permet de définir des actions (callbacks) pour différents types de messages
- * @note Non thread-safe, doit être utilisé dans un seul thread (généralement le thread principal)
- * @note Limité par le nombre de connections simultanées (NB_CONNECTION)
- * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (READ_BUFFER_SIZE)
+ * @brief Basic TCP server class using POSIX sockets and select() for multi-client communication.
  *
- * @exception Lance des runtime_error en cas d'erreur
+ * This class provides a robust TCP server implementation that can handle multiple simultaneous
+ * client connections using select() for non-blocking I/O operations. It supports message-based
+ * communication with callback functions for different message types.
  *
+ * @note Handles connections, disconnections, sending and receiving messages automatically
+ * @note Uses Message class for structured message format and parsing
+ * @note Limited by maximum simultaneous connections (NB_CONNECTION = 1000)
+ * @note Limited by maximum bytes that can be read at once (READ_BUFFER_SIZE = 100000)
+ *
+ * @code
+ * // Create and start server
+ * Server server("127.0.0.1", 8080);
+ * server.start();
+ *
+ * // Define message handler for specific message type
+ * server.defineAction(1001, [](long long& clientID, const Message& msg) {
+ *     std::string request;
+ *     msg >> request;
+ *     std::cout << "Client " << clientID << " says: " << request << std::endl;
+ *
+ *     // Send response back to client
+ *     Message response(1002);
+ *     response << std::string("Hello Client " + std::to_string(clientID));
+ *     server.sendTo(response, clientID);
+ * });
+ *
+ * // Main server loop
+ * while (running) {
+ *     server.update(); // Process incoming connections and messages
+ * }
+ *
+ * server.stop();
+ * @endcode
+ *
+ * @throws std::runtime_error on network errors (bind, listen, accept failures)
+ * @see Message for message format and usage
+ * @see Client for corresponding client implementation
  */
 class Server
 {

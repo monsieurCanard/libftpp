@@ -1,0 +1,115 @@
+\hypertarget{classDataBuffer}{}\doxysection{Data\+Buffer Class Reference}
+\label{classDataBuffer}\index{DataBuffer@{DataBuffer}}
+
+
+A simple LIFO data buffer for serialization and deserialization for simple data types and std\+::string.  
+
+
+
+
+{\ttfamily \#include $<$data\+\_\+buffer.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classDataBuffer_adeb7032666fce4e6d3188f28d8b6d240}\label{classDataBuffer_adeb7032666fce4e6d3188f28d8b6d240}} 
+const std\+::vector$<$ unsigned char $>$ {\bfseries data} () const
+\item 
+void \mbox{\hyperlink{classDataBuffer_a68f7976046ae49c5c081499c715da236}{increase\+Cursor}} (size\+\_\+t amount) const
+\begin{DoxyCompactList}\small\item\em Increase the read/write cursor by a specified amount. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classDataBuffer_ae8e861245f077f8edaefcfde92a59a9e}{decrease\+Cursor}} (size\+\_\+t amount) const
+\begin{DoxyCompactList}\small\item\em Decrease the read/write cursor by a specified amount. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDataBuffer_a08214f891b72eb65c76ad9b289842589}\label{classDataBuffer_a08214f891b72eb65c76ad9b289842589}} 
+void \mbox{\hyperlink{classDataBuffer_a08214f891b72eb65c76ad9b289842589}{reset}} () const
+\begin{DoxyCompactList}\small\item\em Reset the read/write cursor to the beginning of the buffer. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDataBuffer_ac114fa2ba9b9ad0545b6f846dc098c21}\label{classDataBuffer_ac114fa2ba9b9ad0545b6f846dc098c21}} 
+void \mbox{\hyperlink{classDataBuffer_ac114fa2ba9b9ad0545b6f846dc098c21}{clear}} ()
+\begin{DoxyCompactList}\small\item\em Clear the buffer and reset the cursor. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classDataBuffer_a01025a782191c5200a80e524d0f60d6f}\label{classDataBuffer_a01025a782191c5200a80e524d0f60d6f}} 
+size\+\_\+t {\bfseries size} () const
+\item 
+\mbox{\Hypertarget{classDataBuffer_af1d81de64ef93c21878a5a2d52f1f694}\label{classDataBuffer_af1d81de64ef93c21878a5a2d52f1f694}} 
+void {\bfseries append} (const unsigned char $\ast$data, size\+\_\+t len)
+\item 
+\mbox{\Hypertarget{classDataBuffer_af4b694c4211cc370db29c094152b44c4}\label{classDataBuffer_af4b694c4211cc370db29c094152b44c4}} 
+\mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} \& {\bfseries operator$<$$<$} (const std\+::string \&value)
+\item 
+\mbox{\Hypertarget{classDataBuffer_a853717d8e3fecf940406cfc59d04519c}\label{classDataBuffer_a853717d8e3fecf940406cfc59d04519c}} 
+const \mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} \& {\bfseries operator$>$$>$} (std\+::string \&value) const
+\item 
+\mbox{\Hypertarget{classDataBuffer_aeea4c11fa10d811a1f5fd220c7db7ca5}\label{classDataBuffer_aeea4c11fa10d811a1f5fd220c7db7ca5}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} \& {\bfseries operator$<$$<$} (const T \&value)
+\item 
+\mbox{\Hypertarget{classDataBuffer_a11446dc15a572fc04045391679313a0e}\label{classDataBuffer_a11446dc15a572fc04045391679313a0e}} 
+{\footnotesize template$<$typename T $>$ }\\const \mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} \& {\bfseries operator$>$$>$} (T \&value) const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A simple LIFO data buffer for serialization and deserialization for simple data types and std\+::string. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classDataBuffer}{DataBuffer}} buffer;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}       intValue = 42;}
+\DoxyCodeLine{\textcolor{keywordtype}{float}     floatValue = 3.14f;}
+\DoxyCodeLine{std::string strValue = \textcolor{stringliteral}{"{}Hello, DataBuffer!"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{buffer << intValue;}
+\DoxyCodeLine{buffer << floatValue;}
+\DoxyCodeLine{buffer << strValue;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}      readInt;}
+\DoxyCodeLine{\textcolor{keywordtype}{float}    readFloat;}
+\DoxyCodeLine{std::string readStr;}
+\DoxyCodeLine{}
+\DoxyCodeLine{buffer >> readStr;}
+\DoxyCodeLine{buffer >> readFloat;}
+\DoxyCodeLine{buffer >> readInt;}
+
+\end{DoxyCode}
+ 
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::out\+\_\+of\+\_\+range} & Thrown when trying to read more data than available in the buffer. \\
+\hline
+\end{DoxyExceptions}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classDataBuffer_ae8e861245f077f8edaefcfde92a59a9e}\label{classDataBuffer_ae8e861245f077f8edaefcfde92a59a9e}} 
+\index{DataBuffer@{DataBuffer}!decreaseCursor@{decreaseCursor}}
+\index{decreaseCursor@{decreaseCursor}!DataBuffer@{DataBuffer}}
+\doxysubsubsection{\texorpdfstring{decreaseCursor()}{decreaseCursor()}}
+{\footnotesize\ttfamily void Data\+Buffer\+::decrease\+Cursor (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{amount }\end{DoxyParamCaption}) const}
+
+
+
+Decrease the read/write cursor by a specified amount. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em amount} & The amount to decrease the cursor by.\\
+\hline
+\end{DoxyParams}
+Usefull with const data() to move the cursor backward after reading data. \mbox{\Hypertarget{classDataBuffer_a68f7976046ae49c5c081499c715da236}\label{classDataBuffer_a68f7976046ae49c5c081499c715da236}} 
+\index{DataBuffer@{DataBuffer}!increaseCursor@{increaseCursor}}
+\index{increaseCursor@{increaseCursor}!DataBuffer@{DataBuffer}}
+\doxysubsubsection{\texorpdfstring{increaseCursor()}{increaseCursor()}}
+{\footnotesize\ttfamily void Data\+Buffer\+::increase\+Cursor (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{amount }\end{DoxyParamCaption}) const}
+
+
+
+Increase the read/write cursor by a specified amount. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em amount} & The amount to increase the cursor by.\\
+\hline
+\end{DoxyParams}
+Usefull with const data() to move the cursor forward after reading data. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/data\+\_\+structures/data\+\_\+buffer/data\+\_\+buffer.\+hpp\item 
+src/data\+\_\+structures/data\+\_\+buffer/data\+\_\+buffer.\+cpp\end{DoxyCompactItemize}

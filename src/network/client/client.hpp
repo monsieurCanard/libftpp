@@ -19,13 +19,45 @@
 #include "../message/message.hpp"
 
 /**
- * @brief Classe client TCP basique utilisant des sockets POSIX et select()
- * @note Limité par le nombre de byte maximum pouvant être lu d'un coup (MAX_READ_BUFFER)
+ * @brief Basic TCP client class using POSIX sockets and select() for network communication.
  *
- * @throw Lance des std::out_of_range en cas d'erreur de lecture dans un message
- * @throw Lance des std::runtime_error en cas d'erreur réseau
- * @throw Relance toutes les exceptions lancées par les callbacks
+ * This class provides a simple TCP client implementation with message-based communication.
+ * It supports asynchronous message handling through callback functions and maintains
+ * connection state using file descriptors and select() for non-blocking operations.
  *
+ * @note Limited by the maximum number of bytes that can be read at once (MAX_READ_BUFFER = 16000)
+ * @note Uses select() for non-blocking socket operations
+ * @note Supports callback-based message handling with type-specific actions
+ * @note Automatically handles message parsing and reconstruction for partial reads
+ *
+ * @code
+ * // Create and connect to server
+ * Client client;
+ * client.connect("127.0.0.1", 8080);
+ *
+ * // Define message handler for specific message type
+ * client.defineAction(1001, [](const Message& msg) {
+ *     std::string response;
+ *     msg >> response;
+ *     std::cout << "Received: " << response << std::endl;
+ * });
+ *
+ * // Send a message
+ * Message msg(1001);
+ * msg << std::string("Hello Server");
+ * client.send(msg);
+ *
+ * // Process incoming messages
+ * client.update(); // Call regularly in your main loop
+ *
+ * client.disconnect();
+ * @endcode
+ *
+ * @throws std::out_of_range on message parsing errors
+ * @throws std::runtime_error on network connection errors
+ * @throws May re-throw any exceptions from registered callback functions
+ * @see Message for message format and usage
+ * @see Server for corresponding server implementation
  */
 class Client
 {

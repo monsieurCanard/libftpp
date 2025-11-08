@@ -1,0 +1,130 @@
+\hypertarget{classChronometre}{}\doxysection{Chronometre Class Reference}
+\label{classChronometre}\index{Chronometre@{Chronometre}}
+
+
+\mbox{\hyperlink{classChronometre}{Chronometre}} class for measuring elapsed time between start and end timestamps. It provides methods to retrieve the elapsed time in various units (nanoseconds, microseconds, milliseconds, seconds) and as a formatted string.  
+
+
+
+
+{\ttfamily \#include $<$chronometre.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classChronometre_a3698991fb06a2cfbe14f4c2922209089}\label{classChronometre_a3698991fb06a2cfbe14f4c2922209089}} 
+void \mbox{\hyperlink{classChronometre_a3698991fb06a2cfbe14f4c2922209089}{start}} ()
+\begin{DoxyCompactList}\small\item\em Start the chronometre. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classChronometre_afce642c4577ca63d007ea8e555d2daee}\label{classChronometre_afce642c4577ca63d007ea8e555d2daee}} 
+void \mbox{\hyperlink{classChronometre_afce642c4577ca63d007ea8e555d2daee}{end}} ()
+\begin{DoxyCompactList}\small\item\em End the chronometre. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classChronometre_a656411783760701d7598c63a8a803b5d}\label{classChronometre_a656411783760701d7598c63a8a803b5d}} 
+void \mbox{\hyperlink{classChronometre_a656411783760701d7598c63a8a803b5d}{pop\+Last\+Chrono}} ()
+\begin{DoxyCompactList}\small\item\em Remove the last recorded time interval (start and end timestamps). \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classChronometre_af304f805a6dd0c5d865f3fb27b4c71ac}{get\+Time\+Nanoseconds}} () const
+\begin{DoxyCompactList}\small\item\em Get the elapsed time in nanoseconds between the last start and end timestamps. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classChronometre_a9a3964ba3b625ab92395049ff6df49be}{get\+Time\+Microseconds}} () const
+\begin{DoxyCompactList}\small\item\em Get the elapsed time in microseconds between the last start and end timestamps. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classChronometre_ae313c572822bc16fd19df54ab87c3a21}{get\+Time\+Milliseconds}} () const
+\begin{DoxyCompactList}\small\item\em Get the elapsed time in milliseconds between the last start and end timestamps. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{classChronometre_acf21a2f8093087fad5c37cf0e1e131e7}{get\+Time\+Seconds}} () const
+\begin{DoxyCompactList}\small\item\em Get the elapsed time in seconds between the last start and end timestamps. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classChronometre_a7b2f18656f666cf52c2611029fee2374}{get\+Time\+String}} () const
+\begin{DoxyCompactList}\small\item\em Get the elapsed time as a formatted string with appropriate units. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classChronometre}{Chronometre}} class for measuring elapsed time between start and end timestamps. It provides methods to retrieve the elapsed time in various units (nanoseconds, microseconds, milliseconds, seconds) and as a formatted string. 
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classChronometre}{Chronometre}} chrono;}
+\DoxyCodeLine{chrono.\mbox{\hyperlink{classChronometre_a3698991fb06a2cfbe14f4c2922209089}{start}}();}
+\DoxyCodeLine{chrono.\mbox{\hyperlink{classChronometre_afce642c4577ca63d007ea8e555d2daee}{end}}();}
+\DoxyCodeLine{\textcolor{keywordtype}{double} elapsed = chrono.\mbox{\hyperlink{classChronometre_ae313c572822bc16fd19df54ab87c3a21}{getTimeMilliseconds}}();}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Elapsed time: "{}} << elapsed << \textcolor{stringliteral}{"{} ms"{}} << std::endl;}
+\DoxyCodeLine{chrono.\mbox{\hyperlink{classChronometre_a656411783760701d7598c63a8a803b5d}{popLastChrono}}(); \textcolor{comment}{// Remove the last recorded time interval}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+\mbox{\hyperlink{classChronometre_a3698991fb06a2cfbe14f4c2922209089}{start()}} and \mbox{\hyperlink{classChronometre_afce642c4577ca63d007ea8e555d2daee}{end()}} must be called in pairs before retrieving the elapsed time. 
+\end{DoxyWarning}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classChronometre_a9a3964ba3b625ab92395049ff6df49be}\label{classChronometre_a9a3964ba3b625ab92395049ff6df49be}} 
+\index{Chronometre@{Chronometre}!getTimeMicroseconds@{getTimeMicroseconds}}
+\index{getTimeMicroseconds@{getTimeMicroseconds}!Chronometre@{Chronometre}}
+\doxysubsubsection{\texorpdfstring{getTimeMicroseconds()}{getTimeMicroseconds()}}
+{\footnotesize\ttfamily double Chronometre\+::get\+Time\+Microseconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the elapsed time in microseconds between the last start and end timestamps. 
+
+\begin{DoxyReturn}{Returns}
+Elapsed time in microseconds. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classChronometre_ae313c572822bc16fd19df54ab87c3a21}\label{classChronometre_ae313c572822bc16fd19df54ab87c3a21}} 
+\index{Chronometre@{Chronometre}!getTimeMilliseconds@{getTimeMilliseconds}}
+\index{getTimeMilliseconds@{getTimeMilliseconds}!Chronometre@{Chronometre}}
+\doxysubsubsection{\texorpdfstring{getTimeMilliseconds()}{getTimeMilliseconds()}}
+{\footnotesize\ttfamily double Chronometre\+::get\+Time\+Milliseconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the elapsed time in milliseconds between the last start and end timestamps. 
+
+\begin{DoxyReturn}{Returns}
+Elapsed time in milliseconds. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classChronometre_af304f805a6dd0c5d865f3fb27b4c71ac}\label{classChronometre_af304f805a6dd0c5d865f3fb27b4c71ac}} 
+\index{Chronometre@{Chronometre}!getTimeNanoseconds@{getTimeNanoseconds}}
+\index{getTimeNanoseconds@{getTimeNanoseconds}!Chronometre@{Chronometre}}
+\doxysubsubsection{\texorpdfstring{getTimeNanoseconds()}{getTimeNanoseconds()}}
+{\footnotesize\ttfamily double Chronometre\+::get\+Time\+Nanoseconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the elapsed time in nanoseconds between the last start and end timestamps. 
+
+\begin{DoxyReturn}{Returns}
+Elapsed time in nanoseconds. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classChronometre_acf21a2f8093087fad5c37cf0e1e131e7}\label{classChronometre_acf21a2f8093087fad5c37cf0e1e131e7}} 
+\index{Chronometre@{Chronometre}!getTimeSeconds@{getTimeSeconds}}
+\index{getTimeSeconds@{getTimeSeconds}!Chronometre@{Chronometre}}
+\doxysubsubsection{\texorpdfstring{getTimeSeconds()}{getTimeSeconds()}}
+{\footnotesize\ttfamily double Chronometre\+::get\+Time\+Seconds (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the elapsed time in seconds between the last start and end timestamps. 
+
+\begin{DoxyReturn}{Returns}
+Elapsed time in seconds. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classChronometre_a7b2f18656f666cf52c2611029fee2374}\label{classChronometre_a7b2f18656f666cf52c2611029fee2374}} 
+\index{Chronometre@{Chronometre}!getTimeString@{getTimeString}}
+\index{getTimeString@{getTimeString}!Chronometre@{Chronometre}}
+\doxysubsubsection{\texorpdfstring{getTimeString()}{getTimeString()}}
+{\footnotesize\ttfamily std\+::string Chronometre\+::get\+Time\+String (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
+
+
+
+Get the elapsed time as a formatted string with appropriate units. 
+
+\begin{DoxyWarning}{Warning}
+You cannot choose the unit, it is determined automatically based on the elapsed time. 
+\end{DoxyWarning}
+\begin{DoxyReturn}{Returns}
+Formatted string representing the elapsed time with units (ns, µs, ms, s). 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/bonus/chronometre/chronometre.\+hpp\item 
+src/bonus/chronometre/chronometre.\+cpp\end{DoxyCompactItemize}

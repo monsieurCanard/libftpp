@@ -1,0 +1,115 @@
+\hypertarget{classMessage}{}\doxysection{Message Class Reference}
+\label{classMessage}\index{Message@{Message}}
+
+
+Class representing a structured message for network communication.  
+
+
+
+
+{\ttfamily \#include $<$message.\+hpp$>$}
+
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMessage_af73230cc1b47383d68707b0d77bc49b3}\label{classMessage_af73230cc1b47383d68707b0d77bc49b3}} 
+using {\bfseries Type} = int
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classMessage_ae1563e63f59d38b8eab8ff3846cae504}\label{classMessage_ae1563e63f59d38b8eab8ff3846cae504}} 
+{\bfseries Message} (Type type)
+\item 
+\mbox{\Hypertarget{classMessage_af347a312ba482b22d383d4561b9e0969}\label{classMessage_af347a312ba482b22d383d4561b9e0969}} 
+{\bfseries Message} (int fd, Type type)
+\item 
+\mbox{\Hypertarget{classMessage_ab5519bd3248acaed6d0c8bb9ca34e34b}\label{classMessage_ab5519bd3248acaed6d0c8bb9ca34e34b}} 
+{\footnotesize template$<$typename T $>$ }\\const \mbox{\hyperlink{classMessage}{Message}} \& {\bfseries operator$>$$>$} (T \&value) const
+\item 
+\mbox{\Hypertarget{classMessage_afb72e8a8604eaf9a7582d70dc1f959b2}\label{classMessage_afb72e8a8604eaf9a7582d70dc1f959b2}} 
+{\footnotesize template$<$typename T $>$ }\\\mbox{\hyperlink{classMessage}{Message}} \& {\bfseries operator$<$$<$} (const T \&value)
+\item 
+\mbox{\Hypertarget{classMessage_ab6ed4b14e954fae87f03b932c1527df1}\label{classMessage_ab6ed4b14e954fae87f03b932c1527df1}} 
+void {\bfseries append\+Bytes} (const unsigned char $\ast$data, size\+\_\+t len)
+\item 
+\mbox{\Hypertarget{classMessage_a5b935afe754606c1a5e27c3ae3548cde}\label{classMessage_a5b935afe754606c1a5e27c3ae3548cde}} 
+std\+::vector$<$ unsigned char $>$ {\bfseries get\+Serialized\+Data} () const
+\item 
+\mbox{\Hypertarget{classMessage_a1fefd5b3916e0af49e4bae9a6552d9d7}\label{classMessage_a1fefd5b3916e0af49e4bae9a6552d9d7}} 
+void {\bfseries set\+Type} (Message\+::\+Type type)
+\item 
+\mbox{\Hypertarget{classMessage_aaec4d1a007f1115fa3676be62fd7cd3c}\label{classMessage_aaec4d1a007f1115fa3676be62fd7cd3c}} 
+Message\+::\+Type {\bfseries type} () const
+\item 
+\mbox{\Hypertarget{classMessage_afdc79a30db2a29e43d3c52e37cffe83e}\label{classMessage_afdc79a30db2a29e43d3c52e37cffe83e}} 
+\mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} $\ast$ {\bfseries get\+Buffer} ()
+\item 
+\mbox{\Hypertarget{classMessage_a83fe98e9ddd36d59bab1a8f34010f45b}\label{classMessage_a83fe98e9ddd36d59bab1a8f34010f45b}} 
+void {\bfseries set\+Message\+Fd} (int fd)
+\item 
+\mbox{\Hypertarget{classMessage_ac057370a3396bf0f6a86db7bfc0a4069}\label{classMessage_ac057370a3396bf0f6a86db7bfc0a4069}} 
+void {\bfseries incr\+\_\+cursor} (size\+\_\+t len) const
+\item 
+\mbox{\Hypertarget{classMessage_a7c862d2ef3dcad4fd85b08ab774bd0ed}\label{classMessage_a7c862d2ef3dcad4fd85b08ab774bd0ed}} 
+void {\bfseries decr\+\_\+cursor} (size\+\_\+t len) const
+\item 
+\mbox{\Hypertarget{classMessage_aae579e87db4487c626dedfb0c862e514}\label{classMessage_aae579e87db4487c626dedfb0c862e514}} 
+bool {\bfseries is\+Complet} ()
+\item 
+\mbox{\Hypertarget{classMessage_a55d070b5477a7cdbbf562aada763a92d}\label{classMessage_a55d070b5477a7cdbbf562aada763a92d}} 
+void {\bfseries reset} ()
+\item 
+\mbox{\Hypertarget{classMessage_ad32f490f8ca1819dbeaee6e17de37b9e}\label{classMessage_ad32f490f8ca1819dbeaee6e17de37b9e}} 
+const int \& {\bfseries get\+Fd} () const
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class representing a structured message for network communication. 
+
+This class provides a convenient way to handle structured messages in network protocols. It uses a \mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} internally to store message data and supports serialization for network transmission.
+
+\begin{DoxyNote}{Note}
+Uses a \mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} to store message data efficiently 
+
+The transfer format is\+: \mbox{[}type (int)\mbox{]}\mbox{[}size (size\+\_\+t)\mbox{]}\mbox{[}data (variable)\mbox{]} 
+
+During usage, the buffer contains only the data (without type), and the Message\+::\+Type is stored separately in \+\_\+type 
+
+Supports stream operators ($<$$<$, $>$$>$) for easy data insertion and extraction
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create a message with a specific type}}
+\DoxyCodeLine{\mbox{\hyperlink{classMessage}{Message}} msg(1001);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Add data using stream operators}}
+\DoxyCodeLine{msg << std::string(\textcolor{stringliteral}{"{}Hello"{}}) << 42 << 3.14f;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Serialize for network transmission}}
+\DoxyCodeLine{\textcolor{keyword}{auto} serialized = msg.getSerializedData();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Extract data (order matters!)}}
+\DoxyCodeLine{std::string text;}
+\DoxyCodeLine{\textcolor{keywordtype}{int} number;}
+\DoxyCodeLine{\textcolor{keywordtype}{float} value;}
+\DoxyCodeLine{msg >> text >> number >> value;}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & on serialization/deserialization errors \\
+\hline
+\end{DoxyExceptions}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classDataBuffer}{Data\+Buffer}} for underlying data storage mechanism 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/network/message/message.\+hpp\item 
+src/network/message/message.\+cpp\end{DoxyCompactItemize}

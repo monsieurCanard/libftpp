@@ -7,6 +7,42 @@
 #include <unordered_map>
 #include <unordered_set>
 
+/**
+ * @brief State Machine Design Pattern
+ *
+ * @tparam TState Type representing the states (e.g., enum, string, int)
+ *
+ * @code
+ * enum class States
+ * {
+ *     Idle,
+ *     Running,
+ *     Paused
+ * };
+ *
+ * StateMachine<States> sm;
+ *
+ * sm.addState(States::Idle);
+ * sm.addState(States::Running);
+ * sm.addState(States::Paused);
+ *
+ * sm.addTransition(States::Idle, States::Running, []() {
+ *     std::cout << "Transitioning from Idle to Running" << std::endl;
+ * });
+ *
+ * sm.addAction(States::Running, []() {
+ *     std::cout << "Currently Running" << std::endl;
+ * });
+ *
+ * sm.transitionTo(States::Running);
+ * // Outputs: "Transitioning from Idle to Running"
+ *
+ * sm.update();
+ * // Outputs: "Currently Running"
+ * @endcode
+ *
+ * @warning The first state added becomes the initial state.
+ */
 template <typename TState>
 class StateMachine
 {

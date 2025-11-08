@@ -6,7 +6,21 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+/**
+ * @brief Observer Design Pattern
+ *
+ * @tparam TEvent Type of the event identifier (e.g., enum, string, int)
+ *
+ * @code
+ *  Observer<std::string> obs;
+ * std::string           result;
 
+ * obs.subscribe("click", [&]() { result = "clicked"; });
+ * obs.notify("click");
+
+ * // Now result == "clicked"
+ * @endcode
+ */
 template <typename TEvent>
 class Observer
 {

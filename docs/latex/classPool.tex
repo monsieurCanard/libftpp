@@ -1,0 +1,116 @@
+\hypertarget{classPool}{}\doxysection{Pool$<$ TType $>$ Class Template Reference}
+\label{classPool}\index{Pool$<$ TType $>$@{Pool$<$ TType $>$}}
+
+
+\mbox{\hyperlink{classPool}{Pool}} of reusable memory.  
+
+
+
+
+{\ttfamily \#include $<$pool.\+hpp$>$}
+
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classPool_1_1Object}{Object}}
+\begin{DoxyCompactList}\small\item\em Wrapper around a TType object managed by the \mbox{\hyperlink{classPool}{Pool}}. Provides access to the underlying TType object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classPool_a432f47e8a79c9c46725dc44f5c79d460}\label{classPool_a432f47e8a79c9c46725dc44f5c79d460}} 
+{\bfseries Pool} (size\+\_\+t size=0)
+\item 
+void \mbox{\hyperlink{classPool_a6481dda63be26451edf9186038baa30f}{resize}} (size\+\_\+t number\+Of\+Object\+Stored)
+\begin{DoxyCompactList}\small\item\em Pre-\/allocates memory for a given number of objects. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename... TArgs$>$ }\\\mbox{\hyperlink{classPool_1_1Object}{Object}} \& \mbox{\hyperlink{classPool_a77f31a195fe621fbeddcce741787173c}{acquire}} (TArgs \&\&... p\+\_\+args)
+\begin{DoxyCompactList}\small\item\em Acquires an object from the pool. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classPool_a9fe7ebcf5600eeb41802565bb18b7520}\label{classPool_a9fe7ebcf5600eeb41802565bb18b7520}} 
+void \mbox{\hyperlink{classPool_a9fe7ebcf5600eeb41802565bb18b7520}{release}} (\mbox{\hyperlink{classPool_1_1Object}{Object}} \&obj)
+\begin{DoxyCompactList}\small\item\em Releases an object back into the pool. Destroys the contained TType object and return its slot to the available Stack. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename TType$>$\newline
+class Pool$<$ TType $>$}
+
+\mbox{\hyperlink{classPool}{Pool}} of reusable memory. 
+
+RAII is used to manage the lifetime of objects.
+
+The \mbox{\hyperlink{classPool}{Pool}} pre-\/allocates objects of type {\ttfamily TType} and reuses them to avoid frequent allocations and deallocations.
+
+\begin{DoxyWarning}{Warning}
+If you resize the pool, all existing objects are destroyed.
+\end{DoxyWarning}
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em TType} & Type of objects managed by the pool.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classPool}{Pool<MyClass>}} pool(10); \textcolor{comment}{// Create a pool with 10 pre-\/allocated MyClass objects}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\& obj1 = pool.acquire(arg1, arg2); \textcolor{comment}{// Acquire an object from the pool}}
+\DoxyCodeLine{}
+\DoxyCodeLine{obj1-\/>doSomething();}
+\DoxyCodeLine{}
+\DoxyCodeLine{pool.release(obj1); \textcolor{comment}{// Release the object back to the pool}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classPool_a77f31a195fe621fbeddcce741787173c}\label{classPool_a77f31a195fe621fbeddcce741787173c}} 
+\index{Pool$<$ TType $>$@{Pool$<$ TType $>$}!acquire@{acquire}}
+\index{acquire@{acquire}!Pool$<$ TType $>$@{Pool$<$ TType $>$}}
+\doxysubsubsection{\texorpdfstring{acquire()}{acquire()}}
+{\footnotesize\ttfamily template$<$typename TType $>$ \\
+template$<$typename... TArgs$>$ \\
+\mbox{\hyperlink{classPool_1_1Object}{Object}}\& \mbox{\hyperlink{classPool}{Pool}}$<$ TType $>$\+::acquire (\begin{DoxyParamCaption}\item[{TArgs \&\&...}]{p\+\_\+args }\end{DoxyParamCaption})}
+
+
+
+Acquires an object from the pool. 
+
+Constructs a new TType object in pre-\/allocated memory and returns a wrapper \mbox{\hyperlink{classPool_1_1Object}{Object}} to access it.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em TArgs} & Types of constructor arguments for TType. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+args} & Arguments forwarded to TType\textquotesingle{}s constructor. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A \mbox{\hyperlink{classPool_1_1Object}{Pool\+::\+Object}} wrapper containing the allocated TType.
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::out\+\_\+of\+\_\+range} & if no objects are available in the pool. \\
+\hline
+\end{DoxyExceptions}
+\mbox{\Hypertarget{classPool_a6481dda63be26451edf9186038baa30f}\label{classPool_a6481dda63be26451edf9186038baa30f}} 
+\index{Pool$<$ TType $>$@{Pool$<$ TType $>$}!resize@{resize}}
+\index{resize@{resize}!Pool$<$ TType $>$@{Pool$<$ TType $>$}}
+\doxysubsubsection{\texorpdfstring{resize()}{resize()}}
+{\footnotesize\ttfamily template$<$typename TType $>$ \\
+void \mbox{\hyperlink{classPool}{Pool}}$<$ TType $>$\+::resize (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{number\+Of\+Object\+Stored }\end{DoxyParamCaption})}
+
+
+
+Pre-\/allocates memory for a given number of objects. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em number\+Of\+Object\+Stored} & Number of objects to pre-\/allocate. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/data\+\_\+structures/pool/pool.\+hpp\end{DoxyCompactItemize}

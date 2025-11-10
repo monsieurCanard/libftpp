@@ -26,12 +26,13 @@ TEST(ObservableValueTest, SubscribeAndNotify)
     obs.subscribe(&observer);
     EXPECT_EQ(obs.countSubscriber(), 1u);
 
-    obs.set(10); // devrait notifier
+    obs = 10; // devrait notifier
+
     EXPECT_EQ(observer.updateCount, 1);
     EXPECT_EQ(observer.lastValue, 10);
 
     // Changer la valeur à la même valeur : ne doit pas notifier
-    obs.set(10);
+    obs = 10;
     EXPECT_EQ(observer.updateCount, 1); // toujours 1
 }
 
@@ -41,6 +42,7 @@ TEST(ObservableValueTest, Unsubscribe)
     ObservableValue<int> obs(0);
     TestObserver<int>    observer;
 
+    std::cout << "Subscribing observer." << std::endl;
     obs.subscribe(&observer);
     obs.unsubscribe(&observer);
     EXPECT_EQ(obs.countSubscriber(), 0u);

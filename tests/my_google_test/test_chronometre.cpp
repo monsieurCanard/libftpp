@@ -63,12 +63,12 @@ TEST_F(ChronometreTest, PopLastChronoRemovesLast)
 
     // Si la classe supprime bien la dernière mesure,
     // on s’attend à une erreur ou une valeur spéciale
-    EXPECT_THROW(chrono.getTimeMilliseconds(), std::runtime_error);
+    EXPECT_THROW(chrono.getTimeMilliseconds(), std::logic_error);
 }
 
 // --- Test erreurs ---
 TEST_F(ChronometreTest, EndWithoutStartThrows)
 {
     Chronometre c;
-    EXPECT_THROW(c.end(), std::runtime_error);
+    EXPECT_THROW(c.end(), std::logic_error);
 }

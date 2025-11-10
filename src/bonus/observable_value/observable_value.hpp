@@ -54,8 +54,8 @@ public:
     ObservableValue() = default;
     ~ObservableValue()
     {
-        for (auto* observer : _subscriber)
-            unsubscribe(observer);
+        while (!_subscriber.empty())
+            unsubscribe(*_subscriber.begin());
     }
 
     ObservableValue(TType value)

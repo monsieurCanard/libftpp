@@ -64,7 +64,7 @@ void Server::_acceptNewConnection()
 
     if (_clients.size() >= NB_CONNECTION)
     {
-        std::cerr << "Max connections reached, closing new connection" << std::endl;
+        std::cout << "Max connections reached, closing new connection" << std::endl;
         close(connfd);
         return;
     }
@@ -139,7 +139,7 @@ void Server::sendTo(const Message& message, long long clientID)
     if (bytes_sent == -1)
     {
         _clearClient(fdIt->second);
-        std::cerr << "Failed to send message to client " << clientID << std::endl;
+        std::cout << "Failed to send message to client " << clientID << std::endl;
     }
 }
 

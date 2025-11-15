@@ -21,7 +21,7 @@
 
 Une **documentation complète générée avec Doxygen** est disponible en ligne :
 
-🔗 **[libftpp.dukiverse.com](https://libftpp.dukiverse.com)**
+🔗 **[libftpp.duckiverse.com](https://libftpp.duckiverse.com)**
 
 Cette documentation inclut :
 - 📖 API complète de toutes les classes et fonctions

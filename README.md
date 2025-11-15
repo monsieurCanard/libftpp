@@ -194,7 +194,9 @@ libftpp/
 | | Template Method | Squelette d’un algo, détails dans les sous-classes | `Game::play()` appelle `init()`, `loop()`, `end()` |
 | | Visitor | Ajoute une opération sans changer les classes | `ASTVisitor` pour analyser un arbre syntaxique |
 
+# 📖 Classes implémentées
 
+---
 ## 📚 Structures de données implémentées
 
 ### 📦 Pool de mémoire
@@ -254,7 +256,7 @@ auto raw = buffer.getBytes();
 - IPC (Inter-Process Communication)
 - Cache de données
 
-
+---
 ## 🧵 Programmation concurrente et Threading
 
 La librairie fournit plusieurs composants pour la programmation multi-thread sécurisée et performante.
@@ -349,7 +351,7 @@ worker.removeTask("heartbeat");
 - Nettoyage périodique
 - Mise à jour de caches
 
-### 🔄 Condition Variables
+### 🔄 (astuce) Condition Variables
 
 Les **condition variables** (`std::condition_variable`) permettent la synchronisation entre threads en bloquant un thread jusqu'à ce qu'une condition soit remplie.
 
@@ -431,7 +433,7 @@ void WorkerPool::loop() {
     }
 }
 ```
-
+---
 ## 🌐 Architecture réseau
 
 ### 📨 Message
@@ -532,7 +534,7 @@ while (running) {
     std::this_thread::sleep_for(16ms); // ~60 FPS
 }
 ```
-
+---
 ## 🔢 Mathématiques
 
 La librairie fournit des outils mathématiques pour les graphiques, jeux et simulations.
@@ -643,7 +645,7 @@ for (int i = 0; i < enemyCount; i++) {
 - Génération de niveaux procéduraux
 - Tests avec données aléatoires
 - Simulations Monte Carlo
-
+---
 ## 🎁 Composants Bonus
 
 
@@ -798,11 +800,11 @@ health = 90;     // Via operator=, déclenche aussi
 - Systèmes d'événements
 - Game state management
 
-## Details - Design Patterns (✅ = implémentés)
+# Details - Design Patterns (✅ = implémentés)
 
-### 🔹 Création (Creational Patterns)
+## 🔹 Création (Creational Patterns)
 
-#### ✅ Singleton
+### ✅ Singleton
 **But :** Garantit qu'une classe n'a qu'une seule instance et fournit un point d'accès global.
 
 **Utilisation :** Configuration globale, gestionnaire de ressources, logging.
@@ -819,7 +821,7 @@ auto* manager = db.instance();
 - Contrôle strict de l'instanciation
 - Accès global uniforme
 
-#### Factory Method
+### Factory Method
 **But :** Définit une interface pour créer un objet, mais laisse les sous-classes décider de la classe instanciée.
 
 **Utilisation :** Création d'objets sans spécifier leur classe exacte, frameworks extensibles.
@@ -837,7 +839,7 @@ public:
 };
 ```
 
-#### Abstract Factory
+### Abstract Factory
 **But :** Fournit une interface pour créer des familles d'objets liés sans spécifier leurs classes concrètes.
 **Utilisation :** Systèmes multi-plateformes, thèmes d'interface, familles de produits.
 
@@ -846,7 +848,7 @@ public:
 - Facilite l'échange de familles de produits
 - Garantit la cohérence entre produits
 
-#### Builder
+### Builder
 **But :** Sépare la construction complexe
  d'un objet de sa représentation finale.
 
@@ -863,14 +865,14 @@ public:
 };
 ```
 
-#### Prototype
+### Prototype
 **But :** Crée de nouveaux objets en copiant un prototype existant.
 
 **Utilisation :** Clonage d'objets complexes, éviter la re-initialisation coûteuse.
 
-### 🔹 Structure (Structural Patterns)
+## 🔹 Structure (Structural Patterns)
 
-#### Adapter
+### Adapter
 **But :** Convertit l'interface d'une classe en une autre attendue par le client.
 
 **Utilisation :** Intégration de librairies tierces, legacy code, APIs incompatibles.
@@ -879,7 +881,7 @@ public:
 - **Object Adapter** : utilise la composition
 - **Class Adapter** : utilise l'héritage multiple
 
-#### Bridge
+### Bridge
 **But :** Sépare l'abstraction de son implémentation pour les faire évoluer indépendamment.
 
 **Utilisation :** Éviter l'explosion combinatoire d'héritages, architectures multi-plateformes.
@@ -889,7 +891,7 @@ public:
 - Extensibilité facilitée
 - Masquage des détails d'implémentation
 
-#### Composite
+### Composite
 **But :** Permet de traiter un groupe d'objets comme un objet unique (structure d'arbre).
 
 **Utilisation :** Systèmes de fichiers, interfaces graphiques, menus hiérarchiques.
@@ -899,7 +901,7 @@ public:
 - Traitement uniforme des objets simples et composites
 - Facilite l'ajout de nouveaux types de composants
 
-#### Decorator
+### Decorator
 **But :** Ajoute dynamiquement des responsabilités à un objet sans modifier sa classe.
 
 **Utilisation :** Extensions de fonctionnalités, middleware, streams, GUI.
@@ -909,7 +911,7 @@ public:
 - Combinaison dynamique de comportements
 - Respect du principe Open/Closed
 
-#### Facade
+### Facade
 **But :** Fournit une interface simplifiée à un ensemble complexe de classes/sous-systèmes.
 
 **Utilisation :** APIs simplifiées, masquer la complexité interne, point d'entrée unifié.
@@ -919,7 +921,7 @@ public:
 - Interface plus simple
 - Centralisation des interactions
 
-#### Flyweight
+### Flyweight
 **But :** Partage les objets pour économiser mémoire/performances.
 
 **Utilisation :** Nombreuses instances d'objets similaires (caractères, particules, tuiles).
@@ -929,7 +931,7 @@ public:
 - **État extrinsèque** : unique à chaque contexte
 - Factory pour gérer les instances partagées
 
-#### Proxy
+### Proxy
 **But :** Fournit un substitut qui contrôle l'accès à un objet réel.
 
 **Utilisation :** Lazy loading, contrôle d'accès, cache, logging, réseaux.
@@ -939,9 +941,9 @@ public:
 - **Protection Proxy** : contrôle d'accès
 - **Remote Proxy** : représentant local d'un objet distant
 
-### 🔹 Comportement (Behavioral Patterns)
+## 🔹 Comportement (Behavioral Patterns)
 
-#### ✅ Observer
+### ✅ Observer
 **But :** Notifie automatiquement une liste d'observateurs lors d'un changement d'état.
 
 **Utilisation :** Interfaces utilisateur, événements système, MVC, reactive programming.
@@ -990,7 +992,7 @@ stats.subscribe(&display);
 stats.set(newStats);  // Notifie automatiquement display
 ```
 
-#### ✅ Memento
+### ✅ Memento
 **But :** Sauvegarde/restaure l'état interne d'un objet sans violer l'encapsulation.
 
 **Utilisation :** Undo/Redo, snapshots, sauvegarde d'état, checkpoints.
@@ -1041,7 +1043,7 @@ obj.restore(backup);  // Retour à State1
 - Simplifie l'implémentation d'undo/redo
 - Sauvegarde sans exposer les détails internes
 
-#### ✅ State Machine
+### ✅ State Machine
 **But :** Change le comportement d'un objet selon son état interne.
 
 **Utilisation :** Parsers, protocoles réseau, jeux (IA), workflows, automates.
@@ -1113,7 +1115,7 @@ fsm.update();           // Execute running behavior
 - UI (Loading, Menu, Playing, Paused)
 - Protocoles (Handshake, Data Transfer, Closing)
 
-#### Chain of Responsibility
+### Chain of Responsibility
 **But :** Passe une requête à travers une chaîne d'objets susceptibles de la traiter.
 
 **Utilisation :** Validation, middleware, gestionnaires d'événements, parsers.
@@ -1123,7 +1125,7 @@ fsm.update();           // Execute running behavior
 - Chaîne configurable dynamiquement
 - Responsabilité distribuée
 
-#### Command
+### Command
 **But :** Encapsule une requête dans un objet (permet annulation, historique).
 
 **Utilisation :** Undo/Redo, macros, queues de commandes, transactions.
@@ -1134,7 +1136,7 @@ fsm.update();           // Execute running behavior
 - **Invoker** : lance les commandes
 - **Receiver** : exécute l'action
 
-#### Interpreter
+### Interpreter
 **But :** Définit une grammaire et un interprète pour exécuter des expressions.
 
 **Utilisation :** Langages de script, expressions régulières, calculatrices, DSL.
@@ -1144,7 +1146,7 @@ fsm.update();           // Execute running behavior
 - Chaque règle = une classe
 - Méthode `interpret()` pour l'évaluation
 
-#### Iterator
+### Iterator
 **But :** Accès séquentiel aux éléments d'une collection sans exposer sa structure.
 
 **Utilisation :** Parcours de conteneurs, algorithmes génériques, abstraction des structures.
@@ -1154,14 +1156,14 @@ fsm.update();           // Execute running behavior
 - Plusieurs itérateurs simultanés
 - Découplage algorithme/structure
 
-#### Mediator
+### Mediator
 **But :** Centralise la communication entre plusieurs objets.
 
 **Utilisation :** Interfaces complexes, réduction du couplage, coordination.
 
 **Exemple :** Contrôleur aérien coordonnant les avions sans qu'ils communiquent directement.
 
-#### Strategy
+### Strategy
 **But :** Définit une famille d'algorithmes interchangeables dynamiquement.
 
 **Utilisation :** Algorithmes de tri, compression, tarification, rendering.
@@ -1171,7 +1173,7 @@ fsm.update();           // Execute running behavior
 - Algorithmes configurables à l'exécution
 - Facilite l'ajout de nouveaux algorithmes
 
-#### Template Method
+### Template Method
 **But :** Définit l'ossature d'un algorithme, laisse certaines étapes aux sous-classes.
 
 **Utilisation :** Frameworks, algorithmes avec variantes, hooks personnalisables.
@@ -1190,7 +1192,7 @@ protected:
 };
 ```
 
-#### Visitor
+### Visitor
 **But :** Sépare un algorithme de la structure sur laquelle il opère.
 
 **Utilisation :** AST, sérialiseurs, processeurs de données, compilateurs.
@@ -1200,9 +1202,9 @@ protected:
 - Regroupement d'opérations liées
 - Utilisation du double dispatch
 
-## 🔧 Concepts C++ avancés
+# 🔧 Concepts C++ avancés
 
-### Templates variadiques
+## Templates variadiques
 Permettent de passer un nombre variable d'arguments typés :
 Ellipsis: `...`
 Si tu mets `...` dans une fonction comme ceci: 
@@ -1218,7 +1220,7 @@ func(1, "hello", 3.14);
 ```
 Cela signifie que tu peux passer n'importe quel nombre d'arguments de n'importe quel type.
 
-### Gestion des références et std::forward
+## Gestion des références et std::forward
 
 - `T&` : référence lvalue uniquement
 - `const T&` : référence constante (lvalues + rvalues)
@@ -1238,7 +1240,7 @@ TType* acquire(TArgs&&... args) {
 }
 ```
 
-### std::aligned_storage
+## std::aligned_storage
 
 Template C++11 pour pré-allouer de la mémoire correctement alignée mais deprecated en c++23:
 
@@ -1253,7 +1255,7 @@ new (ptr) T(args...);  // Placement new
 - Containers personnalisés
 - Éviter les allocations dynamiques
 
-### Default Noexcept Delete
+## Default Noexcept Delete
 Indique qu'une fonction ne lance pas d'exception, permettant des optimisations.
 
 ```cpp
@@ -1280,7 +1282,7 @@ public:
     NonCopyable& operator=(const NonCopyable&) = delete; // Interdit la copie
 };
 ```
-### Liste des exceptions des plus courantes
+## Liste des exceptions des plus courantes
 ```
 std::exception
 ├── std::logic_error
@@ -1294,11 +1296,11 @@ std::exception
     └── std::underflow_error
 ```
 
-## 🧪 Tests
+# 🧪 Tests
 
 Les tests utilisent **GoogleTest** (téléchargé automatiquement via CMake) et couvrent l'intégralité des composants de la librairie.
 
-### Exécution des tests
+## Exécution des tests
 
 ```bash
 # Compiler les tests
@@ -1316,7 +1318,7 @@ make run-gtest
 [  PASSED  ] X tests.
 ```
 
-### Couverture des tests
+## Couverture des tests
 
 **Structures de données :**
 - ✅ `test_data_buffer.cpp` - Sérialisation/désérialisation
@@ -1351,7 +1353,7 @@ make run-gtest
 - ✅ `test_n_ary_tree.cpp` - Arbre n-aire
 - ✅ `test_observable_value.cpp` - Valeurs observables
 
-### Types de tests couverts
+## Types de tests couverts
 
 **Fonctionnalités de base :**
 - Constructeurs/destructeurs
@@ -1378,7 +1380,7 @@ make run-gtest
 - États invalides
 - Ressources épuisées
 
-### Structure des tests
+## Structure des tests
 
 
 tests/
@@ -1391,7 +1393,7 @@ tests/
     └── ...
 
 
-### Exemple de test
+## Exemple de test
 
 ```cpp
 #include <gtest/gtest.h>

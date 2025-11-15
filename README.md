@@ -1,17 +1,40 @@
-<img width="2000" height="626" alt="Image" src="https://github.com/user-attachments/assets/97c2fe5a-16d8-4526-8447-533ed9501395" />
+<div align="center">
+  <img width="80%" alt="Libftpp Banner" src="https://github.com/user-attachments/assets/97c2fe5a-16d8-4526-8447-533ed9501395" />
+</div>
 
-# Libftpp 📚
+<h1 align="center">Libftpp 📚</h1>
 
-![C++](https://img.shields.io/badge/C%2B%2B-blue.svg)
+<p align="center">
+  <img src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white" alt="C++17"/>
+  <a href="https://libftpp.dukiverse.com"><img src="https://img.shields.io/badge/docs-doxygen-blue.svg" alt="Documentation"/></a>
+  <img src="https://img.shields.io/badge/tests-GoogleTest-red?logo=google&logoColor=white" alt="GoogleTest"/>
+
+</p>
 
 ## 📖 Description
 
 **libftpp** est une librairie C++ moderne explorant les structures de données avancées et les design patterns. Ce projet met l'accent sur les bonnes pratiques du C++ moderne, la gestion efficace de la mémoire et l'implémentation rigoureuse des patterns classiques du génie logiciel.
 
+## 📚 Documentation
+
+Une **documentation complète générée avec Doxygen** est disponible en ligne :
+
+🔗 **[libftpp.dukiverse.com](https://libftpp.dukiverse.com)**
+
+Cette documentation inclut :
+- 📖 API complète de toutes les classes et fonctions
+- 💡 Exemples d'utilisation détaillés
+- 🔍 Diagrammes de classes et relations
+- 📝 Guide d'implémentation des design patterns
+- ⚡ Notes sur les performances et bonnes pratiques
+
 ## 🚀 Installation et compilation
 
 ### Prérequis
-- Compilateur C++11 ou supérieur
+- Compilateur C++17 ou supérieur (g++ recommandé)
+- CMake 3.14 ou supérieur (pour les tests GoogleTest)
+- Make
+- Git
 
 ### Installation
 
@@ -19,18 +42,71 @@
 git clone git@github.com:monsieurCanard/libftpp.git
 cd libftpp
 ```
-### Compilation lib
+
+### Compilation de la librairie
+
 ```bash
 make
 ```
+Cette commande compile tous les fichiers sources et génère la librairie statique `libftpp.a` dans le répertoire racine.
 
-### Compilation for Test
+**Fichiers compilés :**
+- Structures de données (DataBuffer)
+- Design Patterns (Memento)
+- Réseau (Message, Server, Client)
+- Mathématiques (Perlin Noise, Random 2D Coordinate Generator)
+- Threading (ThreadSafeIOStream, PersistentWorker, Thread, WorkerPool)
+- Bonus (Logger, Chronometre, RingBuffer)
+
+**Options de compilation :**
+- `-std=c++17` : Standard C++17
+- `-Wall -Wextra -Werror` : Tous les warnings activés, traités comme des erreurs
+
+### Compilation et lancement des tests Google Test
+
 ```bash
-make test
+# Compiler la librairie + les tests GoogleTest
+make gtest
+
+# Lancer les tests GoogleTest
+make run-gtest
 ```
-### Lancement des tests
+
+Les tests GoogleTest sont automatiquement téléchargés via CMake et compilés dans le dossier `build/`.
+
+**Tests disponibles :**
+- `test_data_buffer.cpp` - Tests du buffer de données
+- `test_pool.cpp` - Tests du pool mémoire
+- `test_memento.cpp` - Tests du pattern Memento
+- `test_observer.cpp` - Tests du pattern Observer
+- `test_singleton.cpp` - Tests du pattern Singleton
+- `test_state_machine.cpp` - Tests de la machine à états
+- `test_message.cpp` - Tests du système de messages
+- `test_thread.cpp` - Tests des threads
+- `test_thread_safe_queue.cpp` - Tests de la queue thread-safe
+- `test_worker_pool.cpp` - Tests du pool de workers
+- `test_persistent_worker.cpp` - Tests du worker persistant
+- `test_logger.cpp` - Tests du logger
+- `test_chronometre.cpp` - Tests du chronomètre
+- `test_ring_buffer.cpp` - Tests du buffer circulaire
+- `test_n_ary_tree.cpp` - Tests de l'arbre n-aire
+- `test_observable_value.cpp` - Tests de la valeur observable
+- `test_ivector2.cpp` - Tests du vecteur 2D
+- `test_ivector3.cpp` - Tests du vecteur 3D
+- `test_perlin_noise.cpp` - Tests du bruit de Perlin
+- `test_random_2D_coordinate_generator.cpp` - Tests du générateur de coordonnées
+
+### Nettoyage
+
 ```bash
-make run-test
+# Nettoyer les fichiers objets
+make clean
+
+# Nettoyer complètement (objets + librairie + tests + logs)
+make fclean
+
+# Recompiler complètement
+make re
 ```
 
 
@@ -119,32 +195,159 @@ libftpp/
 | | Visitor | Ajoute une opération sans changer les classes | `ASTVisitor` pour analyser un arbre syntaxique |
 
 
-## 📚 Structures de données implementées
+## 📚 Structures de données implémentées
 
 ### 📦 Pool de mémoire
 
 Un **Pool** est un réservoir de mémoire qui pré-alloue des objets pour éviter les allocations/désallocations fréquentes. Améliore significativement les performances pour la création d'objets coûteux.
 
 **Caractéristiques :**
-- Utilise `std::aligned_storage` pour l'alignement mémoire
+- Utilise `std::aligned_storage` pour l'alignement mémoire (deprecated C++23, utiliser `std::aligned_storage_t`)
 - Templates variadiques pour les constructeurs
 - Placement new pour la construction in-place
+- Gestion automatique de la mémoire via RAII
 
+**API principale :**
 ```cpp
 Pool<MyClass> pool(100);  // Pré-alloue 100 objets
 auto* obj = pool.acquire(arg1, arg2);  // Construction avec arguments
+pool.release(obj);  // Libération pour réutilisation
 ```
+
+**Avantages :**
+- Évite la fragmentation mémoire
+- Réduction drastique des appels `new`/`delete`
+- Performance prévisible pour les systèmes temps réel
 
 ### 💾 DataBuffer
 
-Système de **sérialisation/désérialisation** utilisant les streams C++ pour la persistance de données.
+Système de **sérialisation/désérialisation** thread-safe utilisant un buffer interne pour la persistance et le transfert de données.
 
 **Fonctionnalités :**
-- Sérialisation via `reinterpret_cast<unsigned int*>` pour copier les octets
-- Désérialisation via `memcpy` pour restaurer les données
+- Sérialisation via `reinterpret_cast<unsigned int*>` pour copier les octets bruts
+- Désérialisation via `memcpy` pour restaurer les données typées
+- Support des types primitifs et `std::string`
+- Gestion automatique de la taille et du curseur
+- Operators `<<` et `>>` pour une syntaxe intuitive
+
+**Utilisation :**
+```cpp
+DataBuffer buffer;
+
+// Sérialisation
+buffer << 42 << 3.14f << std::string("Hello");
+
+// Désérialisation (ordre important!)
+int value;
+float pi;
+std::string text;
+buffer >> value >> pi >> text;
+
+// Accès bas niveau
+buffer.appendBytes(data, size);
+auto raw = buffer.getBytes();
+```
+
+**Cas d'usage :**
+- Communication réseau (utilisé par la classe `Message`)
+- Sauvegarde de jeu
+- IPC (Inter-Process Communication)
+- Cache de données
 
 
-## 🧵 Programmation concurrente
+## 🧵 Programmation concurrente et Threading
+
+La librairie fournit plusieurs composants pour la programmation multi-thread sécurisée et performante.
+
+### 🧵 Thread
+
+Wrapper autour de `std::thread` avec des fonctionnalités étendues pour faciliter la gestion des threads.
+
+**Caractéristiques :**
+- Encapsulation de `std::thread` avec interface simplifiée
+- Gestion automatique du cycle de vie
+- Support des lambdas et fonctions membres
+
+**Utilisation :**
+```cpp
+Thread worker([]() {
+    // Code exécuté dans le thread
+    processData();
+});
+
+worker.join();  // Attendre la fin
+```
+
+### 🔐 ThreadSafeQueue
+
+Queue FIFO thread-safe utilisant mutex et condition variables pour la synchronisation.
+
+**Fonctionnalités :**
+- Operations `push()` et `pop()` thread-safe
+- Blocage automatique si la queue est vide
+- Gestion propre de l'arrêt
+
+**Pattern producteur-consommateur :**
+```cpp
+ThreadSafeQueue<Task> queue;
+
+// Thread producteur
+queue.push(task);
+
+// Thread consommateur
+Task task = queue.pop();  // Bloque si vide
+```
+
+### 🖨️ ThreadSafeIOStream
+
+Wrapper thread-safe pour les opérations I/O (cout, cerr, fichiers).
+
+**Problème résolu :**
+Les streams C++ standards ne sont pas thread-safe, ce qui peut causer des sorties entrelacées.
+
+**Solution :**
+```cpp
+ThreadSafeIOStream tsout(std::cout);
+
+// Dans différents threads
+tsout << "Thread 1: " << data << std::endl;
+tsout << "Thread 2: " << other << std::endl;
+// Garantit que chaque ligne est atomique
+```
+
+### ⚙️ PersistentWorker
+
+Thread worker qui exécute des tâches nommées en boucle continue avec gestion dynamique.
+
+**Architecture :**
+- Map de tâches `unordered_map<string, function<void()>>`
+- Ajout/suppression dynamique pendant l'exécution
+- Pause configurable entre tâches (`PAUSE_BT_TASK`)
+
+**Utilisation :**
+```cpp
+PersistentWorker worker;
+
+// Ajouter des tâches qui s'exécutent en boucle
+worker.addTask("heartbeat", []() {
+    sendHeartbeat();
+});
+
+worker.addTask("monitor", []() {
+    checkSystemHealth();
+});
+
+// Supprimer une tâche
+worker.removeTask("heartbeat");
+
+// Arrêt automatique à la destruction
+```
+
+**Cas d'usage :**
+- Monitoring système
+- Heartbeats réseau
+- Nettoyage périodique
+- Mise à jour de caches
 
 ### 🔄 Condition Variables
 
@@ -330,7 +533,272 @@ while (running) {
 }
 ```
 
-## 🎨 Details - Design Patterns (✅ = implémentés)
+## 🔢 Mathématiques
+
+La librairie fournit des outils mathématiques pour les graphiques, jeux et simulations.
+
+### 📐 IVector2 et IVector3
+
+Interfaces pour les vecteurs 2D et 3D avec opérations mathématiques standards.
+
+**Opérations supportées :**
+- Addition, soustraction, multiplication, division
+- Produit scalaire (dot product)
+- Norme et normalisation
+- Distance entre vecteurs
+
+**IVector2 - Vecteur 2D :**
+```cpp
+template <typename T>
+class IVector2 {
+    T x, y;
+public:
+    IVector2(T x = 0, T y = 0);
+    
+    IVector2 operator+(const IVector2& other) const;
+    IVector2 operator-(const IVector2& other) const;
+    IVector2 operator*(T scalar) const;
+    
+    T dot(const IVector2& other) const;
+    T length() const;
+    IVector2 normalized() const;
+    T distance(const IVector2& other) const;
+};
+```
+
+**IVector3 - Vecteur 3D :**
+```cpp
+template <typename T>
+class IVector3 {
+    T x, y, z;
+public:
+    IVector3(T x = 0, T y = 0, T z = 0);
+    
+    IVector3 operator+(const IVector3& other) const;
+    IVector3 cross(const IVector3& other) const;  // Produit vectoriel
+    T dot(const IVector3& other) const;
+    T length() const;
+    IVector3 normalized() const;
+};
+```
+
+**Cas d'usage :**
+- Physique et collisions
+- Graphiques 2D/3D
+- Calculs géométriques
+- Déplacements et directions
+
+### 🌊 Perlin Noise 2D
+
+Générateur de bruit de Perlin pour créer des textures procédurales naturelles et cohérentes.
+
+**Caractéristiques :**
+- Génération de bruit pseudo-aléatoire mais cohérent
+- Interpolation lisse entre valeurs
+- Paramétrable (seed, fréquence, amplitude)
+- Idéal pour terrains, textures, nuages
+
+**Utilisation :**
+```cpp
+PerlinNoise2D perlin(seed);
+
+// Générer une heightmap pour un terrain
+for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+        float noise = perlin.noise(x * 0.1f, y * 0.1f);
+        // noise est entre -1.0 et 1.0
+        heightmap[y][x] = (noise + 1.0f) * 0.5f;  // Normaliser à [0, 1]
+    }
+}
+```
+
+**Applications :**
+- Génération de terrains procéduraux
+- Textures naturelles (bois, marbre, nuages)
+- Animation de particules
+- Génération de cartes
+
+### 🎲 Random 2D Coordinate Generator
+
+Générateur de coordonnées aléatoires 2D avec distribution uniforme.
+
+**Fonctionnalités :**
+- Génération de points aléatoires dans un rectangle
+- Seed configurable pour reproductibilité
+- Distribution uniforme garantie
+
+**Utilisation :**
+```cpp
+Random2DCoordinateGenerator gen(seed);
+
+// Générer des positions de spawning
+for (int i = 0; i < enemyCount; i++) {
+    auto [x, y] = gen.generate(0, mapWidth, 0, mapHeight);
+    spawnEnemy(x, y);
+}
+```
+
+**Cas d'usage :**
+- Placement d'objets dans un jeu
+- Génération de niveaux procéduraux
+- Tests avec données aléatoires
+- Simulations Monte Carlo
+
+## 🎁 Composants Bonus
+
+
+### ⏱️ Chronometre
+
+Classe utilitaire pour mesurer précisément le temps d'exécution et les performances.
+
+**Fonctionnalités :**
+- Mesure de temps haute précision avec `std::chrono`
+- Calcul automatique du temps écoulé
+- Support de plusieurs unités (ms, µs, ns)
+
+**Utilisation :**
+```cpp
+Chronometre chrono;
+chrono.start();
+
+// Code à mesurer
+expensiveOperation();
+
+chrono.stop();
+std::cout << "Temps: " << chrono.elapsed() << " ms" << std::endl;
+```
+
+### 📝 Logger
+
+Système de logging thread-safe avec niveaux de log et sortie fichier/console.
+
+**Niveaux de log :**
+- `DEBUG` : Messages de débogage détaillés
+- `INFO` : Messages informatifs généraux
+- `WARNING` : Avertissements
+- `ERROR` : Erreurs critiques
+
+**Caractéristiques :**
+- Singleton pattern pour accès global
+- Thread-safe via `ThreadSafeIOStream`
+- Horodatage automatique
+- Filtrage par niveau de log
+- Sortie fichier et/ou console
+
+**Utilisation :**
+```cpp
+// Configuration
+Logger::instance().setOutputFile("app.log");
+Logger::instance().setLogLevel(LogLevel::INFO);
+
+// Logging
+Logger::instance().log(LogLevel::INFO, "Application started");
+Logger::instance().log(LogLevel::ERROR, "Connection failed");
+
+// Console uniquement
+Logger::instance().logConsole(LogLevel::DEBUG, "Debug info");
+```
+
+### 🔄 RingBuffer
+
+Buffer circulaire optimisé avec taille fixe et écrasement automatique des anciennes données.
+
+**Avantages :**
+- Pas de réallocation dynamique
+- Performance prévisible O(1)
+- Idéal pour les logs, audio, streaming
+
+**Utilisation :**
+```cpp
+RingBuffer<int> buffer(1000);  // Capacité de 1000 éléments
+
+buffer.push(42);
+int value = buffer.pop();
+
+if (buffer.isFull()) {
+    // Les nouvelles données écrasent les anciennes
+}
+```
+
+**Cas d'usage :**
+- Buffers audio/vidéo
+- Logs circulaires
+- File d'événements
+- Données de capteurs
+
+### 🌳 N-ary Tree
+
+Arbre générique où chaque nœud peut avoir N enfants (pas limité à 2 comme un arbre binaire).
+
+**Caractéristiques :**
+- Template pour tout type de données
+- Parcours en profondeur et largeur
+- Insertion/suppression dynamique
+- Gestion automatique de la mémoire
+
+**Utilisation :**
+```cpp
+NAryTree<std::string> tree;
+auto* root = tree.createRoot("Root");
+auto* child1 = tree.addChild(root, "Child 1");
+auto* child2 = tree.addChild(root, "Child 2");
+tree.addChild(child1, "Grand Child");
+
+// Parcours
+tree.traverseDepthFirst([](const std::string& data) {
+    std::cout << data << std::endl;
+});
+```
+
+**Cas d'usage :**
+- Systèmes de fichiers
+- Organigrammes
+- Hiérarchies de scènes 3D
+- Arbres de décision
+
+### 👁️ ObservableValue
+
+Template qui implémente le pattern Observer pour des valeurs observables avec notification automatique.
+
+**Fonctionnalités :**
+- Notification automatique lors du changement de valeur
+- Support de multiples observateurs
+- Comparaison pour éviter les notifications inutiles
+- Gestion automatique des abonnements
+
+**Interface requise :**
+```cpp
+template <typename T>
+class IObserver {
+public:
+    virtual void update(const T& newValue) = 0;
+};
+```
+
+**Utilisation :**
+```cpp
+class MyObserver : public IObserver<int> {
+public:
+    void update(const int& value) override {
+        std::cout << "Nouvelle valeur: " << value << std::endl;
+    }
+};
+
+ObservableValue<int> health(100);
+MyObserver observer;
+
+health.subscribe(&observer);
+health.set(95);  // Déclenche observer.update(95)
+health = 90;     // Via operator=, déclenche aussi
+```
+
+**Cas d'usage :**
+- Reactive programming
+- Data binding (UI)
+- Systèmes d'événements
+- Game state management
+
+## Details - Design Patterns (✅ = implémentés)
 
 ### 🔹 Création (Creational Patterns)
 
@@ -478,19 +946,48 @@ public:
 
 **Utilisation :** Interfaces utilisateur, événements système, MVC, reactive programming.
 
+**Implémentation dans libftpp :**
+La librairie fournit deux implémentations du pattern Observer :
+1. **Observer classique** : Interface générique pour implémenter vos propres observateurs
+2. **ObservableValue** : Template spécialisé pour observer les changements de valeurs
+
 **Avantages :**
 - Découplage entre sujet et observateurs
 - Communication broadcast
 - Support dynamique d'observateurs
+- Notification automatique uniquement en cas de changement réel
 
-**Implémentation typique :**
+**Implémentation classique :**
 ```cpp
-class Subject {
-    std::vector<Observer*> observers;
+// Interface observer
+template <typename T>
+class IObserver {
 public:
-    void attach(Observer* obs) { observers.push_back(obs); }
-    void notify() { for(auto* obs : observers) obs->update(); }
+    virtual void update(const T& data) = 0;
+    virtual ~IObserver() = default;
 };
+
+// Sujet observable
+class Subject {
+    std::vector<IObserver<int>*> observers;
+public:
+    void attach(IObserver<int>* obs) { observers.push_back(obs); }
+    void detach(IObserver<int>* obs) { 
+        observers.erase(std::remove(observers.begin(), observers.end(), obs));
+    }
+    void notify(int data) { 
+        for(auto* obs : observers) obs->update(data); 
+    }
+};
+```
+
+**ObservableValue (bonus) :**
+```cpp
+ObservableValue<PlayerStats> stats;
+StatsDisplay display;
+
+stats.subscribe(&display);
+stats.set(newStats);  // Notifie automatiquement display
 ```
 
 #### ✅ Memento
@@ -505,6 +1002,45 @@ public:
 - **Memento** : stocke l'état interne
 - **Caretaker** : gère les mementos sans les examiner
 
+**Implémentation dans libftpp :**
+```cpp
+class Memento {
+    friend class Originator;
+private:
+    std::string state;
+    Memento(const std::string& s) : state(s) {}
+public:
+    // Pas d'accès direct à l'état
+};
+
+class Originator {
+    std::string state;
+public:
+    Memento save() {
+        return Memento(state);
+    }
+    
+    void restore(const Memento& m) {
+        state = m.state;
+    }
+    
+    void setState(const std::string& s) { state = s; }
+};
+
+// Utilisation
+Originator obj;
+obj.setState("State1");
+Memento backup = obj.save();
+
+obj.setState("State2");
+obj.restore(backup);  // Retour à State1
+```
+
+**Avantages :**
+- Préserve l'encapsulation
+- Simplifie l'implémentation d'undo/redo
+- Sauvegarde sans exposer les détails internes
+
 #### ✅ State Machine
 **But :** Change le comportement d'un objet selon son état interne.
 
@@ -514,19 +1050,68 @@ public:
 - Code plus maintenable pour les logiques d'état complexes
 - Élimination des conditions if/switch complexes
 - États explicites et transitions claires
+- Comportement polymorphique selon l'état
 
-**Implémentation :**
+**Implémentation dans libftpp :**
 ```cpp
+// Interface d'état
+class State {
+public:
+    virtual void enter() = 0;
+    virtual void execute() = 0;
+    virtual void exit() = 0;
+    virtual ~State() = default;
+};
+
+// États concrets
+class IdleState : public State {
+public:
+    void enter() override { std::cout << "Entering Idle\n"; }
+    void execute() override { /* Comportement idle */ }
+    void exit() override { std::cout << "Exiting Idle\n"; }
+};
+
+class RunningState : public State {
+public:
+    void enter() override { std::cout << "Start running\n"; }
+    void execute() override { /* Comportement running */ }
+    void exit() override { std::cout << "Stop running\n"; }
+};
+
+// Machine à états
 class StateMachine {
     State* currentState;
 public:
+    StateMachine(State* initial) : currentState(initial) {
+        currentState->enter();
+    }
+    
     void transition(State* newState) {
         currentState->exit();
         currentState = newState;
         currentState->enter();
     }
+    
+    void update() {
+        currentState->execute();
+    }
 };
+
+// Usage
+IdleState idle;
+RunningState running;
+StateMachine fsm(&idle);
+
+fsm.update();           // Execute idle behavior
+fsm.transition(&running); // Change to running
+fsm.update();           // Execute running behavior
 ```
+
+**Cas d'usage réels :**
+- IA de jeu (Idle, Patrol, Attack, Flee)
+- Connexions réseau (Disconnected, Connecting, Connected)
+- UI (Loading, Menu, Playing, Paused)
+- Protocoles (Handshake, Data Transfer, Closing)
 
 #### Chain of Responsibility
 **But :** Passe une requête à travers une chaîne d'objets susceptibles de la traiter.
@@ -707,23 +1292,125 @@ std::exception
     ├── std::range_error
     ├── std::overflow_error
     └── std::underflow_error
-````
+```
 
 ## 🧪 Tests
 
-Les tests utilisent **GoogleTest** et couvrent :
-- ✅ Fonctionnalités des structures de données
-- ✅ Comportement des design patterns
-- ✅ Cas limites et gestion d'erreurs
-- ✅ Performance et fuites mémoire
+Les tests utilisent **GoogleTest** (téléchargé automatiquement via CMake) et couvrent l'intégralité des composants de la librairie.
 
-**Structure des tests :**
+### Exécution des tests
+
+```bash
+# Compiler les tests
+make gtest
+
+# Lancer tous les tests GoogleTest
+make run-gtest
+
+# Sortie attendue
+[==========] Running X tests from Y test suites.
+[----------] Global test environment set-up.
+...
+[----------] Global test environment tear-down
+[==========] X tests from Y test suites ran.
+[  PASSED  ] X tests.
 ```
+
+### Couverture des tests
+
+**Structures de données :**
+- ✅ `test_data_buffer.cpp` - Sérialisation/désérialisation
+- ✅ `test_pool.cpp` - Allocation/libération mémoire
+- ✅ `test_ring_buffer.cpp` - Buffer circulaire
+
+**Design Patterns :**
+- ✅ `test_memento.cpp` - Sauvegarde/restauration d'état
+- ✅ `test_observer.cpp` - Pattern Observer classique
+- ✅ `test_singleton.cpp` - Instance unique
+- ✅ `test_state_machine.cpp` - Machine à états finis
+
+**Threading :**
+- ✅ `test_thread.cpp` - Wrapper de threads
+- ✅ `test_thread_safe_queue.cpp` - Queue thread-safe
+- ✅ `test_thread_safe_iostream.cpp` - IO thread-safe
+- ✅ `test_worker_pool.cpp` - Pool de workers
+- ✅ `test_persistent_worker.cpp` - Worker persistant
+
+**Réseau :**
+- ✅ `test_message.cpp` - Système de messages
+
+**Mathématiques :**
+- ✅ `test_ivector2.cpp` - Vecteurs 2D
+- ✅ `test_ivector3.cpp` - Vecteurs 3D
+- ✅ `test_perlin_noise.cpp` - Génération de bruit
+- ✅ `test_random_2D_coordinate_generator.cpp` - Génération aléatoire
+
+**Bonus :**
+- ✅ `test_logger.cpp` - Système de logging
+- ✅ `test_chronometre.cpp` - Mesure de temps
+- ✅ `test_n_ary_tree.cpp` - Arbre n-aire
+- ✅ `test_observable_value.cpp` - Valeurs observables
+
+### Types de tests couverts
+
+**Fonctionnalités de base :**
+- Constructeurs/destructeurs
+- Opérations CRUD (Create, Read, Update, Delete)
+- Sérialisation/désérialisation
+
+**Cas limites :**
+- Buffers vides/pleins
+- Valeurs nulles/invalides
+- Dépassements de capacité
+
+**Thread safety :**
+- Accès concurrent
+- Conditions de course
+- Deadlocks potentiels
+
+**Performance :**
+- Complexité temporelle
+- Fuites mémoire (via valgrind)
+- Allocations inutiles
+
+**Gestion d'erreurs :**
+- Exceptions attendues
+- États invalides
+- Ressources épuisées
+
+### Structure des tests
+
+
 tests/
-├── test_data_buffer.cpp
-├── test_pool.cpp
-├── test_memento.cpp
-├── test_observer.cpp
-├── test_singleton.cpp
-└── test_state_machine.cpp
+├── my_google_test/          # Tests GoogleTest (utilisés)
+│   ├── main.cpp            # Point d'entrée des tests
+│   ├── test_*.cpp          # Suites de tests par composant
+│   └── ...
+└── school_test/            # Tests manuels (non utilisés par make)
+    ├── main_*.cpp          # Programmes de test individuels
+    └── ...
+
+
+### Exemple de test
+
+```cpp
+#include <gtest/gtest.h>
+#include "libftpp.hpp"
+
+TEST(DataBufferTest, SerializeAndDeserialize) {
+    DataBuffer buffer;
+    
+    // Sérialisation
+    buffer << 42 << 3.14f << std::string("test");
+    
+    // Désérialisation
+    int i;
+    float f;
+    std::string s;
+    buffer >> i >> f >> s;
+    
+    EXPECT_EQ(i, 42);
+    EXPECT_FLOAT_EQ(f, 3.14f);
+    EXPECT_EQ(s, "test");
+}
 ```

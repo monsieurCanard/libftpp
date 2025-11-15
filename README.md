@@ -11,6 +11,8 @@
 
 </p>
 
+# 👀 Vue d'ensemble
+
 ## 📖 Description
 
 **libftpp** est une librairie C++ moderne explorant les structures de données avancées et les design patterns. Ce projet met l'accent sur les bonnes pratiques du C++ moderne, la gestion efficace de la mémoire et l'implémentation rigoureuse des patterns classiques du génie logiciel.
@@ -165,34 +167,6 @@ libftpp/
 - **Interdictions** : Boost, `*printf()`, `*alloc()`, `free()`
 - **Headers** : Indépendants avec include guards
 - **Mémoire** : Éviter les fuites, gestion RAII (Resource Acquisition Is Initialization)
-
-# 📚 Gang of Four – Résumé simple
-
-| Catégorie | Pattern | Idée en une phrase | Exemple en C++ |
-|-----------|---------|---------------------|----------------|
-| **Création** | Singleton | Toujours la même instance unique | Un seul `Logger` ou `ConfigManager` |
-| | Factory Method | Choisit quel objet créer sans dire son type exact | `ShapeFactory` → retourne `Circle` ou `Square` |
-| | Abstract Factory | Crée des familles d’objets compatibles | `UIFactory` → boutons Windows/Linux |
-| | Builder | Construit un objet étape par étape | `HttpRequestBuilder` pour configurer une requête |
-| | Prototype | Clone un objet existant | `Document* copy = doc.clone();` |
-| **Structure** | Adapter | Rend deux interfaces compatibles | `LegacyPrinterAdapter` pour utiliser une vieille lib |
-| | Bridge | Sépare abstraction et implémentation | `Renderer` (OpenGL/DirectX) séparé de `Shape` |
-| | Composite | Objets simples et composés traités pareil | `File` et `Directory` dans un système de fichiers |
-| | Decorator | Ajoute des fonctions sans toucher au code | `Stream` décoré avec `BufferedStream` |
-| | Facade | Simplifie un système complexe | `CompilerFacade` qui appelle lexer+parser+codegen |
-| | Flyweight | Partage objets identiques pour économiser mémoire | `Character` dans un éditeur de texte |
-| | Proxy | Contrôle l’accès à un objet réel | `ImageProxy` qui charge l’image à la demande |
-| **Comportement** | Observer | Un objet prévient les autres automatiquement | `Button` → notifie ses listeners |
-| | Memento | Sauvegarde/restaure un état | `Game.save()` et `Game.load()` |
-| | State | Change le comportement selon l’état | `TCPConnection` en état `Connected`/`Closed` |
-| | Chain of Responsibility | Passe une requête dans une chaîne de handlers | Middleware HTTP qui traite ou passe au suivant |
-| | Command | Action emballée dans un objet | `UndoCommand` ou `MoveCommand` dans un éditeur |
-| | Interpreter | Exécute une mini-grammaire/langage | Calculatrice qui lit `1+2*3` |
-| | Iterator | Parcourt une collection sans connaître sa structure | `for(auto it = list.begin(); it != list.end(); ++it)` |
-| | Mediator | Un objet central gère la communication | `ChatRoom` qui relaie les messages |
-| | Strategy | Choisir un algo interchangeable facilement | `sort(data, QuickSortStrategy{})` |
-| | Template Method | Squelette d’un algo, détails dans les sous-classes | `Game::play()` appelle `init()`, `loop()`, `end()` |
-| | Visitor | Ajoute une opération sans changer les classes | `ASTVisitor` pour analyser un arbre syntaxique |
 
 # 📖 Classes implémentées
 
@@ -800,7 +774,38 @@ health = 90;     // Via operator=, déclenche aussi
 - Systèmes d'événements
 - Game state management
 
-# Details - Design Patterns (✅ = implémentés)
+
+
+# 📚 Gang of Four – Résumé simple
+
+| Catégorie | Pattern | Idée en une phrase | Exemple en C++ |
+|-----------|---------|---------------------|----------------|
+| **Création** | Singleton | Toujours la même instance unique | Un seul `Logger` ou `ConfigManager` |
+| | Factory Method | Choisit quel objet créer sans dire son type exact | `ShapeFactory` → retourne `Circle` ou `Square` |
+| | Abstract Factory | Crée des familles d’objets compatibles | `UIFactory` → boutons Windows/Linux |
+| | Builder | Construit un objet étape par étape | `HttpRequestBuilder` pour configurer une requête |
+| | Prototype | Clone un objet existant | `Document* copy = doc.clone();` |
+| **Structure** | Adapter | Rend deux interfaces compatibles | `LegacyPrinterAdapter` pour utiliser une vieille lib |
+| | Bridge | Sépare abstraction et implémentation | `Renderer` (OpenGL/DirectX) séparé de `Shape` |
+| | Composite | Objets simples et composés traités pareil | `File` et `Directory` dans un système de fichiers |
+| | Decorator | Ajoute des fonctions sans toucher au code | `Stream` décoré avec `BufferedStream` |
+| | Facade | Simplifie un système complexe | `CompilerFacade` qui appelle lexer+parser+codegen |
+| | Flyweight | Partage objets identiques pour économiser mémoire | `Character` dans un éditeur de texte |
+| | Proxy | Contrôle l’accès à un objet réel | `ImageProxy` qui charge l’image à la demande |
+| **Comportement** | Observer | Un objet prévient les autres automatiquement | `Button` → notifie ses listeners |
+| | Memento | Sauvegarde/restaure un état | `Game.save()` et `Game.load()` |
+| | State | Change le comportement selon l’état | `TCPConnection` en état `Connected`/`Closed` |
+| | Chain of Responsibility | Passe une requête dans une chaîne de handlers | Middleware HTTP qui traite ou passe au suivant |
+| | Command | Action emballée dans un objet | `UndoCommand` ou `MoveCommand` dans un éditeur |
+| | Interpreter | Exécute une mini-grammaire/langage | Calculatrice qui lit `1+2*3` |
+| | Iterator | Parcourt une collection sans connaître sa structure | `for(auto it = list.begin(); it != list.end(); ++it)` |
+| | Mediator | Un objet central gère la communication | `ChatRoom` qui relaie les messages |
+| | Strategy | Choisir un algo interchangeable facilement | `sort(data, QuickSortStrategy{})` |
+| | Template Method | Squelette d’un algo, détails dans les sous-classes | `Game::play()` appelle `init()`, `loop()`, `end()` |
+| | Visitor | Ajoute une opération sans changer les classes | `ASTVisitor` pour analyser un arbre syntaxique |
+
+
+# 📂 Details - Design Patterns (✅ = implémentés)
 
 ## 🔹 Création (Creational Patterns)
 
